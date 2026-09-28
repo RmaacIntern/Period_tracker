@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:paddingHorizontal="28dp"
+    android:paddingTop="32dp"
+    android:paddingBottom="24dp"
+    android:background="@drawable/bg_dialog_card">
+
+    <!-- Drop icon circle -->
+    <FrameLayout
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginBottom="20dp">
+
+        <!-- Outer light pink circle -->
+        <View
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/bg_period_confirm_outer" />
+
+        <!-- Inner white circle with drop icon -->
+        <FrameLayout
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_period_confirm_inner">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_period_drop"
+                android:contentDescription="Period drop" />
+
+        </FrameLayout>
+
+    </FrameLayout>
+
+    <!-- Title -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Period started?"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#2D1B33"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Message -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Is today the first day of your active\nmenstrual flow?"
+        android:textSize="14sp"
+        android:textColor="#8A7A8F"
+        android:gravity="center"
+        android:lineSpacingExtra="3dp"
+        android:layout_marginBottom="24dp" />
+
+    <!-- YES button — red gradient -->
+    <com.example.periodtracker.widgets.GradientButton
+        android:id="@+id/btnYesPeriodStarted"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:text="🩸  Yes, period started"
+        android:layout_marginBottom="12dp" />
+
+    <!-- NO button — text only -->
+    <TextView
+        android:id="@+id/btnNoJustBleeding"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:gravity="center"
+        android:text="🩹  No, just bleeding"
+        android:textSize="14sp"
+        android:textColor="#8A7A8F"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Footer note -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="4dp">
+
+        <ImageView
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:src="@drawable/ic_info"
+            android:layout_marginEnd="6dp"
+            android:contentDescription="Info"
+            android:alpha="0.5" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Choosing yes marks today as Day 1 of your new cycle."
+            android:textSize="11sp"
+            android:textColor="#8A7A8F"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+</LinearLayout>

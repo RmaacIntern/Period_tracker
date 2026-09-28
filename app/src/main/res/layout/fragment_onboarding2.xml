@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/onboarding2Root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingHorizontal="24dp"
+    tools:context=".onboarding.OnboardingFragment2">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="How old are you?"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#3D1B2E"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvSubtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Your age helps Period Tracker personalize your cycle insights and predictions."
+        android:textSize="13sp"
+        android:textColor="#8A7A8F"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+
+    <!-- Age card -->
+    <LinearLayout
+        android:id="@+id/ageCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:paddingTop="28dp"
+        android:paddingBottom="16dp"
+        android:paddingHorizontal="20dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/tvSubtitle">
+
+        <TextView
+            android:id="@+id/tvAgeValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="27"
+            android:textSize="48sp"
+            android:textStyle="bold"
+            android:textColor="#E63A5E" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="YEARS YOUNG"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08"
+            android:textColor="#8A7A8F" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/ageSlider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:valueFrom="12"
+            android:valueTo="55"
+            android:stepSize="1"
+            android:value="27"
+            app:thumbColor="#E63A5E"
+            app:trackColorActive="#E63A5E"
+            app:trackColorInactive="#F0DDE3"
+            app:labelBehavior="gone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvMinAge"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="12"
+                android:textSize="11sp"
+                android:textColor="#8A7A8F" />
+
+            <TextView
+                android:id="@+id/tvMaxAge"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text="55+"
+                android:textSize="11sp"
+                android:textColor="#8A7A8F" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Footer -->
+    <TextView
+        android:id="@+id/tvFooterNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:gravity="center"
+        android:text="🔒 Kept confidential and securely stored on-device"
+        android:textSize="11sp"
+        android:textColor="#8A7A8F"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/onboarding4Root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingHorizontal="24dp"
+    android:paddingBottom="24dp"
+    tools:context=".onboarding.OnboardingFragment4">
+
+    <FrameLayout
+        android:id="@+id/heartIconCircle"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="💗"
+            android:textSize="22sp" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Anything your body\nlives with?"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="#3D1B2E"
+        app:layout_constraintTop_toBottomOf="@id/heartIconCircle" />
+
+    <TextView
+        android:id="@+id/tvSubtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Period Tracker quietly adapts its predictions, cycle insights, and helpful tips around your health. Pick all that apply, or none."
+        android:textSize="13sp"
+        android:textColor="#8A7A8F"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/conditionsChipGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        app:chipSpacingHorizontal="8dp"
+        app:chipSpacingVertical="8dp"
+        app:layout_constraintTop_toBottomOf="@id/tvSubtitle">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipPcos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/ConditionChip"
+            android:text="PCOS" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipEndometriosis"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/ConditionChip"
+            android:text="Endometriosis" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipThyroid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/ConditionChip"
+            android:text="Thyroid issues" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipDiabetes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/ConditionChip"
+            android:text="Diabetes" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipBloodPressure"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/ConditionChip"
+            android:text="High blood pressure" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipAnemia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/ConditionChip"
+            android:text="Anemia" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipMigraines"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/ConditionChip"
+            android:text="Migraines" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipAnxiety"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/ConditionChip"
+            android:text="Anxiety or low mood" />
+
+    </com.google.android.material.chip.ChipGroup>
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chipNoneOfThese"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/ConditionChip"
+        android:layout_marginTop="16dp"
+        android:text="🍃  None of these"
+        android:textAlignment="center"
+        app:chipStartPadding="16dp"
+        app:layout_constraintTop_toBottomOf="@id/conditionsChipGroup" />
+
+    <TextView
+        android:id="@+id/tvFooterNote"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:gravity="center"
+        android:text="🔒 Kept confidential and securely stored on-device"
+        android:textSize="11sp"
+        android:textColor="#8A7A8F"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Background track — soft pink -->
+    <item android:id="@android:id/background">
+        <shape android:shape="rectangle">
+            <corners android:radius="10dp" />
+            <solid android:color="#F5D6E0" />
+        </shape>
+    </item>
+
+    <!-- Secondary progress (not used but required) -->
+    <item android:id="@android:id/secondaryProgress">
+        <clip>
+            <shape android:shape="rectangle">
+                <corners android:radius="10dp" />
+                <solid android:color="#F0B8CA" />
+            </shape>
+        </clip>
+    </item>
+
+    <!-- Filled progress — rose pink gradient -->
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape android:shape="rectangle">
+                <corners android:radius="10dp" />
+                <gradient
+                    android:type="linear"
+                    android:angle="0"
+                    android:startColor="#E63A5E"
+                    android:centerColor="#D63F7A"
+                    android:endColor="#C2185B" />
+            </shape>
+        </clip>
+    </item>
+
+</layer-list>

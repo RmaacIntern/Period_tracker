@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/onboarding7Root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingHorizontal="24dp"
+    tools:context=".onboarding.OnboardingFragment7">
+
+    <FrameLayout
+        android:id="@+id/calendarIconCircle"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_calendar"
+            android:contentDescription="Calendar icon" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="When did your last period\nstart?"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="#3D1B2E"
+        app:layout_constraintTop_toBottomOf="@id/calendarIconCircle" />
+
+    <TextView
+        android:id="@+id/tvSubtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="An estimate is fine, Period Tracker learns your real rhythm as you log."
+        android:textSize="13sp"
+        android:textColor="#8A7A8F"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+
+    <!-- Selected date card -->
+    <LinearLayout
+        android:id="@+id/startDateCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:padding="16dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toBottomOf="@id/tvSubtitle">
+
+        <FrameLayout
+            android:id="@+id/startDateIconCircle"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="12dp">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_calendar_small"
+                android:contentDescription="Date icon" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="START DATE"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.06"
+                android:textColor="#8A7A8F" />
+
+            <TextView
+                android:id="@+id/tvSelectedStartDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Saturday, Sept 12"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="#2D8A5F" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/btnEditDate"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_edit"
+            android:contentDescription="Edit date"
+            android:padding="2dp" />
+    </LinearLayout>
+
+    <!-- Quick pick row -->
+    <LinearLayout
+        android:id="@+id/quickPickRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toBottomOf="@id/startDateCard">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quick pick:"
+            android:textSize="12sp"
+            android:textColor="#8A7A8F"
+            android:layout_marginEnd="8dp" />
+
+        <TextView
+            android:id="@+id/chipToday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:layout_marginEnd="6dp"
+            android:text="Today"
+            android:textSize="12sp"
+            android:textColor="#2D1B33" />
+
+        <TextView
+            android:id="@+id/chipYesterday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:layout_marginEnd="6dp"
+            android:text="Yesterday"
+            android:textSize="12sp"
+            android:textColor="#2D1B33" />
+
+        <TextView
+            android:id="@+id/chipSelectedDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:text="Sept 12"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="#E63A5E" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvFooterNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:gravity="center"
+        android:text="🔒 Kept confidential and securely stored on-device"
+        android:textSize="11sp"
+        android:textColor="#8A7A8F"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

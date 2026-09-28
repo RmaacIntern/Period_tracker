@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:background="@drawable/bottom_sheet_bg"
+    android:paddingHorizontal="24dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="32dp">
+
+    <!-- Handle -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/sheet_handle" />
+
+    <!-- PDF Icon circle -->
+    <FrameLayout
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_period_confirm_outer">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="📄"
+            android:textSize="28sp" />
+
+    </FrameLayout>
+
+    <!-- Title -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="PDF Report Ready"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#2D1B33"
+        android:layout_marginBottom="6dp" />
+
+    <!-- Message -->
+    <TextView
+        android:id="@+id/tvPdfPath"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Saved to Downloads/PeriodTracker_Report.pdf"
+        android:textSize="13sp"
+        android:textColor="#8A7A8F"
+        android:gravity="center"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Open PDF button -->
+    <com.example.periodtracker.widgets.GradientButton
+        android:id="@+id/btnOpenPdf"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:text="📄  Open PDF"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Close button -->
+    <TextView
+        android:id="@+id/btnClosePdf"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:gravity="center"
+        android:text="Close"
+        android:textSize="14sp"
+        android:textColor="#8A7A8F" />
+
+</LinearLayout>

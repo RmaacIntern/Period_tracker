@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#FFFFFF"
+    android:paddingTop="8dp"
+    android:paddingBottom="32dp"
+    android:paddingHorizontal="24dp">
+
+    <!-- Drag handle -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/bg_drag_handle"/>
+
+    <!-- Sheet title -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Update Height"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#3D1B2E"
+        android:layout_marginBottom="4dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Height helps personalize your cycle insights and health information."
+        android:textSize="12sp"
+        android:textColor="#8A7A8F"
+        android:layout_marginBottom="20dp"/>
+
+    <!-- Height card -->
+    <LinearLayout
+        android:id="@+id/heightCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="18dp"
+        android:layout_marginBottom="24dp">
+
+        <!-- Label + value row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📏 Height"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#2D1B33"/>
+
+            <TextView
+                android:id="@+id/tvHeightValue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text="162 cm"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#E63A5E"/>
+
+        </LinearLayout>
+
+        <!-- Slider -->
+        <com.google.android.material.slider.Slider
+            android:id="@+id/heightSlider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:valueFrom="130"
+            android:valueTo="210"
+            android:stepSize="1"
+            android:value="162"
+            app:thumbColor="#E63A5E"
+            app:trackColorActive="#E63A5E"
+            app:trackColorInactive="#F0DDE3"
+            app:labelBehavior="gone"/>
+
+        <!-- Min / max labels -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="130 cm"
+                android:textSize="11sp"
+                android:textColor="#8A7A8F"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text="210 cm"
+                android:textSize="11sp"
+                android:textColor="#8A7A8F"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:weightSum="2">
+
+        <Button
+            android:id="@+id/btnSheetCancel"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="Cancel"
+            android:textColor="#6B7280"
+            app:cornerRadius="14dp"/>
+
+        <Button
+            android:id="@+id/btnSheetSave"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="Save"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#EC4899"
+            app:cornerRadius="14dp"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="🔒 Stored securely on-device"
+        android:textSize="11sp"
+        android:textColor="#8A7A8F"/>
+
+</LinearLayout>

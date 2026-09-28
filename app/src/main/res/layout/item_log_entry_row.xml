@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
+
+    <!-- Top row: time + type label + delete icon -->
+    <TextView
+        android:id="@+id/tvEntryTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="9:05 AM"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:textColor="#2D1B33"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvEntryType"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Morning Log"
+        android:textSize="12sp"
+        android:textColor="#8A7A8F"
+        app:layout_constraintStart_toEndOf="@id/tvEntryTime"
+        app:layout_constraintEnd_toStartOf="@id/btnDeleteEntry"
+        app:layout_constraintTop_toTopOf="@id/tvEntryTime"
+        app:layout_constraintBottom_toBottomOf="@id/tvEntryTime" />
+
+    <TextView
+        android:id="@+id/btnDeleteEntry"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:gravity="center"
+        android:text="🗑"
+        android:textSize="14sp"
+        android:padding="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvEntryTime"
+        app:layout_constraintBottom_toBottomOf="@id/tvEntryTime" />
+
+    <!-- Summary: flow · moods · symptoms -->
+    <TextView
+        android:id="@+id/tvEntrySummary"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="Medium flow · Cramps · Fatigue"
+        android:textSize="12sp"
+        android:textColor="#5C4A6E"
+        android:lineSpacingExtra="2dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvEntryTime" />
+
+    <!-- BBT row (hidden unless basalTemp logged) -->
+    <LinearLayout
+        android:id="@+id/bbtRow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvEntrySummary">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🌡 "
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tvBbt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="97.8°F"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="#2D1B33" />
+
+    </LinearLayout>
+
+    <!-- Notes (hidden unless notes logged) -->
+    <TextView
+        android:id="@+id/tvNotes"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text=""
+        android:textSize="12sp"
+        android:textColor="#8A7A8F"
+        android:textStyle="italic"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bbtRow" />
+
+    <!-- Divider between entries in same day (hidden on last entry) -->
+    <View
+        android:id="@+id/dividerEntry"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:background="#F5EEF8"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvNotes" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

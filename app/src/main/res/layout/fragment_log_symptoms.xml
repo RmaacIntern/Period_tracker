@@ -1,0 +1,661 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="#FBF5F8">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="32dp">
+
+        <!-- TOP BAR -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:paddingHorizontal="16dp"
+            android:background="#FFFFFF">
+
+            <ImageView
+                android:id="@+id/btnBack"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:padding="8dp"
+                android:src="@drawable/ic_arrow_left"
+                android:contentDescription="Back"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <TextView
+                android:id="@+id/tvScreenTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Log Symptoms"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#2D1B33"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <TextView
+                android:id="@+id/btnSave"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Save"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="#EC4899"
+                android:padding="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- CYCLE INFO BANNER -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cycleBanner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="4dp"
+            android:padding="14dp">
+
+            <TextView
+                android:id="@+id/tvBannerCycleDay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CYCLE DAY · DAY 14"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.06"
+                android:textColor="#FFFFFF"
+                android:alpha="0.75"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvBannerEmoji"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🌸"
+                android:textSize="28sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvBannerPhase"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="Ovulatory Phase"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/tvBannerEmoji"
+                app:layout_constraintTop_toBottomOf="@id/tvBannerCycleDay" />
+
+            <TextView
+                android:id="@+id/tvDatePill"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Today · Oct 14"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:alpha="0.85"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvBannerPhase" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- ─── MENSTRUAL FLOW ─── -->
+        <LinearLayout
+            android:id="@+id/sectionFlow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            android:paddingHorizontal="16dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="MENSTRUAL FLOW"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.08"
+                    android:textColor="#2D1B33"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/tvFlowCount" />
+
+                <TextView
+                    android:id="@+id/tvFlowCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0 selected"
+                    android:textSize="10sp"
+                    android:textColor="#8A7A8F"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupFlow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:singleSelection="true"
+                app:selectionRequired="false">
+
+                <com.google.android.material.chip.Chip android:id="@+id/chipFlowNone"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="None" style="@style/CycleChip" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipFlowSpotting"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Spotting" style="@style/CycleChip" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipFlowLight"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Light" style="@style/CycleChip" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipFlowMedium"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Medium" style="@style/CycleChip" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipFlowHeavy"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Heavy" style="@style/CycleChip" />
+
+            </com.google.android.material.chip.ChipGroup>
+
+        </LinearLayout>
+
+        <View android:layout_width="match_parent" android:layout_height="1dp"
+            android:background="#F5EEF8" android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp" android:layout_marginEnd="16dp" />
+
+        <!-- ─── MOOD ─── -->
+        <LinearLayout
+            android:id="@+id/sectionMood"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            android:paddingHorizontal="16dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="MOOD"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.08"
+                    android:textColor="#2D1B33"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/tvMoodCount" />
+
+                <TextView
+                    android:id="@+id/tvMoodCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0 selected"
+                    android:textSize="10sp"
+                    android:textColor="#8A7A8F"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupMood"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:singleSelection="true">
+
+                <com.google.android.material.chip.Chip android:id="@+id/chipMoodHappy"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="😊 Happy" style="@style/CycleChip" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipMoodCalm"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="😌 Calm" style="@style/CycleChip" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipMoodEnergetic"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="⚡ Energetic" style="@style/CycleChip" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipMoodAnxious"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="😰 Anxious" style="@style/CycleChip" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipMoodIrritable"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="😤 Irritable" style="@style/CycleChip" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipMoodSad"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="😢 Sad" style="@style/CycleChip" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipMoodMixed"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Mixed feelings" style="@style/CycleChip" />
+
+            </com.google.android.material.chip.ChipGroup>
+
+        </LinearLayout>
+
+        <View android:layout_width="match_parent" android:layout_height="1dp"
+            android:background="#F5EEF8" android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp" android:layout_marginEnd="16dp" />
+
+        <!-- ─── PHYSICAL SYMPTOMS ─── -->
+        <LinearLayout
+            android:id="@+id/sectionSymptoms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            android:paddingHorizontal="16dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="PHYSICAL SYMPTOMS"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.08"
+                    android:textColor="#2D1B33"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/tvSymptomsCount" />
+
+                <TextView
+                    android:id="@+id/tvSymptomsCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0 selected"
+                    android:textSize="10sp"
+                    android:textColor="#8A7A8F"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupSymptoms"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:singleSelection="false">
+
+                <com.google.android.material.chip.Chip android:id="@+id/chipSympCramps"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Cramps" style="@style/CycleChip" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipSympHeadache"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Headache" style="@style/CycleChip" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipSympBloating"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Bloating" style="@style/CycleChip" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipSympFatigue"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Fatigue" style="@style/CycleChip" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipSympTenderBreasts"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Tender Breasts" style="@style/CycleChip" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipSympBackache"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Backache" style="@style/CycleChip" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipSympAcne"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Acne" style="@style/CycleChip" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipSympCravings"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Cravings" style="@style/CycleChip" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipSympNausea"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Nausea" style="@style/CycleChip" />
+
+            </com.google.android.material.chip.ChipGroup>
+
+        </LinearLayout>
+
+        <View android:layout_width="match_parent" android:layout_height="1dp"
+            android:background="#F5EEF8" android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp" android:layout_marginEnd="16dp" />
+
+        <!-- ─── CERVICAL FLOW ─── -->
+        <LinearLayout
+            android:id="@+id/sectionCervical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            android:paddingHorizontal="16dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="CERVICAL FLOW"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.08"
+                    android:textColor="#2D1B33"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/tvCervicalHint" />
+
+                <TextView
+                    android:id="@+id/tvCervicalHint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="fertility indicator"
+                    android:textSize="10sp"
+                    android:textColor="#8A7A8F"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupCervical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:singleSelection="true"
+                app:selectionRequired="false">
+
+                <com.google.android.material.chip.Chip android:id="@+id/chipCervDry"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Dry" style="@style/CycleChip" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipCervSticky"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Sticky" style="@style/CycleChip" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipCervCreamy"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Creamy" style="@style/CycleChip" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipCervWatery"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Watery" style="@style/CycleChip" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipCervEggWhite"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Egg White Fertile" style="@style/CycleChip" />
+
+            </com.google.android.material.chip.ChipGroup>
+
+        </LinearLayout>
+
+        <View android:layout_width="match_parent" android:layout_height="1dp"
+            android:background="#F5EEF8" android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp" android:layout_marginEnd="16dp" />
+
+        <!-- ─── OVULATION TEST (LH) ─── -->
+        <LinearLayout
+            android:id="@+id/sectionLh"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            android:paddingHorizontal="16dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="OVULATION TEST (LH)"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.08"
+                    android:textColor="#2D1B33"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/tvLhHint" />
+
+                <TextView
+                    android:id="@+id/tvLhHint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="optional"
+                    android:textSize="10sp"
+                    android:textColor="#8A7A8F"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupLh"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipLhNotTested"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Not Tested"
+                    android:checked="true"
+                    style="@style/CycleChip" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipLhNegative"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Negative"
+                    style="@style/CycleChip" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipLhPositive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Positive ⚡"
+                    style="@style/CycleChip" />
+
+            </com.google.android.material.chip.ChipGroup>
+
+        </LinearLayout>
+
+        <View android:layout_width="match_parent" android:layout_height="1dp"
+            android:background="#F5EEF8" android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp" android:layout_marginEnd="16dp" />
+
+        <!-- ─── BASAL BODY TEMP ─── -->
+        <LinearLayout
+            android:id="@+id/sectionBasal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            android:paddingHorizontal="16dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="BASAL BODY TEMP"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.08"
+                    android:textColor="#2D1B33"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/tvBasalHint" />
+
+                <TextView
+                    android:id="@+id/tvBasalHint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="morning reading"
+                    android:textSize="10sp"
+                    android:textColor="#8A7A8F"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/basalTempCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:padding="14dp">
+
+                <TextView
+                    android:id="@+id/btnTempDown"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:gravity="center"
+                    android:text="−"
+                    android:textSize="22sp"
+                    android:textColor="#EC4899"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/tvBasalTemp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="97.8°"
+                    android:textSize="36sp"
+                    android:textStyle="bold"
+                    android:textColor="#2D1B33"
+                    android:gravity="center"
+                    app:layout_constraintStart_toEndOf="@id/btnTempDown"
+                    app:layout_constraintEnd_toStartOf="@id/btnTempUp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/btnTempUp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:gravity="center"
+                    android:text="+"
+                    android:textSize="22sp"
+                    android:textColor="#EC4899"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+        <View android:layout_width="match_parent" android:layout_height="1dp"
+            android:background="#F5EEF8" android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp" android:layout_marginEnd="16dp" />
+
+        <!-- ─── DAILY NOTES ─── -->
+        <LinearLayout
+            android:id="@+id/sectionNotes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            android:paddingHorizontal="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DAILY NOTES"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.08"
+                android:textColor="#2D1B33" />
+
+            <EditText
+                android:id="@+id/etNotes"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_marginTop="10dp"
+                android:hint="Add any notes here, sleep quality, stress levels..."
+                android:textSize="13sp"
+                android:textColor="#2D1B33"
+                android:textColorHint="#C5B8CC"
+                android:background="@null"
+                android:gravity="top"
+                android:inputType="textMultiLine"
+                android:padding="0dp" />
+
+        </LinearLayout>
+
+        <!-- INFO BANNER -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/infoBanner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="20dp"
+            android:padding="12dp">
+
+            <TextView
+                android:id="@+id/ivInfoIcon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:gravity="center"
+                android:text="💡"
+                android:textSize="13sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvInfoText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Consistent daily logging for at least the next 3 cycles will significantly improve your cycle predictions."
+                android:textSize="11sp"
+                android:textColor="#7C3AED"
+                android:lineSpacingExtra="2dp"
+                app:layout_constraintStart_toEndOf="@id/ivInfoIcon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- SAVE BUTTON -->
+        <com.example.periodtracker.widgets.GradientButton
+            android:id="@+id/btnSaveDailyLog"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="20dp"
+            android:text="💾  Save Daily Log" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

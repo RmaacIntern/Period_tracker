@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:fillViewport="true"
+    android:background="#FBF5F8">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="32dp">
+
+        <!-- TOP BAR -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Insights"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="#2D1B33"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- PAGE TITLE -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="HEALTH &amp; CYCLE ANALYTICS"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08"
+            android:textColor="#8A7A8F" />
+
+
+
+        <!-- STAT CARDS ROW 1 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            android:baselineAligned="false">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cardAvgCycle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:padding="14dp">
+
+                <TextView android:id="@+id/lblAvgCycle"
+                    android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:text="Avg Cycle" android:textSize="12sp" android:textColor="#8A7A8F"
+                    app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/iconAvgCycle" />
+
+                <TextView android:id="@+id/iconAvgCycle"
+                    android:layout_width="28dp" android:layout_height="28dp"
+                    android:gravity="center" android:text="🔄" android:textSize="13sp"
+                    app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView android:id="@+id/tvAvgCycleValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="28 Days"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:textColor="#2D1B33"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/lblAvgCycle" />
+
+                <TextView
+                    android:id="@+id/tvAvgCycleSub"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="● ±1.2d (Regular)"
+                    android:textSize="11sp"
+                    android:textColor="#16A34A"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvAvgCycleValue" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cardAvgPeriod"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:padding="14dp">
+
+                <TextView android:id="@+id/lblAvgPeriod"
+                    android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:text="Avg Period" android:textSize="12sp" android:textColor="#8A7A8F"
+                    app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/iconAvgPeriod" />
+
+                <TextView android:id="@+id/iconAvgPeriod"
+                    android:layout_width="28dp" android:layout_height="28dp"
+                    android:gravity="center" android:text="💧" android:textSize="13sp"
+                    app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView android:id="@+id/tvAvgPeriodValue"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp" android:text="5 Days"
+                    android:textSize="22sp" android:textStyle="bold" android:textColor="#2D1B33"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/lblAvgPeriod" />
+
+                <TextView android:id="@+id/tvAvgPeriodSub"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp" android:text="Typical 4–6 days"
+                    android:textSize="11sp" android:textColor="#8A7A8F"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvAvgPeriodValue" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+        <!-- STAT CARDS ROW 2 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:baselineAligned="false">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cardLuteal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:padding="14dp">
+
+                <TextView android:id="@+id/lblLuteal"
+                    android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:text="Luteal Phase" android:textSize="12sp" android:textColor="#8A7A8F"
+                    app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/iconLuteal" />
+
+                <TextView android:id="@+id/iconLuteal"
+                    android:layout_width="28dp" android:layout_height="28dp"
+                    android:gravity="center" android:text="🌙" android:textSize="13sp"
+                    app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView android:id="@+id/tvLutealValue"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp" android:text="14 Days"
+                    android:textSize="22sp" android:textStyle="bold" android:textColor="#2D1B33"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/lblLuteal" />
+
+                <TextView android:id="@+id/tvLutealSub"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp" android:text="● Consistent"
+                    android:textSize="11sp" android:textColor="#16A34A"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvLutealValue" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cardSymptomPeak"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:padding="14dp">
+
+                <TextView android:id="@+id/lblSymptomPeak"
+                    android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:text="Symptom Peak" android:textSize="12sp" android:textColor="#8A7A8F"
+                    app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/iconSymptom" />
+
+                <TextView android:id="@+id/iconSymptom"
+                    android:layout_width="28dp" android:layout_height="28dp"
+                    android:gravity="center" android:text="💗" android:textSize="13sp"
+                    app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView android:id="@+id/tvSymptomPeakValue"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp" android:text="Day 27"
+                    android:textSize="22sp" android:textStyle="bold" android:textColor="#2D1B33"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/lblSymptomPeak" />
+
+                <TextView android:id="@+id/tvSymptomPeakSub"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp" android:text="Mild fatigue &amp; cramps"
+                    android:textSize="11sp" android:textColor="#8A7A8F"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvSymptomPeakValue" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+        <!-- Cycle History / Daily Logs Card -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cycleHistoryCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:padding="18dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground">
+
+            <!-- Icon chip -->
+            <TextView
+                android:id="@+id/tvCycleHistoryIcon"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:gravity="center"
+                android:text="🔄"
+                android:textColor="#EC4899"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Title -->
+            <TextView
+                android:id="@+id/tvCycleHistoryTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="Cycle History"
+                android:textColor="#2D1B33"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/tvCycleHistoryIcon"
+                app:layout_constraintTop_toTopOf="@id/tvCycleHistoryIcon"
+                app:layout_constraintEnd_toStartOf="@id/tvHistoryArrow" />
+
+            <!-- Short description -->
+            <TextView
+                android:id="@+id/tvCycleHistorySub"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="Past cycles, regularity &amp; flow patterns"
+                android:textColor="#8A7A8F"
+                android:textSize="11sp"
+                app:layout_constraintStart_toStartOf="@id/tvCycleHistoryTitle"
+                app:layout_constraintTop_toBottomOf="@id/tvCycleHistoryTitle"
+                app:layout_constraintEnd_toStartOf="@id/tvHistoryArrow" />
+
+            <!-- Arrow chip -->
+            <TextView
+                android:id="@+id/tvHistoryArrow"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:gravity="center"
+                android:text="›"
+                android:textColor="#EC4899"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tvCycleHistoryIcon"
+                app:layout_constraintBottom_toBottomOf="@id/tvCycleHistoryIcon" />
+
+            <!-- Bottom status row -->
+            <TextView
+                android:id="@+id/tvDailyTrackingLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="• Daily tracking"
+                android:textColor="#8A7A8F"
+                android:textSize="11sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvCycleHistoryIcon" />
+
+            <TextView
+                android:id="@+id/tvLastUpdatedLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Updated today"
+                android:textColor="#8A7A8F"
+                android:textSize="11sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvCycleHistoryIcon" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- PHASE GUIDE CARD (no image) -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/phaseGuideCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:padding="16dp">
+
+            <TextView android:id="@+id/iconPhaseGuide"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="✦" android:textSize="16sp" android:textColor="#A855F7"
+                app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView android:id="@+id/tvPhaseGuideTitle"
+                android:layout_width="0dp" android:layout_height="wrap_content"
+                android:text="Follicular Phase Guide" android:textSize="14sp" android:textStyle="bold"
+                android:textColor="#2D1B33" android:layout_marginStart="8dp"
+                app:layout_constraintStart_toEndOf="@id/iconPhaseGuide"
+                app:layout_constraintEnd_toStartOf="@id/tvPhaseDaysBadge"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/iconPhaseGuide" />
+
+            <TextView android:id="@+id/tvPhaseDaysBadge"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Days 6–13" android:textSize="11sp" android:textStyle="bold"
+                android:textColor="#7C3AED" android:paddingHorizontal="10dp" android:paddingVertical="4dp"
+                app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView android:id="@+id/tvPhaseGuideBody"
+                android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Estrogen levels rise steadily toward ovulation. Expect natural boosts in focus, mental endurance, and restorative deep sleep. Prioritize strength training and complex whole carbohydrates this week."
+                android:textSize="13sp" android:textColor="#2D1B33" android:lineSpacingExtra="3dp"
+                app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/iconPhaseGuide" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- COMMON CYCLE PATTERNS CARD -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cyclePatternsCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:padding="16dp">
+
+            <TextView android:id="@+id/tvPatternsTitle"
+                android:layout_width="0dp" android:layout_height="wrap_content"
+                android:text="Common Cycle Patterns" android:textSize="15sp" android:textStyle="bold"
+                android:textColor="#2D1B33"
+                app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/btnPatternsInfo" />
+
+            <TextView android:id="@+id/btnPatternsInfo"
+                android:layout_width="24dp" android:layout_height="24dp"
+                android:gravity="center" android:text="ⓘ" android:textSize="16sp"
+                android:textColor="#8A7A8F"
+                app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView android:id="@+id/tvPatternsSub"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_marginTop="2dp" android:text="Reported during days 25–28"
+                android:textSize="11sp" android:textColor="#8A7A8F"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvPatternsTitle" />
+
+            <!-- Cramping row -->
+            <TextView android:id="@+id/lblCramping"
+                android:layout_width="0dp" android:layout_height="wrap_content"
+                android:text="🔴 Abdominal Cramping" android:textSize="13sp" android:textColor="#2D1B33"
+                android:layout_marginTop="16dp"
+                app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toStartOf="@id/tvCrampingPct"
+                app:layout_constraintTop_toBottomOf="@id/tvPatternsSub" />
+
+            <TextView android:id="@+id/tvCrampingPct"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="60%" android:textSize="13sp" android:textStyle="bold" android:textColor="#2D1B33"
+                android:layout_marginTop="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvPatternsSub" />
+
+            <ProgressBar android:id="@+id/barCramping"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="0dp" android:layout_height="6dp"
+                android:layout_marginTop="6dp" android:progress="60"
+                android:progressTint="#EC4899" android:progressBackgroundTint="#F5EEF8"
+                app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/lblCramping" />
+
+            <!-- Fatigue row -->
+            <TextView android:id="@+id/lblFatigue"
+                android:layout_width="0dp" android:layout_height="wrap_content"
+                android:text="🌙 Lethargy &amp; Fatigue" android:textSize="13sp" android:textColor="#2D1B33"
+                android:layout_marginTop="14dp"
+                app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toStartOf="@id/tvFatiguePct"
+                app:layout_constraintTop_toBottomOf="@id/barCramping" />
+
+            <TextView android:id="@+id/tvFatiguePct"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="45%" android:textSize="13sp" android:textStyle="bold" android:textColor="#2D1B33"
+                android:layout_marginTop="14dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/barCramping" />
+
+            <ProgressBar android:id="@+id/barFatigue"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="0dp" android:layout_height="6dp"
+                android:layout_marginTop="6dp" android:progress="45"
+                android:progressTint="#A855F7" android:progressBackgroundTint="#F5EEF8"
+                app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/lblFatigue" />
+
+            <!-- Headache row -->
+            <TextView android:id="@+id/lblHeadache"
+                android:layout_width="0dp" android:layout_height="wrap_content"
+                android:text="💡 Mild Headaches" android:textSize="13sp" android:textColor="#2D1B33"
+                android:layout_marginTop="14dp"
+                app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toStartOf="@id/tvHeadachePct"
+                app:layout_constraintTop_toBottomOf="@id/barFatigue" />
+
+            <TextView android:id="@+id/tvHeadachePct"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="20%" android:textSize="13sp" android:textStyle="bold" android:textColor="#2D1B33"
+                android:layout_marginTop="14dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/barFatigue" />
+
+            <ProgressBar android:id="@+id/barHeadache"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="0dp" android:layout_height="6dp"
+                android:layout_marginTop="6dp" android:progress="20"
+                android:progressTint="#8A7A8F" android:progressBackgroundTint="#F5EEF8"
+                app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/lblHeadache" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- PHYSICIAN EXPORT CARD -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/exportCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/iconExport"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:gravity="center"
+                android:text="📋"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tvExportBody"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tvExportTitle"
+                />
+
+            <TextView
+                android:id="@+id/tvExportTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="Physician-Ready Export"
+                android:textColor="#2D1B33"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/iconExport"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView android:id="@+id/tvExportBody"
+                android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_marginTop="4dp" android:layout_marginStart="12dp"
+                android:text="Summarizes ovulation markers, luteal variance, and pain frequency formatted for OB/GYN consultations."
+                android:textSize="12sp" android:textColor="#8A7A8F" android:lineSpacingExtra="2dp"
+                app:layout_constraintStart_toEndOf="@id/iconExport"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvExportTitle" />
+
+            <com.example.periodtracker.widgets.GradientButton
+                android:id="@+id/btnDownloadReport"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_marginTop="16dp"
+                android:text="Download Cycle Report (PDF)"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvExportBody" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

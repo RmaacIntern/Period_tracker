@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bottom_sheet_bg"
+    android:paddingBottom="32dp">
+
+    <!-- Handle -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/sheet_handle" />
+
+    <!-- Question -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:text="When did your period start?"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#2D1B33" />
+
+    <!-- Selected date row -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="8dp">
+
+        <TextView
+            android:id="@+id/tvSelectedPeriodDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Thu, Sep 17"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#2D1B33"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#F5EEF8"
+        android:layout_marginTop="12dp" />
+
+    <!-- Month nav row -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="8dp">
+
+        <TextView
+            android:id="@+id/tvCalSheetMonthYear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="September 2026"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="#2D1B33"
+
+            android:drawablePadding="4dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <TextView
+                android:id="@+id/btnCalSheetPrev"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:gravity="center"
+                android:text="‹"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#2D1B33" />
+
+            <TextView
+                android:id="@+id/btnCalSheetNext"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:gravity="center"
+                android:text="›"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#2D1B33" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Weekday headers S M T W T F S -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp">
+
+        <TextView android:layout_width="0dp" android:layout_height="32dp"
+            android:layout_weight="1" android:gravity="center"
+            android:text="S" android:textSize="12sp" android:textColor="#8A7A8F" />
+        <TextView android:layout_width="0dp" android:layout_height="32dp"
+            android:layout_weight="1" android:gravity="center"
+            android:text="M" android:textSize="12sp" android:textColor="#8A7A8F" />
+        <TextView android:layout_width="0dp" android:layout_height="32dp"
+            android:layout_weight="1" android:gravity="center"
+            android:text="T" android:textSize="12sp" android:textColor="#8A7A8F" />
+        <TextView android:layout_width="0dp" android:layout_height="32dp"
+            android:layout_weight="1" android:gravity="center"
+            android:text="W" android:textSize="12sp" android:textColor="#8A7A8F" />
+        <TextView android:layout_width="0dp" android:layout_height="32dp"
+            android:layout_weight="1" android:gravity="center"
+            android:text="T" android:textSize="12sp" android:textColor="#8A7A8F" />
+        <TextView android:layout_width="0dp" android:layout_height="32dp"
+            android:layout_weight="1" android:gravity="center"
+            android:text="F" android:textSize="12sp" android:textColor="#8A7A8F" />
+        <TextView android:layout_width="0dp" android:layout_height="32dp"
+            android:layout_weight="1" android:gravity="center"
+            android:text="S" android:textSize="12sp" android:textColor="#8A7A8F" />
+    </LinearLayout>
+
+    <!-- Calendar grid -->
+    <com.example.periodtracker.calendar.SheetCalendarView
+        android:id="@+id/sheetCalendarView"
+        android:layout_width="match_parent"
+        android:layout_height="280dp"
+        android:layout_marginHorizontal="16dp" />
+
+    <!-- Cancel / OK -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:paddingHorizontal="24dp">
+
+        <TextView
+            android:id="@+id/btnPeriodDateCancel"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Cancel"
+            android:textSize="15sp"
+            android:textColor="#8A7A8F" />
+
+        <TextView
+            android:id="@+id/btnPeriodDateOk"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="OK"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="#EC4899" />
+
+    </LinearLayout>
+
+</LinearLayout>

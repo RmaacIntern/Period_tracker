@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bottom_sheet_bg"
+    android:paddingBottom="32dp">
+
+    <!-- Handle -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/sheet_handle" />
+
+    <!-- Question -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:text="Log Period Start"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#2D1B33" />
+
+    <!-- Selected date row -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="8dp">
+
+        <TextView
+            android:id="@+id/tvPeriodStartDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Select a date"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#2D1B33"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btnPeriodStartEdit"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <TextView
+            android:id="@+id/btnPeriodStartEdit"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="✏"
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#F5EEF8"
+        android:layout_marginTop="12dp" />
+
+    <!-- Month nav row -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="8dp">
+
+        <TextView
+            android:id="@+id/tvPeriodStartMonth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="September 2026"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="#2D1B33"
+
+            android:drawablePadding="4dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <TextView
+                android:id="@+id/btnPeriodStartPrev"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:gravity="center"
+                android:text="‹"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#2D1B33" />
+
+            <TextView
+                android:id="@+id/btnPeriodStartNext"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:gravity="center"
+                android:text="›"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#2D1B33" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Weekday headers S M T W T F S -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp">
+
+        <TextView android:layout_width="0dp" android:layout_height="32dp"
+            android:layout_weight="1" android:gravity="center"
+            android:text="S" android:textSize="12sp" android:textColor="#8A7A8F" />
+        <TextView android:layout_width="0dp" android:layout_height="32dp"
+            android:layout_weight="1" android:gravity="center"
+            android:text="M" android:textSize="12sp" android:textColor="#8A7A8F" />
+        <TextView android:layout_width="0dp" android:layout_height="32dp"
+            android:layout_weight="1" android:gravity="center"
+            android:text="T" android:textSize="12sp" android:textColor="#8A7A8F" />
+        <TextView android:layout_width="0dp" android:layout_height="32dp"
+            android:layout_weight="1" android:gravity="center"
+            android:text="W" android:textSize="12sp" android:textColor="#8A7A8F" />
+        <TextView android:layout_width="0dp" android:layout_height="32dp"
+            android:layout_weight="1" android:gravity="center"
+            android:text="T" android:textSize="12sp" android:textColor="#8A7A8F" />
+        <TextView android:layout_width="0dp" android:layout_height="32dp"
+            android:layout_weight="1" android:gravity="center"
+            android:text="F" android:textSize="12sp" android:textColor="#8A7A8F" />
+        <TextView android:layout_width="0dp" android:layout_height="32dp"
+            android:layout_weight="1" android:gravity="center"
+            android:text="S" android:textSize="12sp" android:textColor="#8A7A8F" />
+    </LinearLayout>
+
+    <!-- Calendar grid -->
+    <com.example.periodtracker.calendar.SheetCalendarView
+        android:id="@+id/periodStartCalendar"
+        android:layout_width="match_parent"
+        android:layout_height="280dp"
+        android:layout_marginHorizontal="16dp" />
+
+    <!-- Recent periods — edit or delete wrong entries -->
+    <LinearLayout
+        android:id="@+id/recentPeriodsSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="16dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Recent periods"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.05"
+            android:textColor="#8A7A8F"
+            android:layout_marginBottom="6dp" />
+
+        <LinearLayout
+            android:id="@+id/recentPeriodsList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+    </LinearLayout>
+
+    <!-- Cancel / OK -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:paddingHorizontal="24dp">
+
+        <TextView
+            android:id="@+id/btnPeriodStartCancel"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Cancel"
+            android:textSize="15sp"
+            android:textColor="#8A7A8F" />
+
+        <TextView
+            android:id="@+id/btnPeriodStartOk"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Log Period Start"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="#EC4899" />
+
+    </LinearLayout>
+
+</LinearLayout>
