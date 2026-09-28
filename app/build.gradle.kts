@@ -1,14 +1,12 @@
 plugins {
     alias(libs.plugins.android.application)
-
+    id("com.google.gms.google-services")
     alias(libs.plugins.ksp)
 }
 
 android {
     namespace = "com.example.periodtracker"
-    compileSdk {
-        version = release(37)
-    }
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.example.periodtracker"
@@ -21,9 +19,11 @@ android {
 
     buildTypes {
         release {
-            optimization {
-                enable = false
-            }
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
@@ -68,6 +68,15 @@ dependencies {
 
     // DataStore
     implementation(libs.androidx.datastore.preferences)
+
+    // Firebase BoM & Analytics
+    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    // Firebase Remote Config — controls ads on/off remotely
+    implementation("com.google.firebase:firebase-config-ktx")
+
+    // Google Mobile Ads SDK (AdMob)
+    implementation("com.google.android.libraries.ads.mobile.sdk:ads-mobile-sdk:1.5.0")
 
     // Test
     testImplementation(libs.junit)

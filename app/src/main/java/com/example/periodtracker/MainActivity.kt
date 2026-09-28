@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity() {
         scheduleDailyLogReminder()
         handleNotificationIntent(intent)
 
+
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.mainFragmentContainer, HomeFragment())
