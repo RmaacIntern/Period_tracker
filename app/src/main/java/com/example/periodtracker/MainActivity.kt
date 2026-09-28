@@ -2,81 +2,227 @@ package com.example.periodtracker
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.BlendModeColorFilterCompat
+import androidx.core.graphics.BlendModeCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.example.periodtracker.ads.AdConstants
+import com.example.periodtracker.ads.AdsRemoteConfig
+import com.example.periodtracker.ads.BannerAdHelper
+import com.example.periodtracker.ads.LoadAds
+import com.example.periodtracker.ads.ShowAds
 import com.example.periodtracker.calendar.CalendarFragment
 import com.example.periodtracker.databinding.ActivityMainBinding
+import com.example.periodtracker.databinding.CustomBottomNavBinding
 import com.example.periodtracker.databinding.DialogExitConfirmationBinding
+import com.example.periodtracker.databinding.SmallBannerBinding
 import com.example.periodtracker.homefragment.HomeFragment
 import com.example.periodtracker.insights.InsightsFragment
 import com.example.periodtracker.notification.DailyLogReminderWorker
 import com.example.periodtracker.notification.NotificationHelper
 import com.example.periodtracker.profile.ProfileFragment
+import android.widget.ImageView
+import android.widget.TextView
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var navBinding: CustomBottomNavBinding
+    private var bannerAdHelper: BannerAdHelper? = null
     private var exitDialogShowing = false
+    private var clickInProgress = false
+    private var selectedTabId = -1  // ← -1 means nothing selected yet
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.mainRoot) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(0, systemBars.top, 0, 0)
-            insets
-        }
+        navBinding = CustomBottomNavBinding.bind(binding.customBottomNav.root)
+
+        setupWindowInsets()
+        setupBannerAd()
+        preloadMainAd()
+        setupBottomNav()
 
         NotificationHelper.createChannels(this)
         scheduleDailyLogReminder()
         handleNotificationIntent(intent)
 
-
+        // AFTER
         if (savedInstanceState == null) {
+            selectedTabId = R.id.navHome
+            updateTabColors(R.id.navHome)
             supportFragmentManager.beginTransaction()
                 .replace(R.id.mainFragmentContainer, HomeFragment())
                 .commit()
         }
 
-        binding.bottomNav.setOnItemSelectedListener { item ->
-            val fragment = when (item.itemId) {
-                R.id.nav_home     -> HomeFragment()
-                R.id.nav_calendar -> CalendarFragment()
-                R.id.nav_insights -> InsightsFragment()
-                R.id.nav_profile  -> ProfileFragment()
-                else -> return@setOnItemSelectedListener false
-            }
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.mainFragmentContainer, fragment)
-                .commit()
-            true
-        }
-
-        // ✅ New back press API — works on Android 13+ and all older versions
         onBackPressedDispatcher.addCallback(this) {
             when {
-                // Fragment has back stack — pop it first (e.g. LogSymptomsFragment)
                 supportFragmentManager.backStackEntryCount > 0 -> {
                     supportFragmentManager.popBackStack()
                 }
-                // No back stack — show exit dialog
-                else -> showExitDialog()
+                else -> {
+                    if (!AdsRemoteConfig.show_back_press_interstitial) {
+                        showExitDialog()
+                        return@addCallback
+                    }
+
+                    ShowAds.showAdIfEligible(this@MainActivity) {
+                        // ← Small delay lets activity fully resume before showing dialog
+                        binding.mainRoot.postDelayed({
+                            if (!isFinishing && !isDestroyed) {
+                                showExitDialog()
+                            }
+                        }, 300)
+                    }
+                }
             }
         }
     }
 
-    // ── Exit dialog ───────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────────
+    // CUSTOM BOTTOM NAV
+    // ─────────────────────────────────────────────────────────────
+
+    private fun setupBottomNav() {
+        navBinding.navHome.setOnClickListener     { onTabClicked(R.id.navHome) }
+        navBinding.navCalendar.setOnClickListener { onTabClicked(R.id.navCalendar) }
+        navBinding.navInsights.setOnClickListener { onTabClicked(R.id.navInsights) }
+        navBinding.navProfile.setOnClickListener  { onTabClicked(R.id.navProfile) }
+
+        updateTabColors(R.id.navHome)
+    }
+    private fun onTabClicked(tabId: Int) {
+        if (clickInProgress || tabId == selectedTabId) return
+        clickInProgress = true
+
+        // ← Save which tab user wants to go to
+        val pendingTabId = tabId
+
+        // ← Keep current tab visually selected while ad is showing
+        updateTabColors(selectedTabId)
+
+        ShowAds.showMainOnUserAction(this) {
+            clickInProgress = false
+            // ← Only NOW switch to new tab after ad closes
+            selectTab(pendingTabId)
+        }
+    }
+
+    private fun selectTab(tabId: Int) {
+        selectedTabId = tabId
+        updateTabColors(tabId)
+
+        val fragment = when (tabId) {
+            R.id.navHome     -> HomeFragment()
+            R.id.navCalendar -> CalendarFragment()
+            R.id.navInsights -> InsightsFragment()
+            R.id.navProfile  -> ProfileFragment()
+            else             -> HomeFragment()
+        }
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.mainFragmentContainer, fragment)
+            .commit()
+    }
+
+    private fun updateTabColors(selectedId: Int) {
+        val selectedColor   = android.graphics.Color.parseColor("#FFFFFF")
+        val unselectedColor = android.graphics.Color.parseColor("#8A7A8F")
+
+        // Reset all to unselected — INVISIBLE keeps space reserved
+        listOf(
+            Triple(navBinding.navHome,     navBinding.iconHome,     navBinding.labelHome),
+            Triple(navBinding.navCalendar, navBinding.iconCalendar, navBinding.labelCalendar),
+            Triple(navBinding.navInsights, navBinding.iconInsights, navBinding.labelInsights),
+            Triple(navBinding.navProfile,  navBinding.iconProfile,  navBinding.labelProfile)
+        ).forEach { (tab, icon, label) ->
+            tab.background   = null
+            label.visibility = View.INVISIBLE  // ← INVISIBLE not GONE — space always reserved
+            setTabColor(icon, label, unselectedColor)
+        }
+
+        // Set selected tab — gradient pill + white
+        val (tab, icon, label) = when (selectedId) {
+            R.id.navHome     -> Triple(navBinding.navHome,     navBinding.iconHome,     navBinding.labelHome)
+            R.id.navCalendar -> Triple(navBinding.navCalendar, navBinding.iconCalendar, navBinding.labelCalendar)
+            R.id.navInsights -> Triple(navBinding.navInsights, navBinding.iconInsights, navBinding.labelInsights)
+            R.id.navProfile  -> Triple(navBinding.navProfile,  navBinding.iconProfile,  navBinding.labelProfile)
+            else             -> Triple(navBinding.navHome,     navBinding.iconHome,     navBinding.labelHome)
+        }
+
+        tab.background   = ContextCompat.getDrawable(this, R.drawable.bg_nav_selected)
+        label.visibility = View.VISIBLE
+        setTabColor(icon, label, selectedColor)
+    }
+
+    private fun setTabColor(icon: ImageView, label: TextView, color: Int) {
+        icon.colorFilter = BlendModeColorFilterCompat
+            .createBlendModeColorFilterCompat(color, BlendModeCompat.SRC_IN)
+        label.setTextColor(color)
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // WINDOW INSETS
+    // ─────────────────────────────────────────────────────────────
+
+    private fun setupWindowInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.mainRoot) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
+            binding.smallAd.root.setPadding(0, 0, 0, systemBars.bottom)
+            insets
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // BANNER AD
+    // ─────────────────────────────────────────────────────────────
+
+    private fun setupBannerAd() {
+        if (!AdsRemoteConfig.show_banner) return
+        bannerAdHelper = BannerAdHelper(this, AdConstants.BANNER_AD_UNIT_ID)
+        val smallBannerBinding = SmallBannerBinding.bind(binding.smallAd.root)
+        bannerAdHelper?.loadInto(smallBannerBinding)
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // PRELOAD INTERSTITIAL
+    // ─────────────────────────────────────────────────────────────
+
+    private fun preloadMainAd() {
+        if (AdsRemoteConfig.show_main_interstitial ||
+            AdsRemoteConfig.show_back_press_interstitial
+        ) {
+            LoadAds.preloadSharedInterstitialIfNeeded()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        clickInProgress = false
+        exitDialogShowing = false  // ← ADD this
+        updateTabColors(selectedTabId)
+        preloadMainAd()
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // EXIT DIALOG
+    // ─────────────────────────────────────────────────────────────
 
     private fun showExitDialog() {
         if (exitDialogShowing) return
+        if (isFinishing || isDestroyed) return  // ← ADD this guard
         exitDialogShowing = true
 
         val dialogBinding = DialogExitConfirmationBinding
@@ -100,10 +246,7 @@ class MainActivity : AppCompatActivity() {
             setOnDismissListener { exitDialogShowing = false }
         }
 
-        dialogBinding.btnStayInApp.setOnClickListener {
-            dialog.dismiss()
-        }
-
+        dialogBinding.btnStayInApp.setOnClickListener { dialog.dismiss() }
         dialogBinding.btnExit.setOnClickListener {
             dialog.dismiss()
             finishAffinity()
@@ -112,7 +255,9 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    // ── Notification intent ───────────────────────────────────────
+    // ─────────────────────────────────────────────────────────────
+    // NOTIFICATION INTENT
+    // ─────────────────────────────────────────────────────────────
 
     override fun onNewIntent(intent: android.content.Intent) {
         super.onNewIntent(intent)
@@ -133,7 +278,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // ── Daily log reminder ────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────────
+    // DAILY LOG REMINDER
+    // ─────────────────────────────────────────────────────────────
 
     private fun scheduleDailyLogReminder() {
         val request = PeriodicWorkRequestBuilder<DailyLogReminderWorker>(1, TimeUnit.DAYS)
@@ -151,5 +298,15 @@ class MainActivity : AppCompatActivity() {
         var target = now.withHour(20).withMinute(0).withSecond(0)
         if (now.isAfter(target)) target = target.plusDays(1)
         return java.time.Duration.between(now, target).toMillis()
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // DESTROY
+    // ─────────────────────────────────────────────────────────────
+
+    override fun onDestroy() {
+        bannerAdHelper?.destroy()
+        bannerAdHelper = null
+        super.onDestroy()
     }
 }

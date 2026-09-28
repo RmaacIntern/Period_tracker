@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<io.github.usefulness.shimmer.android.ShimmerFrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nativeShimmer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_ad_card"
+    app:shimmer_auto_start="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <!-- TOP SECTION: AD LABEL + ICON + HEADLINE + META -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <!-- AD LABEL -->
+
+            <View
+                android:layout_width="24dp"
+                android:layout_height="14dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/bg_ad_badge_shimmer" />
+
+            <!-- ICON -->
+
+            <View
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="@color/colorGrayNew" />
+
+            <!-- HEADLINE + META -->
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="12dp"
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical">
+
+                <!-- HEADLINE LINE -->
+
+                <View
+                    android:layout_width="180dp"
+                    android:layout_height="15dp"
+                    android:background="@color/colorGrayNew" />
+
+                <!-- STARS / PRICE / STORE LINE -->
+
+                <View
+                    android:layout_width="140dp"
+                    android:layout_height="12dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/colorGrayNew" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- FAKE BODY (2 lines, no media box) -->
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="12dp"
+            android:layout_marginTop="14dp"
+            android:background="@color/colorGrayNew" />
+
+        <View
+            android:layout_width="220dp"
+            android:layout_height="12dp"
+            android:layout_marginTop="6dp"
+            android:background="@color/colorGrayNew" />
+
+        <!-- FAKE BUTTON -->
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginTop="14dp"
+            android:background="@color/colorGrayNew" />
+
+    </LinearLayout>
+
+</io.github.usefulness.shimmer.android.ShimmerFrameLayout>

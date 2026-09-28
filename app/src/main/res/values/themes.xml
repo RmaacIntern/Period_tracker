@@ -1,12 +1,13 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.LunaCycle" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+    <!-- Base application theme -->
+    <style name="Base.Theme.PeriodTracker" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- ← Fix translucent flags HERE, not in CycleChip -->
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
     </style>
 
-    <style name="Theme.LunaCycle" parent="Base.Theme.LunaCycle" />
-
+    <style name="Theme.PeriodTracker" parent="Base.Theme.PeriodTracker" />
 
     <style name="WeekdayLabel">
         <item name="android:layout_width">0dp</item>
@@ -27,8 +28,6 @@
         <item name="checkedIconVisible">false</item>
     </style>
 
-    <!-- Add this inside your existing <resources> in res/values/styles.xml -->
-
     <style name="CycleChip" parent="Widget.MaterialComponents.Chip.Choice">
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/chip_text_selector</item>
@@ -42,9 +41,7 @@
         <item name="android:checkable">true</item>
         <item name="checkedIconVisible">false</item>
         <item name="rippleColor">#20EC4899</item>
-
-        <item name="android:windowTranslucentStatus">true</item>
-        <!-- or -->
-        <item name="android:windowFullscreen">true</item>
+        <!-- ← Window flags removed from here, they don't belong in a Chip style -->
     </style>
+
 </resources>

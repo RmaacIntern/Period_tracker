@@ -8,12 +8,11 @@
     <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
-
-    <!-- Internet permission — required for ads -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:name=".MainApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -21,14 +20,12 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.LunaCycle">
+        android:theme="@style/Theme.PeriodTracker">
 
-        <!-- Sample AdMob App ID (replace with your own in production) -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3394103859664530~6275812209"/>
+            android:value="ca-app-pub-3940256099942544~3347511713"/>
 
-        <!-- ✅ AlarmReceiver with intent-filter — required for alarms to fire -->
         <receiver
             android:name=".notification.AlarmReceiver"
             android:exported="false">
@@ -39,7 +36,6 @@
             </intent-filter>
         </receiver>
 
-        <!-- ✅ PeriodConfirmReceiver with intent-filter — required for Yes/Not yet buttons -->
         <receiver
             android:name=".notification.PeriodConfirmReceiver"
             android:exported="false">
@@ -49,7 +45,6 @@
             </intent-filter>
         </receiver>
 
-        <!-- BootReceiver — already correct -->
         <receiver
             android:name=".notification.BootReceiver"
             android:exported="true">
@@ -73,10 +68,13 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
+        <!-- ✅ FIXED: intent-filter is now INSIDE the activity tag -->
+        <!-- ✅ FIXED: exported="true" added — required for launcher activities -->
         <activity
             android:name=".splash.SplashActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.PeriodTracker">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -87,6 +85,7 @@
             android:name=".onboarding.OnboardingActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+
     </application>
 
 </manifest>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/collapsibleBannerRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!-- Shimmer while loading -->
+    <io.github.usefulness.shimmer.android.ShimmerFrameLayout
+        android:id="@+id/collapsibleBannerShimmer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <!-- Fake icon -->
+            <View
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:background="@color/colorGrayNew" />
+
+            <!-- Fake text -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp"
+                android:orientation="vertical">
+
+                <View
+                    android:layout_width="180dp"
+                    android:layout_height="13dp"
+                    android:background="@color/colorGrayNew" />
+
+                <View
+                    android:layout_width="130dp"
+                    android:layout_height="11dp"
+                    android:layout_marginTop="6dp"
+                    android:background="@color/colorGrayNew" />
+
+            </LinearLayout>
+
+            <!-- Fake button -->
+            <View
+                android:layout_width="70dp"
+                android:layout_height="34dp"
+                android:background="@color/colorGrayNew" />
+
+        </LinearLayout>
+
+    </io.github.usefulness.shimmer.android.ShimmerFrameLayout>
+
+
+    <!-- Actual collapsible banner goes here -->
+    <FrameLayout
+        android:id="@+id/collapsibleBannerAdContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+</LinearLayout>

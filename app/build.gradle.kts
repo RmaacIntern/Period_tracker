@@ -48,6 +48,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.process)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.material)
     implementation(libs.androidx.fragment.ktx)
@@ -77,6 +78,8 @@ dependencies {
 
     // Google Mobile Ads SDK (AdMob)
     implementation("com.google.android.libraries.ads.mobile.sdk:ads-mobile-sdk:1.5.0")
+
+    implementation("io.github.usefulness:shimmer-android-core:1.0.0")
 
     // Test
     testImplementation(libs.junit)

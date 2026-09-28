@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    android:orientation="horizontal"
+    android:background="@android:color/white"
+    android:elevation="12dp"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp"
+    android:gravity="center_vertical">
+
+    <!-- Home -->
+    <LinearLayout
+        android:id="@+id/navHome"
+        android:layout_width="0dp"
+        android:layout_height="44dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp">
+
+        <ImageView
+            android:id="@+id/iconHome"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_nav_home"
+            android:contentDescription="Home"
+            android:layout_gravity="center_vertical" />
+
+        <!-- Space always reserved even when gone -->
+        <TextView
+            android:id="@+id/labelHome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="Home"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:visibility="invisible"
+            android:textColor="@android:color/white"
+            android:layout_gravity="center_vertical" />
+
+    </LinearLayout>
+
+    <!-- Calendar -->
+    <LinearLayout
+        android:id="@+id/navCalendar"
+        android:layout_width="0dp"
+        android:layout_height="44dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp">
+
+        <ImageView
+            android:id="@+id/iconCalendar"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_nav_calendar"
+            android:contentDescription="Calendar"
+            android:layout_gravity="center_vertical" />
+
+        <TextView
+            android:id="@+id/labelCalendar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="Calendar"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:visibility="invisible"
+            android:textColor="@android:color/white"
+            android:layout_gravity="center_vertical" />
+
+    </LinearLayout>
+
+    <!-- Insights -->
+    <LinearLayout
+        android:id="@+id/navInsights"
+        android:layout_width="0dp"
+        android:layout_height="44dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp">
+
+        <ImageView
+            android:id="@+id/iconInsights"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_nav_insights"
+            android:contentDescription="Insights"
+            android:layout_gravity="center_vertical" />
+
+        <TextView
+            android:id="@+id/labelInsights"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="Insights"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:visibility="invisible"
+            android:textColor="@android:color/white"
+            android:layout_gravity="center_vertical" />
+
+    </LinearLayout>
+
+    <!-- Profile -->
+    <LinearLayout
+        android:id="@+id/navProfile"
+        android:layout_width="0dp"
+        android:layout_height="44dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp">
+
+        <ImageView
+            android:id="@+id/iconProfile"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_nav_profile"
+            android:contentDescription="Profile"
+            android:layout_gravity="center_vertical" />
+
+        <TextView
+            android:id="@+id/labelProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="Profile"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:visibility="invisible"
+            android:textColor="@android:color/white"
+            android:layout_gravity="center_vertical" />
+
+    </LinearLayout>
+
+</LinearLayout>

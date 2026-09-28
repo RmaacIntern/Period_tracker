@@ -2,4 +2,15 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="textcolor">#2A2A2A</color>
+    <color name="btncolor">#E4A850</color>
+    <color name="card_bg">#F1F3FF</color>
+    <color name="card_text">#4C4C4C</color>
+
+    <color name="hintTextColor">#4C4C4C</color>
+    <color name="blue">#197AEF</color>
+    <color name="gray">#808080</color>
+    <color name="colorGrayNew">#6E6E6E</color>
+
 </resources>
