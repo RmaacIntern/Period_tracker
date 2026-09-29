@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -30,9 +30,9 @@
             android:name=".notification.AlarmReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.example.periodtracker.PERIOD_REMINDER"/>
-                <action android:name="com.example.periodtracker.PERIOD_DAY"/>
-                <action android:name="com.example.periodtracker.OVULATION_ALERT"/>
+                <action android:name="com.aivigil.periodtracker.PERIOD_REMINDER"/>
+                <action android:name="com.aivigil.periodtracker.PERIOD_DAY"/>
+                <action android:name="com.aivigil.periodtracker.OVULATION_ALERT"/>
             </intent-filter>
         </receiver>
 
@@ -40,8 +40,8 @@
             android:name=".notification.PeriodConfirmReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.example.periodtracker.PERIOD_YES"/>
-                <action android:name="com.example.periodtracker.PERIOD_NOT_YET"/>
+                <action android:name="com.aivigil.periodtracker.PERIOD_YES"/>
+                <action android:name="com.aivigil.periodtracker.PERIOD_NOT_YET"/>
             </intent-filter>
         </receiver>
 

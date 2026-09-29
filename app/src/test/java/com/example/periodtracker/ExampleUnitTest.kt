@@ -1,4 +1,4 @@
-package com.example.periodtracker
+﻿package com.aivigil.periodtracker
 
 import org.junit.Test
 

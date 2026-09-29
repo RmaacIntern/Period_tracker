@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -51,7 +51,7 @@
         android:lineSpacingMultiplier="1.3" />
 
     <!-- Stay in App button -->
-    <com.example.periodtracker.widgets.GradientButton
+    <com.aivigil.periodtracker.widgets.GradientButton
         android:id="@+id/btnStayInApp"
         android:layout_width="match_parent"
         android:layout_height="52dp"

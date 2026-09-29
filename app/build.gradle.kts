@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.periodtracker"
+    namespace = "com.aivigil.periodtracker"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.example.periodtracker"
+        applicationId = "com.aivigil.periodtracker"
         minSdk = 26
         targetSdk = 37
         versionCode = 1
