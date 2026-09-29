@@ -13,6 +13,9 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.example.periodtracker.MainActivity
+import com.example.periodtracker.ads.AdsRemoteConfig
+import com.example.periodtracker.ads.LoadAds
+import com.example.periodtracker.ads.ShowAds
 import com.example.periodtracker.databinding.ActivityOnboardingBinding
 import com.example.periodtracker.onboarding.viewmodel.OnboardingViewModel
 import com.example.periodtracker.viewmodel.CycleViewModel
@@ -33,7 +36,6 @@ class OnboardingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Must be before setContentView
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         binding = ActivityOnboardingBinding.inflate(layoutInflater)
@@ -43,19 +45,19 @@ class OnboardingActivity : AppCompatActivity() {
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
             val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-
-            // Adjust padding for keyboard vs navigation bar
             v.setPadding(
                 bars.left,
                 bars.top,
                 bars.right,
                 if (imeVisible) imeHeight else bars.bottom
             )
-
-            insets // Do not consume insets so fragments can access them
+            insets
         }
 
-        // ... ViewPager setup
+        // ✅ Preload onboarding interstitial early
+        if (AdsRemoteConfig.show_onboarding_interstitial) {
+            LoadAds.preloadOnboarding()
+        }
 
         val adapter = OnboardingPagerAdapter(this)
         binding.onboardingViewPager.adapter = adapter
@@ -108,6 +110,7 @@ class OnboardingActivity : AppCompatActivity() {
                 }
                 return@setOnClickListener
             }
+
             if (current == 0) {
                 val frag = adapter.getFragment(0) as? OnboardingFragment1
                 frag?.hideNameError()
@@ -118,8 +121,29 @@ class OnboardingActivity : AppCompatActivity() {
             collectFragmentData(current, adapter)
 
             if (current < totalSteps - 1) {
+                // ✅ Normal navigation for steps 1-7
                 binding.onboardingViewPager.currentItem = current + 1
             } else {
+                // ✅ Last step (step 8) — show onboarding interstitial then proceed
+                showOnboardingAdThenProceed()
+            }
+        }
+    }
+
+    // ============================================================
+    // ONBOARDING INTERSTITIAL ON LAST STEP
+    // ============================================================
+
+    private fun showOnboardingAdThenProceed() {
+        if (!AdsRemoteConfig.show_onboarding_interstitial) {
+            // Ad disabled — go straight to app
+            saveAndProceed()
+            return
+        }
+
+        ShowAds.showOnboarding(this) {
+            // Called after ad dismissed or if no ad available
+            runOnUiThread {
                 saveAndProceed()
             }
         }
@@ -188,7 +212,6 @@ class OnboardingActivity : AppCompatActivity() {
                 onboardingViewModel.weightKg = it.getSelectedWeightKg()
             }
             3 -> (fragment as? OnboardingFragment4)?.let {
-                // joinToString converts List<String> → String for the ViewModel
                 onboardingViewModel.conditions   = it.getSelectedConditions().joinToString(", ")
                 onboardingViewModel.noneSelected = it.isNoneSelected()
             }
@@ -214,7 +237,7 @@ class OnboardingActivity : AppCompatActivity() {
             weightKg        = vm.weightKg,
             activityLevel   = vm.activityLevel?.name ?: "Balanced",
             goal            = vm.goal?.name ?: "Track My Cycle",
-            conditions      = vm.conditions,   // already a String
+            conditions      = vm.conditions,
             cycleLength     = vm.cycleLength,
             periodDuration  = vm.periodDuration,
             lastPeriodStart = lastPeriod

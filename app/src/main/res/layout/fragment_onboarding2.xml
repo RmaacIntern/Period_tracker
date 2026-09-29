@@ -103,6 +103,21 @@
 
     </LinearLayout>
 
+    <FrameLayout
+        android:id="@+id/nativeAdContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/bg_ad_card"
+        android:elevation="1dp"
+
+        app:layout_constraintBottom_toTopOf="@id/tvFooterNote"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
     <!-- Footer -->
     <TextView
         android:id="@+id/tvFooterNote"

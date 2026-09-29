@@ -1,7 +1,8 @@
 package com.example.periodtracker.ads
 
-
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
@@ -10,12 +11,12 @@ import android.widget.RatingBar
 import android.widget.TextView
 import com.example.periodtracker.R
 import com.google.android.libraries.ads.mobile.sdk.common.LoadAdError
-
 import com.google.android.libraries.ads.mobile.sdk.nativead.NativeAd
 import com.google.android.libraries.ads.mobile.sdk.nativead.NativeAdLoader
 import com.google.android.libraries.ads.mobile.sdk.nativead.NativeAdLoaderCallback
 import com.google.android.libraries.ads.mobile.sdk.nativead.NativeAdRequest
 import com.google.android.libraries.ads.mobile.sdk.nativead.NativeAdView
+
 
 class NativeAdHelper(
     private val context: Context
@@ -171,12 +172,12 @@ class NativeAdHelper(
         val headline = adView.findViewById<TextView>(R.id.adHeadline)
         val advertiser = adView.findViewById<TextView>(R.id.adAdvertiser)
         val body = adView.findViewById<TextView>(R.id.adBody)
-        val callToAction = adView.findViewById<TextView>(R.id.adCallToAction)
+        val callToAction = adView.findViewById<android.widget.Button>(R.id.adCallToAction)
         val stars = adView.findViewById<RatingBar>(R.id.adStars)
         val price = adView.findViewById<TextView>(R.id.adPrice)
         val store = adView.findViewById<TextView>(R.id.adStore)
 
-        // --- Register each asset view with the NativeAdView ---
+        // Register each asset view with the NativeAdView
         adView.headlineView = headline
         adView.bodyView = body
         adView.callToActionView = callToAction
@@ -186,27 +187,19 @@ class NativeAdHelper(
         adView.priceView = price
         adView.storeView = store
 
-        // ... your existing text/visibility binding logic stays the same ...
-
-
         // -------------------------
         // HEADLINE
         // -------------------------
 
         headline.text = ad.headline
         headline.visibility =
-            if (ad.headline.isNullOrBlank()) {
-                View.GONE
-            } else {
-                View.VISIBLE
-            }
+            if (ad.headline.isNullOrBlank()) View.GONE else View.VISIBLE
 
         // -------------------------
         // BODY
         // -------------------------
 
         val bodyText = ad.body
-
         if (bodyText.isNullOrBlank()) {
             body.visibility = View.GONE
         } else {
@@ -218,13 +211,32 @@ class NativeAdHelper(
         // CALL TO ACTION
         // -------------------------
 
-        val ctaText = ad.callToAction
+        // -------------------------
+// CALL TO ACTION
+// -------------------------
 
+        val ctaText = ad.callToAction
         if (ctaText.isNullOrBlank()) {
             callToAction.visibility = View.GONE
         } else {
             callToAction.text = ctaText
             callToAction.visibility = View.VISIBLE
+
+            // ✅ Clear Material tint first, then apply gradient
+            if (callToAction is android.widget.Button) {
+                callToAction.backgroundTintList = null
+            }
+
+            // Slightly less saturated version — still matches brand but distinct
+            callToAction.background = GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                orientation = GradientDrawable.Orientation.LEFT_RIGHT
+                colors = intArrayOf(
+                    Color.parseColor("#D63384"),  // slightly darker pink
+                    Color.parseColor("#9333EA")   // slightly darker purple
+                )
+                cornerRadius = 8 * context.resources.displayMetrics.density  // ✅ not pill shaped
+            }
         }
 
         // -------------------------
@@ -232,7 +244,6 @@ class NativeAdHelper(
         // -------------------------
 
         val icon = ad.icon
-
         if (icon == null) {
             appIcon.visibility = View.GONE
         } else {
@@ -245,17 +256,10 @@ class NativeAdHelper(
         // -------------------------
 
         val advertiserText = ad.advertiser
-
-        if (advertiserText.isNullOrBlank()) {
-            advertiser.visibility = View.GONE
-        } else {
+        if (!advertiserText.isNullOrBlank()) {
             advertiser.text = advertiserText
         }
-
-        /*
-         * Your XML intentionally keeps advertiser hidden.
-         * Keep it hidden because the current UI does not display it.
-         */
+        // Hidden by design
         advertiser.visibility = View.GONE
 
         // -------------------------
@@ -263,7 +267,6 @@ class NativeAdHelper(
         // -------------------------
 
         val rating = ad.starRating
-
         if (rating == null || rating <= 0.0) {
             stars.visibility = View.GONE
         } else {
@@ -276,7 +279,6 @@ class NativeAdHelper(
         // -------------------------
 
         val priceText = ad.price
-
         if (priceText.isNullOrBlank()) {
             price.visibility = View.GONE
         } else {
@@ -289,7 +291,6 @@ class NativeAdHelper(
         // -------------------------
 
         val storeText = ad.store
-
         if (storeText.isNullOrBlank()) {
             store.visibility = View.GONE
         } else {

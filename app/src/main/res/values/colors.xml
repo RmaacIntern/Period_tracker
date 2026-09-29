@@ -5,7 +5,7 @@
 
     <color name="textcolor">#2A2A2A</color>
     <color name="btncolor">#E4A850</color>
-    <color name="card_bg">#F1F3FF</color>
+    <color name="card_bg">#FFFFFFFF</color>
     <color name="card_text">#4C4C4C</color>
 
     <color name="hintTextColor">#4C4C4C</color>

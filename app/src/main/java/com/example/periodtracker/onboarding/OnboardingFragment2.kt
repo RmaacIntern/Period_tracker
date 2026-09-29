@@ -6,7 +6,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+
 import androidx.fragment.app.Fragment
+
+import com.example.periodtracker.ads.NativeAdHelper
 import com.example.periodtracker.databinding.FragmentOnboarding2Binding
 
 class OnboardingFragment2 : Fragment() {
@@ -15,6 +18,7 @@ class OnboardingFragment2 : Fragment() {
     private val binding get() = _binding!!
 
     private var selectedAge = 27
+    private var nativeAdHelper: NativeAdHelper? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,28 +41,34 @@ class OnboardingFragment2 : Fragment() {
             )
         )
 
-        // Age card — white with rounded corners
+        // Age card
         binding.ageCard.background = GradientDrawable().apply {
             shape = GradientDrawable.RECTANGLE
             cornerRadius = 22f * resources.displayMetrics.density
             setColor(Color.parseColor("#FFFFFF"))
         }
 
-        // Init slider + label
+        // Slider
         binding.ageSlider.value = selectedAge.toFloat()
         binding.tvAgeValue.text = selectedAge.toString()
-
         binding.ageSlider.addOnChangeListener { _, value, _ ->
             selectedAge = value.toInt()
             binding.tvAgeValue.text = selectedAge.toString()
         }
+
+        // Native ad — null-safe, won't crash if container not found
+        // Native ad
+        nativeAdHelper = NativeAdHelper(requireContext())       // in Fragment
+
+        nativeAdHelper?.loadInto(binding.nativeAdContainer)
     }
 
-    /** Called from the Activity's Continue button before saving to Room. */
     fun getSelectedAge(): Int = selectedAge
 
     override fun onDestroyView() {
         super.onDestroyView()
+        nativeAdHelper?.destroy()
+        nativeAdHelper = null
         _binding = null
     }
 }

@@ -68,8 +68,7 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
-        <!-- ✅ FIXED: intent-filter is now INSIDE the activity tag -->
-        <!-- ✅ FIXED: exported="true" added — required for launcher activities -->
+
         <activity
             android:name=".splash.SplashActivity"
             android:exported="true"

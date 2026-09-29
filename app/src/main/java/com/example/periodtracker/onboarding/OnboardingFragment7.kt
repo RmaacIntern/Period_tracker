@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.periodtracker.ads.NativeAdHelper
 import com.example.periodtracker.databinding.FragmentOnboarding7Binding
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -16,6 +17,7 @@ import java.util.Locale
 class OnboardingFragment7 : Fragment() {
 
     private var _binding: FragmentOnboarding7Binding? = null
+    private var nativeAdHelper: NativeAdHelper? = null
     private val binding get() = _binding!!
 
     private var selectedDate: LocalDate? = null
@@ -40,6 +42,12 @@ class OnboardingFragment7 : Fragment() {
                 Color.parseColor("#FFFFFF")
             )
         )
+
+        nativeAdHelper = NativeAdHelper(requireContext())       // in Fragment
+
+        nativeAdHelper?.loadInto(binding.nativeAdContainer)
+
+
 
         binding.calendarIconCircle.background = filledCircle("#FDE2E9")
         binding.startDateCard.background = roundedBg("#FFFFFF", 18f)
@@ -122,6 +130,8 @@ class OnboardingFragment7 : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        nativeAdHelper?.destroy()
+        nativeAdHelper = null
         _binding = null
     }
 }

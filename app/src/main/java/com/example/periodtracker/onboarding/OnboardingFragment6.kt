@@ -8,12 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.periodtracker.R
+import com.example.periodtracker.ads.NativeAdHelper
 import com.example.periodtracker.databinding.FragmentOnboarding6Binding
 
 class OnboardingFragment6 : Fragment() {
 
     private var _binding: FragmentOnboarding6Binding? = null
     private val binding get() = _binding!!
+    private var nativeAdHelper: NativeAdHelper? = null
 
     // Single goal — both features are always included
     enum class Goal { TRACK_CYCLE }
@@ -37,6 +39,10 @@ class OnboardingFragment6 : Fragment() {
                 Color.parseColor("#FFFFFF")
             )
         )
+
+        nativeAdHelper = NativeAdHelper(requireContext())       // in Fragment
+
+        nativeAdHelper?.loadInto(binding.nativeAdContainer)
 
         binding.goalIconCircle.background = filledCircle("#FDE2E9")
 
@@ -63,6 +69,8 @@ class OnboardingFragment6 : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        nativeAdHelper?.destroy()
+        nativeAdHelper = null
         _binding = null
     }
 }

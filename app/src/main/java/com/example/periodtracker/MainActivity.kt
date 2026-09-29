@@ -103,19 +103,24 @@ class MainActivity : AppCompatActivity() {
         updateTabColors(R.id.navHome)
     }
     private fun onTabClicked(tabId: Int) {
-        if (clickInProgress || tabId == selectedTabId) return
+        if (clickInProgress) return  // ✅ removed tabId == selectedTabId check
+
+        // If same tab clicked — no ad, just refresh fragment
+        if (tabId == selectedTabId) {
+            selectTab(tabId)
+            return
+        }
+
         clickInProgress = true
 
-        // ← Save which tab user wants to go to
-        val pendingTabId = tabId
-
-        // ← Keep current tab visually selected while ad is showing
+        // Keep current tab visually selected while ad is showing
         updateTabColors(selectedTabId)
 
         ShowAds.showMainOnUserAction(this) {
-            clickInProgress = false
-            // ← Only NOW switch to new tab after ad closes
-            selectTab(pendingTabId)
+            runOnUiThread {  // ✅ ensure UI runs on main thread
+                clickInProgress = false
+                selectTab(tabId)
+            }
         }
     }
 
@@ -131,9 +136,10 @@ class MainActivity : AppCompatActivity() {
             else             -> HomeFragment()
         }
 
+        // ✅ commitAllowingStateLoss prevents crash after ad dismiss
         supportFragmentManager.beginTransaction()
             .replace(R.id.mainFragmentContainer, fragment)
-            .commit()
+            .commitAllowingStateLoss()
     }
 
     private fun updateTabColors(selectedId: Int) {
@@ -211,8 +217,26 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         clickInProgress = false
-        exitDialogShowing = false  // ← ADD this
+        exitDialogShowing = false
         updateTabColors(selectedTabId)
+
+        // ✅ Re-select current tab to ensure correct fragment is showing
+        if (selectedTabId != -1) {
+            val currentFragment = supportFragmentManager
+                .findFragmentById(R.id.mainFragmentContainer)
+            val expectedFragment = when (selectedTabId) {
+                R.id.navHome     -> HomeFragment::class.java
+                R.id.navCalendar -> CalendarFragment::class.java
+                R.id.navInsights -> InsightsFragment::class.java
+                R.id.navProfile  -> ProfileFragment::class.java
+                else             -> HomeFragment::class.java
+            }
+            // Only replace if wrong fragment is showing
+            if (currentFragment?.javaClass != expectedFragment) {
+                selectTab(selectedTabId)
+            }
+        }
+
         preloadMainAd()
     }
 
