@@ -11,6 +11,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
+import com.aivigil.periodtracker.MainActivity
 import com.aivigil.periodtracker.MainApplication
 import com.aivigil.periodtracker.ads.AdConstants
 import com.aivigil.periodtracker.ads.AdsRemoteConfig
@@ -23,6 +25,8 @@ import com.aivigil.periodtracker.onboarding.OnboardingActivity
 import com.google.android.libraries.ads.mobile.sdk.MobileAds
 import com.google.android.libraries.ads.mobile.sdk.initialization.InitializationConfig
 import com.google.firebase.FirebaseApp
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 class SplashActivity : AppCompatActivity() {
     private val appOpenAdManager
@@ -295,14 +299,21 @@ class SplashActivity : AppCompatActivity() {
         opened = true
 
         handler.removeCallbacksAndMessages(null)
+        appOpenAdManager.setSplashFinished()
 
-        Log.d(TAG, "Opening OnboardingActivity")
+        lifecycleScope.launch {
+            val repo = com.aivigil.periodtracker.data.repository.CycleRepository
+                .getInstance(applicationContext)
+            val done = repo.isOnboardingComplete.first()
 
-        startActivity(Intent(this, OnboardingActivity::class.java))
-        finish()
-        opened = true
-        handler.removeCallbacksAndMessages(null)
-        appOpenAdManager.setSplashFinished()   // ← add
+            Log.d(TAG, "Opening next screen — onboardingDone=$done")
+
+            val dest = if (done) MainActivity::class.java
+            else      OnboardingActivity::class.java
+
+            startActivity(Intent(this@SplashActivity, dest))
+            finish()
+        }
     }
 
     // ─────────────────────────────────────────────────────────────
