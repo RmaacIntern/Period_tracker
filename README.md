@@ -1,215 +1,254 @@
-# 🌸 Period Tracker — Android App
+---
+title: "README — Period Tracker"
+date: 2026-09-29
+developer: Adnan Arshad
+tip: b76d8c1
+---
 
-A private, on-device period and cycle tracking app built with modern Android architecture. All data stays on the user's device — no cloud sync, no data sharing.
+# Period Tracker — Android App
+
+Private, on-device menstrual cycle tracker. Predicts next period, fertile window, and
+ovulation from the user's last period date and their stated cycle length. All data stays
+on the device — nothing is uploaded.
+
+**Package:** `com.aivigil.periodtracker`
+**Min SDK:** 26 (Android 8.0) · **Target SDK:** 37
+**Version:** 1.0 (versionCode 1)
+**Repo:** https://github.com/RmaacIntern/Period_tracker
 
 ---
 
-## 📱 Screenshots
+## Where Everything Is
 
-> Add screenshots here after uploading to GitHub
-
----
-
-## ✨ Features
-
-- 🗓️ Period & cycle tracking with predictions
-- 📊 Cycle insights and health analytics
-- 👤 Personalized onboarding (8-step flow)
-- 🔒 100% on-device privacy — no data leaves the phone
-- 🔔 Daily log reminder notifications
-- 📅 Calendar view with cycle visualization
-- 💊 Health conditions & activity level tracking
-
----
-
-## 🏗️ Architecture
-
-| Layer | Technology |
-|---|---|
-| Language | Kotlin |
-| UI | View Binding + Fragments |
-| Architecture | MVVM (ViewModel + LiveData) |
-| Local Database | Room |
-| Preferences | DataStore |
-| Background Work | WorkManager |
-| Navigation | ViewPager2 + FragmentManager |
-
----
-
-## 📦 Dependencies
-
-```gradle
-// UI
-com.google.android.material
-androidx.constraintlayout
-
-// Architecture
-androidx.lifecycle:lifecycle-viewmodel-ktx
-androidx.lifecycle:lifecycle-livedata-ktx
-androidx.room:room-runtime + room-ktx
-
-// Ads
-com.google.android.gms:play-services-ads:25.5.0
-com.google.firebase:firebase-bom:33.7.0
-com.google.firebase:firebase-analytics
-com.google.firebase:firebase-config-ktx
-
-// Shimmer
-io.github.usefulness:shimmer-android:0.6.0
-
-// Background
-androidx.work:work-runtime-ktx
-```
-
----
-
-## 💰 Ads Integration
-
-Fully integrated Google AdMob (Next-Gen SDK) with Firebase Remote Config toggle for every ad type.
-
-| Ad Type | Placement | Remote Config Key |
+| What | Location | Who has access |
 |---|---|---|
-| App Open | App foreground | `show_app_open` |
-| Splash Interstitial | Splash screen | `show_splash_interstitial` |
-| Onboarding Interstitial | After step 8 | `show_onboarding_interstitial` |
-| Native Ad | Onboarding fragments 1 & 2 | `show_native` |
-| Banner | MainActivity bottom | `show_banner` |
-| Main Interstitial | Bottom nav tab clicks | `show_main_interstitial` |
-| Back Press Interstitial | Back button press | `show_back_press_interstitial` |
-
-### Ad Files
-
-```
-ads/
-├── AdConstants.kt          — Ad unit IDs + preload IDs
-├── AdsRemoteConfig.kt      — Firebase Remote Config toggles
-├── AppOpenAdManager.kt     — App open ad lifecycle
-├── BannerAdHelper.kt       — Banner + collapsible banner
-├── LoadAds.kt              — Splash + onboarding + shared preloader
-├── NativeAdHelper.kt       — Native ad with shimmer loading state
-├── ShowAds.kt              — All show logic (time/click based)
-└── FullScreenAdState.kt    — Prevents App Open during interstitials
-```
-
-### Native Ad Layout
-
-Custom native ad with shimmer placeholder:
-
-```
-res/layout/
-├── layout_native_ad.xml         — Actual native ad view
-└── layout_native_ad_shimmer.xml — Shimmer placeholder while loading
-```
+| Source code | `RmaacIntern/Period_tracker` (this repo) — `main` branch | Adnan, Muneeb, Shezrah |
+| Play Store listing | Not yet submitted | Muneeb to create |
+| Firebase project | Firebase Console — project name used during dev; **production project not yet created** | Adnan currently; Muneeb to own production |
+| AdMob account | All ad unit IDs in `app/src/main/java/com/aivigil/periodtracker/ads/AdConstants.kt` are **Google test IDs** — production IDs not yet created | Muneeb to obtain production IDs |
+| Release keystore | **Does not exist yet** — no release build has been configured | Must be created before Play Store submission; Muneeb to own |
+| `google-services.json` | Excluded from repo (in `.gitignore`) — dev version used locally | Adnan holds dev file; production file needed from Muneeb's Firebase project |
+| `local.properties` | Excluded from repo (in `.gitignore`) — contains local SDK path only | Each developer generates their own |
+| Privacy policy | **Does not exist yet** — required by Play Store for an app that collects health data | Muneeb / Shezrah to create before submission |
 
 ---
 
-## 🚀 Setup
+## Three Files That Matter Most
 
-### 1. Clone the repo
+If you are picking up this project for the first time, read these three before touching anything else:
 
+| # | File | Why |
+|---|---|---|
+| 1 | `docs/APP-BRIEFS.md` | Full architecture — every screen, every data table, every ad placement, the notification system, all decisions. The fastest way to understand the whole app. |
+| 2 | `app/src/main/java/com/aivigil/periodtracker/domain/CycleEngine.kt` | All cycle maths live here — pure Kotlin, no Android deps. If a prediction is wrong, the bug is here or in how `CycleRepository` feeds it. |
+| 3 | `app/src/main/java/com/aivigil/periodtracker/ads/AdsRemoteConfig.kt` | Controls every ad type. To turn off any ad without a release, change the value in Firebase Console — the key names are all in this file. |
+
+---
+
+## How to Build
+
+**Requirements:**
+- Android Studio Hedgehog or later
+- JDK 17 (use Android Studio's bundled JDR — `File → Project Structure → SDK Location → JDK`)
+- `google-services.json` placed at `app/google-services.json` (get from Muneeb)
+
+**Steps:**
 ```bash
-git clone https://github.com/yourusername/period-tracker.git
-cd period-tracker
+git clone https://github.com/RmaacIntern/Period_tracker.git
+cd "Period Tracker"
+# Place google-services.json in app/
+./gradlew assembleDebug
 ```
 
-### 2. Add your `google-services.json`
-
-Download from [Firebase Console](https://console.firebase.google.com/) and place in:
-```
-app/google-services.json
-```
-
-### 3. Add your AdMob App ID
-
-In `AndroidManifest.xml`:
-```xml
-<meta-data
-    android:name="com.google.android.gms.ads.APPLICATION_ID"
-    android:value="ca-app-pub-XXXXXXXXXXXXXXXX~XXXXXXXXXX" />
-```
-
-### 4. Update Ad Unit IDs
-
-In `ads/AdConstants.kt` replace test IDs with your real IDs:
-```kotlin
-const val BANNER_AD_UNIT_ID       = "ca-app-pub-xxx/xxx"
-const val INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-xxx/xxx"
-const val NATIVE_AD_UNIT_ID       = "ca-app-pub-xxx/xxx"
-const val APP_OPEN_AD_UNIT_ID     = "ca-app-pub-xxx/xxx"
-```
-
-### 5. Firebase Remote Config defaults
-
-Set these keys in Firebase Console → Remote Config:
-
-```
-show_app_open                  = true
-show_splash_interstitial       = true
-show_onboarding_interstitial   = true
-show_native                    = true
-show_banner                    = true
-show_main_interstitial         = true
-show_back_press_interstitial   = true
-interstitial_trigger           = "onclick"   // or "time"
-ad_click_interval              = 3
-timer_interval_seconds         = 60
-show_ad_on_first_click         = false
-max_splash_time_ms             = 8000
+**If `JAVA_HOME is not set` error appears:**
+```powershell
+# Windows — point to Android Studio's bundled JDK
+$env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
+$env:PATH = "$env:JAVA_HOME\bin;$env:PATH"
+./gradlew assembleDebug
 ```
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
-com.example.periodtracker/
-├── ads/                    — All AdMob ad helpers
-├── calendar/               — Calendar fragment + views
-├── homefragment/           — Home screen fragment
-├── insights/               — Insights fragment
-├── notification/           — WorkManager + NotificationHelper
-├── onboarding/             — 8-step onboarding flow
-│   ├── viewmodel/          — OnboardingViewModel
-│   └── OnboardingFragment1-8.kt
-├── profile/                — Profile fragment
-├── viewmodel/              — CycleViewModel + Factory
-├── widgets/                — Custom views (GradientButton etc.)
-├── MainActivity.kt         — Main screen with custom bottom nav
-└── MainApplication.kt      — App class with AppOpenAdManager
+app/src/main/java/com/aivigil/periodtracker/
+├── ads/                    AdMob — 6 classes (AdConstants, AdsRemoteConfig,
+│                           BannerAdHelper, LoadAds, ShowAds, AppOpenAdManager)
+├── calendar/               CalendarFragment + CycleCalendarView (custom canvas View)
+├── data/
+│   ├── dao/                UserSettingsDao, PeriodEntryDao, DailyLogDao
+│   ├── db/                 AppDatabase (Room, version 7, 6 migrations)
+│   ├── entity/             UserSettings, PeriodEntry, DailyLog
+│   └── repository/         CycleRepository — single data access point
+├── dialog/                 PeriodStartConfirmationDialog
+├── domain/                 CycleEngine — all cycle maths, pure Kotlin
+├── history/                PastLogHistoryFragment
+├── homefragment/           HomeFragment — ring, phase, stats, predictions
+├── insights/               InsightsFragment + CycleBarChartView
+├── logsymptoms/            LogSymptomsFragment — flow, mood, symptoms, BBT, notes
+├── notification/           AlarmReceiver, AlarmScheduler, BootReceiver,
+│                           DailyLogReminderWorker, NotificationHelper,
+│                           PeriodConfirmReceiver
+├── onboarding/             OnboardingActivity + 8 fragments + OnboardingViewModel
+├── profile/                ProfileFragment + 9 bottom sheets
+├── splash/                 SplashActivity — entry point, Firebase + AdMob init
+├── viewmodel/              CycleViewModel (shared across all fragments)
+└── widgets/                GradientButton, CycleProgressRingView, StepProgressHeaderView
+
+docs/
+├── APP-BRIEFS.md           Full architecture reference (read this first)
+├── SPEC.md                 Feature spec with Done-when criteria
+├── DESIGN-STANDARD.md      All colour tokens, typography, spacing — read before any UI work
+├── NEW-APP-RUNBOOK.md      16 gates to run every morning before writing code
+├── DOCUMENTATION-STANDARD.md  Session log template
+├── DOCUMENTATION-GAP-EXPLANATION.md  Explains why docs were not standard from day 1
+└── session-logs/           SESSION-2026-09-15.md through SESSION-2026-09-29.md
 ```
 
 ---
 
-## ⚙️ Build Config
+## Database
 
-```gradle
-compileSdk  = 37
-minSdk      = 26
-targetSdk   = 37
-```
+**File name:** `period_tracker.db` (renamed from `lunacycle.db` on 2026-09-29 — see `AppDatabase.kt` and `MainApplication.kt`)
+**ORM:** Room 2.8.5
+**Current version:** 7
 
----
+| Table | Purpose | Key fields |
+|---|---|---|
+| `user_settings` | Singleton row — one per user | userName, cycleLength, periodDuration, lastPeriodStart, goal, conditions |
+| `period_entries` | One row per confirmed period start | startDate (UNIQUE), endDate, flow |
+| `daily_logs` | Daily symptom entries — multiple per date | date, entryNumber, flow, moods, symptoms, cervicalFluid, lhTestResult, basalTemp, loggedAt |
 
-## 🔐 Privacy
-
-- All cycle and health data is stored **locally on device** using Room database
-- No data is sent to any server
-- No user accounts required
-- AdMob may collect anonymized ad interaction data per [Google's privacy policy](https://policies.google.com/privacy)
+**Migration history:** v1→2 (DailyLog PK change), v2→3 (loggedAt), v3→4 (lhTestResult),
+v4→5 (PeriodEntry.flow), v5→6 (UNIQUE on startDate + dedup), v6→7 (file rename no-op).
 
 ---
 
-## 👨‍💻 Developer
+## Ads
 
-**Adnan Arshad**
-Android Developer Intern @ Markalytics
+All ad types are controlled by Firebase Remote Config — no release needed to turn any ad off.
+
+| Key | Default | Effect |
+|---|---|---|
+| `show_splash_interstitial` | true | Interstitial during splash screen |
+| `show_onboarding_interstitial` | true | Interstitial between onboarding steps |
+| `show_main_interstitial` | true | Interstitial on tab navigation |
+| `show_back_press_interstitial` | true | Interstitial on back press |
+| `show_app_open_ad` | true | App-open ad on foreground |
+| `show_banner` | true | Banner on splash and MainActivity |
+| `show_collapsible_banner` | true | Collapsible banner in onboarding |
+| `show_native` | true | Native ads in feed placements |
+| `interstitial_trigger` | `"time"` | `"time"` or `"onclick"` mode |
+| `timer_interval_seconds` | 10 | Seconds between time-based interstitials |
+| `ad_click_interval` | 3 | Tab clicks between click-based interstitials |
+
+**All unit IDs are Google test IDs.** Replace in `AdConstants.kt` before any release.
 
 ---
 
-## 📄 License
+## Notifications
+
+Three channels created in `NotificationHelper.createChannels()` called from `MainActivity.onCreate()`:
+
+| Channel | ID | Fires |
+|---|---|---|
+| Period Reminder | `period_reminder` | Day before predicted period at 9am |
+| Ovulation Alert | `ovulation_alert` | First day of fertile window at 9am |
+| Daily Log | `daily_log` | Daily via WorkManager |
+
+Alarms use `setExactAndAllowWhileIdle`. `BootReceiver` reschedules them after device restart.
+The "Yes / Not yet" notification actions are handled by `PeriodConfirmReceiver`.
+
+**Required permissions:** `POST_NOTIFICATIONS` (runtime, Android 13+), `SCHEDULE_EXACT_ALARM`,
+`USE_EXACT_ALARM`, `RECEIVE_BOOT_COMPLETED`.
+
+---
+
+## Gotchas
+
+These are issues that cost significant debugging time. Read before touching the relevant code.
+
+**1. AGP 9.3.2 — do not add `kotlin.android` plugin alias**
+AGP 9.3.2 bundles Kotlin. Adding `alias(libs.plugins.kotlin.android)` to `build.gradle.kts`
+causes "Cannot add extension 'kotlin'" and breaks the build. Remove it if it appears.
+
+**2. AGP 9.3.2 — `kotlinOptions` block is unresolved**
+Use `kotlin { jvmToolchain(17) }` *outside* the `android {}` block instead of
+`kotlinOptions { jvmTarget = "17" }` inside it.
+
+**3. KSP + AGP 9.3.2 — `kotlin.sourceSets` error**
+Add this to root `gradle.properties`:
+```
+android.disallowKotlinSourceSets=false
+```
+Without it, KSP cannot compile Room's generated DAOs.
+
+**4. `android:layout_marginHorizontal` — do not use**
+Even though minSdk is 26, the XML inflater rejects `marginHorizontal` at compile time.
+Use `layout_marginStart` + `layout_marginEnd` on every layout file.
+
+**5. Package rename corrupts XML files with UTF-8 BOM**
+Android Studio's Refactor → Rename re-saves some XML files with a UTF-8 BOM (`\xEF\xBB\xBF`)
+at byte 0. The build fails with `line 1:0 mismatched input '﻿'`. Fix with:
+```powershell
+Get-ChildItem -Path "app\src\main\res" -Filter "*.xml" -Recurse | ForEach-Object {
+    $bytes = [System.IO.File]::ReadAllBytes($_.FullName)
+    if ($bytes.Length -ge 3 -and $bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF) {
+        $noBom = $bytes[3..($bytes.Length - 1)]
+        [System.IO.File]::WriteAllBytes($_.FullName, $noBom)
+    }
+}
+```
+
+**6. `BottomNavigationView` is replaced — do not use it**
+The standard `BottomNavigationView` was drawing behind fragment content. The app uses
+`custom_bottom_nav.xml` with `CustomBottomNavBinding`. Do not reintroduce `BottomNavigationView`.
+
+**7. `onBackPressed()` is deprecated — do not override it**
+Use `onBackPressedDispatcher.addCallback(this) { ... }` in `MainActivity`. Overriding
+`onBackPressed()` is silently ignored on Android 13+ on some devices.
+
+**8. `windowTranslucentStatus` belongs in the theme, not a widget style**
+This attribute only takes effect when set on an Activity's theme. Placing it inside a
+`<style>` for a widget (e.g. `CycleChip`) is silently ignored and causes edge-to-edge
+display to break. Set it in `Base.Theme.PeriodTracker` in `themes.xml`.
+
+**9. Database file was named `lunacycle.db` — it has been renamed**
+As of 2026-09-29 the file is `period_tracker.db`. The rename is handled in
+`MainApplication.onCreate()` before Room opens the connection. Do not change the name
+in `AppDatabase.kt` again without adding a corresponding migration.
+
+**10. `AdMob CTA button gradient` — clear `backgroundTintList` first**
+`AppCompatButton` inherits a Material colour tint that overrides `android:background`.
+Setting a `GradientDrawable` as background has no visible effect unless you call
+`callToAction.backgroundTintList = null` first. See `NativeAdHelper.kt`.
+
+**11. `google-services.json` is gitignored — builds will fail without it**
+The file is excluded from the repo. Get it from Muneeb (Firebase Console →
+Project Settings → Your apps → `com.aivigil.periodtracker` → Download).
+
+---
+
+## Known Issues Outstanding
+
+| ID | File | Description |
+|---|---|---|
+| K-04 | `AdConstants.kt` | All ad unit IDs are Google test IDs — must replace before Play Store |
+| K-05 | `SplashActivity.kt` | Onboarding check bypassed — always navigates to onboarding on every launch |
+
+*K-01 (LunaCycle notification text), K-02 (lunacycle.db), K-03 (Base.Theme.LunaCycle) — all resolved 2026-09-29.*
+
+---
+
+## Commit Convention
 
 ```
-Copyright 2026 Markalytics
+<type>(<scope>): <description>
 
-Licensed under the Apache License, Version 2.0
+Types: feat fix refactor style docs chore
+Scopes: splash onboarding home calendar insights log profile ads db notif design
 ```
+
+Example: `fix(ads): guard showSplash against destroyed activity`
