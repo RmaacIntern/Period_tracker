@@ -9,6 +9,8 @@ interface PeriodEntryDao {
 
     @Query("SELECT * FROM period_entries ORDER BY startDate DESC")
     fun observeAll(): LiveData<List<PeriodEntry>>
+    @Query("SELECT * FROM period_entries WHERE id = :id LIMIT 1")
+    suspend fun getById(id: Int): PeriodEntry?
 
     @Query("SELECT * FROM period_entries ORDER BY startDate DESC")
     suspend fun getAll(): List<PeriodEntry>

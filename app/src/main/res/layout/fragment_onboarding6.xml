@@ -24,36 +24,45 @@
             android:contentDescription="Goal icon" />
     </FrameLayout>
 
+    <!-- ✅ FIX — added start + end constraints so match_parent width works correctly -->
     <TextView
         android:id="@+id/tvTitle"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="What brings you\nhere, lovely?"
         android:textSize="22sp"
         android:textStyle="bold"
         android:textColor="#3D1B2E"
-        app:layout_constraintTop_toBottomOf="@id/goalIconCircle" />
+        app:layout_constraintTop_toBottomOf="@id/goalIconCircle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- ✅ FIX — added start + end constraints -->
     <TextView
         android:id="@+id/tvSubtitle"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Everything you need — cycle tracking, ovulation and fertile window, all in one place."
         android:textSize="13sp"
         android:textColor="#8A7A8F"
-        app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Single always-selected card -->
+    <!-- ✅ FIX — added bottom constraint to anchor nativeAdContainer correctly -->
     <LinearLayout
         android:id="@+id/cardGoal"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:padding="20dp"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/tvSubtitle">
+        app:layout_constraintTop_toBottomOf="@id/tvSubtitle"
+        app:layout_constraintBottom_toTopOf="@id/nativeAdContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <!-- Row 1: Track my cycle -->
         <LinearLayout
@@ -153,16 +162,17 @@
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
+
+    <!-- ✅ FIX — added top constraint to anchor below cardGoal -->
     <FrameLayout
         android:id="@+id/nativeAdContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-
         android:layout_marginTop="8dp"
         android:layout_marginBottom="30dp"
         android:background="@drawable/bg_ad_card"
         android:elevation="1dp"
-
+        app:layout_constraintTop_toBottomOf="@id/cardGoal"
         app:layout_constraintBottom_toTopOf="@id/tvFooterNote"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -176,6 +186,8 @@
         android:text="🔒 Kept confidential and securely stored on-device"
         android:textSize="11sp"
         android:textColor="#8A7A8F"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

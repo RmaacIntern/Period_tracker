@@ -105,6 +105,12 @@ class CycleRepository(context: Context) {
     fun observePeriodEntries(): LiveData<List<PeriodEntry>> = periodDao.observeAll()
     suspend fun getPeriodEntries(): List<PeriodEntry>       = periodDao.getAll()
 
+    // ✅ NEW — fetch a single PeriodEntry by id.
+    // Used by CycleViewModel.updatePeriodStartDate() to avoid
+    // loading all entries just to find one.
+    // Requires PeriodEntryDao.getById(id) — see note below.
+    suspend fun getPeriodEntryById(id: Int): PeriodEntry? = periodDao.getById(id)
+
     /**
      * Confirms and records a new period start.
      *
@@ -292,7 +298,7 @@ class CycleRepository(context: Context) {
         return CycleEngine.bestPrediction(
             lastPeriodStart = latestPeriodStart,
             avgCycleLength  = settings.cycleLength,
-            periodDuration  = settings.periodDuration  // ✅ add this line
+            periodDuration  = settings.periodDuration
         ).also {
             Log.i(TAG, "getBestPrediction: lastPeriod=$latestPeriodStart " +
                     "cycleLen=${settings.cycleLength} nextPeriod=${it.nextPeriodDate} " +

@@ -43,8 +43,8 @@ class HomeFragment : Fragment() {
     }
 
     private val fmt   = DateTimeFormatter.ofPattern("MMM d", Locale.getDefault())
-    private val today = LocalDate.now()
-    private var isTesting = false
+
+
 
     private val requestNotifPermission = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -205,6 +205,7 @@ class HomeFragment : Fragment() {
                 Log.w(TAG, "tryBind: settings not ready yet")
                 return@launch
             }
+            val today = LocalDate.now()
 
             val day       = CycleEngine.cycleDay(pred.lastPeriodStart, pred.cycleLength)
             val phase     = CycleEngine.phase(day, pred.cycleLength, s.periodDuration)

@@ -42,19 +42,16 @@ class OnboardingActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
-            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val bars       = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-            val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            val imeHeight  = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
             v.setPadding(
-                bars.left,
-                bars.top,
-                bars.right,
+                bars.left, bars.top, bars.right,
                 if (imeVisible) imeHeight else bars.bottom
             )
             insets
         }
 
-        // ✅ Preload onboarding interstitial early
         if (AdsRemoteConfig.show_onboarding_interstitial) {
             LoadAds.preloadOnboarding()
         }
@@ -99,8 +96,8 @@ class OnboardingActivity : AppCompatActivity() {
             if (isNavigating) return@setOnClickListener
 
             val current = binding.onboardingViewPager.currentItem
+            val error   = validateStep(current, adapter)
 
-            val error = validateStep(current, adapter)
             if (error != null) {
                 if (current == 0) {
                     val frag = adapter.getFragment(0) as? OnboardingFragment1
@@ -121,39 +118,33 @@ class OnboardingActivity : AppCompatActivity() {
             collectFragmentData(current, adapter)
 
             if (current < totalSteps - 1) {
-                // ✅ Normal navigation for steps 1-7
                 binding.onboardingViewPager.currentItem = current + 1
             } else {
-                // ✅ Last step (step 8) — show onboarding interstitial then proceed
                 showOnboardingAdThenProceed()
             }
         }
     }
 
     // ============================================================
-    // ONBOARDING INTERSTITIAL ON LAST STEP
+    // ONBOARDING INTERSTITIAL
     // ============================================================
 
     private fun showOnboardingAdThenProceed() {
         if (!AdsRemoteConfig.show_onboarding_interstitial) {
-            // Ad disabled — go straight to app
             saveAndProceed()
             return
         }
-
         ShowAds.showOnboarding(this) {
-            // Called after ad dismissed or if no ad available
-            runOnUiThread {
-                saveAndProceed()
-            }
+            runOnUiThread { saveAndProceed() }
         }
     }
 
-    // ── Validation per step ───────────────────────────────────────
+    // ============================================================
+    // VALIDATION
+    // ============================================================
 
     private fun validateStep(step: Int, adapter: OnboardingPagerAdapter): String? {
         val fragment = adapter.getFragment(step)
-
         return when (step) {
             0 -> {
                 val name = (fragment as? OnboardingFragment1)?.getEnteredName()
@@ -164,28 +155,23 @@ class OnboardingActivity : AppCompatActivity() {
                     else                 -> null
                 }
             }
-            1 -> null
-            2 -> null
-            3 -> {
-                val f = fragment as? OnboardingFragment4
+            1    -> null
+            2    -> null
+            3    -> {
+                val f             = fragment as? OnboardingFragment4
                 val hasConditions = f?.getSelectedConditions()?.isNotEmpty() == true
                 val noneSelected  = f?.isNoneSelected() == true
-                if (!hasConditions && !noneSelected) {
+                if (!hasConditions && !noneSelected)
                     "Please select your health conditions or choose \"None of these\""
-                } else null
+                else null
             }
-            4 -> {
-                val f = fragment as? OnboardingFragment5
-                if (f == null) "Please select your activity level" else null
-            }
-            5 -> {
-                val f = fragment as? OnboardingFragment6
-                if (f == null) "Please select your goal" else null
-            }
-            6 -> {
+            4    -> null  // activity level always has a default (BALANCED)
+            5    -> null  // goal always has a default (TRACK_CYCLE)
+            6    -> {
                 val date = (fragment as? OnboardingFragment7)?.getSelectedStartDate()
                 when {
-                    date == null -> "Please select when your last period started"
+                    date == null ->
+                        "Please select when your last period started"
                     date.isAfter(LocalDate.now()) ->
                         "Last period start cannot be in the future"
                     date.isBefore(LocalDate.now().minusDays(90)) ->
@@ -193,12 +179,14 @@ class OnboardingActivity : AppCompatActivity() {
                     else -> null
                 }
             }
-            7 -> null
+            7    -> null
             else -> null
         }
     }
 
-    // ── Collect data after validation passes ──────────────────────
+    // ============================================================
+    // COLLECT DATA
+    // ============================================================
 
     private fun collectFragmentData(completedStep: Int, adapter: OnboardingPagerAdapter) {
         val fragment = adapter.getFragment(completedStep) ?: return
@@ -224,22 +212,29 @@ class OnboardingActivity : AppCompatActivity() {
         }
     }
 
-    // ── Save to Room and launch MainActivity ──────────────────────
+    // ============================================================
+    // SAVE & LAUNCH
+    // ============================================================
 
     private fun saveAndProceed() {
-        val vm = onboardingViewModel
+        val vm         = onboardingViewModel
         val lastPeriod = vm.lastPeriodStart ?: LocalDate.now()
 
         cycleViewModel.saveOnboardingData(
-            userName        = vm.userName.ifEmpty { "User" },
-            age             = vm.age,
-            heightCm        = vm.heightCm,
-            weightKg        = vm.weightKg,
-            activityLevel   = vm.activityLevel?.name ?: "Balanced",
-            goal            = vm.goal?.name ?: "Track My Cycle",
-            conditions      = vm.conditions,
-            cycleLength     = vm.cycleLength,
-            periodDuration  = vm.periodDuration,
+            userName       = vm.userName.ifEmpty { "User" },
+            age            = vm.age,
+            heightCm       = vm.heightCm,
+            weightKg       = vm.weightKg,
+            // ✅ FIX 1 — use enum .name for correct uppercase strings
+            // Old: "Balanced" / "Track My Cycle" — didn't match enum .name values
+            // New: "BALANCED" / "TRACK_CYCLE" — matches ActivityLevel.valueOf() in ProfileFragment
+            activityLevel  = vm.activityLevel?.name
+                ?: OnboardingFragment5.ActivityLevel.BALANCED.name,
+            goal           = vm.goal?.name
+                ?: OnboardingFragment6.Goal.TRACK_CYCLE.name,
+            conditions     = vm.conditions,
+            cycleLength    = vm.cycleLength,
+            periodDuration = vm.periodDuration,
             lastPeriodStart = lastPeriod
         )
 
@@ -247,22 +242,16 @@ class OnboardingActivity : AppCompatActivity() {
         finish()
     }
 
-    // ── Show error toast ──────────────────────────────────────────
+    // ============================================================
+    // ERROR DISPLAY
+    // ============================================================
 
+    // ✅ FIX 2 — replaced deprecated Toast.view with Snackbar.
+    // Toast.view was deprecated in API 30 and silently stopped working on API 35+
+    // meaning the custom styled toast would show as a plain default toast (or not at all).
     private fun showError(message: String) {
-        val toast = Toast(this)
-        val tv = TextView(this).apply {
-            text     = "⚠ $message"
-            setTextColor(Color.WHITE)
-            textSize = 13f
-            setPadding(40, 24, 40, 24)
-            gravity  = Gravity.CENTER
-            setBackgroundColor(Color.parseColor("#2D1B33"))
-        }
-        @Suppress("DEPRECATION")
-        toast.view     = tv
-        toast.duration = Toast.LENGTH_LONG
-        toast.setGravity(Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, 0, 160)
-        toast.show()
+        com.google.android.material.snackbar.Snackbar
+            .make(binding.root, "⚠  $message", com.google.android.material.snackbar.Snackbar.LENGTH_LONG)
+            .show()
     }
 }

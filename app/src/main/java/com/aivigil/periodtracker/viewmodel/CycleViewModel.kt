@@ -29,20 +29,40 @@ class CycleViewModel(app: Application) : AndroidViewModel(app) {
     // ── SINGLE PREDICTION SOURCE ──────────────────────────────────
     //
     // All cycle/ovulation/fertile-window values exposed to the UI
-    // are derived from this one MediatorLiveData.  Nothing calls
+    // are derived from this one MediatorLiveData. Nothing calls
     // CycleEngine directly with raw UserSettings anymore.
 
-    private val _prediction = MediatorLiveData<CycleEngine.CyclePrediction?>()
+    private val _prediction    = MediatorLiveData<CycleEngine.CyclePrediction?>()
     val prediction: LiveData<CycleEngine.CyclePrediction?> = _prediction
+
+    // ✅ FIX 2 — isFertileToday computed inside refresh() so LocalDate.now()
+    // is always fresh. The old .map { LocalDate.now() } version was computed
+    // once and never updated if the app stayed open past midnight.
+    private val _isFertileToday = MutableLiveData<Boolean>()
+    val isFertileToday: LiveData<Boolean> = _isFertileToday
 
     init {
         fun refresh() = viewModelScope.launch {
-            val pred = repo.getBestPrediction() ?: return@launch
+            // ✅ FIX 3 — explicitly post null so UI can show empty state
+            // instead of silently doing nothing when there is no period data yet
+            val pred = repo.getBestPrediction()
+            if (pred == null) {
+                Log.w(TAG, "refresh: getBestPrediction returned null — no period data yet")
+                _prediction.postValue(null)
+                return@launch
+            }
+
             _prediction.postValue(pred)
+
             val today = LocalDate.now()
 
+            // ✅ FIX 2 — compute isFertileToday here with a fresh LocalDate.now()
+            _isFertileToday.postValue(
+                CycleEngine.isFertile(today, pred.fertileStart, pred.fertileEnd)
+            )
+
             // Only schedule period alarm if the reminder date (D-1) is still in the future
-            pred.nextPeriodDate?.let { nextPeriod ->
+            pred.nextPeriodDate.let { nextPeriod ->
                 if (nextPeriod.minusDays(1).isAfter(today)) {
                     com.aivigil.periodtracker.notification.AlarmScheduler
                         .schedulePeriodAlarms(getApplication(), nextPeriod)
@@ -52,17 +72,40 @@ class CycleViewModel(app: Application) : AndroidViewModel(app) {
             // Only schedule ovulation alarm if the fertile window start (ovulation-5)
             // is still in the future — prevents sending "fertile window starts today"
             // when the window has already passed
-            pred.ovulationDate?.let { ovulation ->
+            pred.ovulationDate.let { ovulation ->
                 val fertileStart = ovulation.minusDays(5)
                 if (fertileStart.isAfter(today)) {
                     com.aivigil.periodtracker.notification.AlarmScheduler
                         .scheduleOvulationAlarm(getApplication(), ovulation)
                 }
             }
+
+            Log.d(TAG, "refresh: prediction updated — " +
+                    "lastPeriod=${pred.lastPeriodStart} " +
+                    "cycleLen=${pred.cycleLength} " +
+                    "nextPeriod=${pred.nextPeriodDate} " +
+                    "ovulation=${pred.ovulationDate} " +
+                    "fertile=${pred.fertileStart}→${pred.fertileEnd} " +
+                    "isFertileToday=${_isFertileToday.value} " +
+                    "confidence=${pred.confidence} source=${pred.dataSource}")
         }
+
         _prediction.addSource(settings)      { refresh() }
         _prediction.addSource(periodEntries) { refresh() }
-        _prediction.addSource(allLogs)       { refresh() }
+
+        // ✅ FIX 4 — only trigger refresh() for logs that actually affect
+        // the ovulation prediction (BBT or LH). Flow/mood/symptom logs
+        // do not change cycle math so they no longer cause a full recalc.
+        _prediction.addSource(allLogs) { logs ->
+            val lastLog = logs.maxByOrNull { it.loggedAt }
+            val affectsPrediction = lastLog?.basalTemp != null ||
+                    lastLog?.lhTestResult !in listOf("Not Tested", null, "")
+            if (affectsPrediction) {
+                Log.d(TAG, "refresh: triggered by BBT/LH log change " +
+                        "bbt=${lastLog?.basalTemp} lh=${lastLog?.lhTestResult}")
+                refresh()
+            }
+        }
     }
 
     // ── Derived: cycle basics ─────────────────────────────────────
@@ -101,10 +144,8 @@ class CycleViewModel(app: Application) : AndroidViewModel(app) {
 
     // ── Derived: fertility ────────────────────────────────────────
 
-    val isFertileToday: LiveData<Boolean> = _prediction.map { pred ->
-        pred ?: return@map false
-        CycleEngine.isFertile(LocalDate.now(), pred.fertileStart, pred.fertileEnd)
-    }
+    // isFertileToday is now a MutableLiveData updated inside refresh()
+    // See _isFertileToday declaration above — ✅ FIX 2
 
     val fertileWindowDays: LiveData<Set<LocalDate>> = _prediction.map { pred ->
         pred?.let { CycleEngine.fertileWindowDays(it.fertileStart, it.fertileEnd) } ?: emptySet()
@@ -122,11 +163,15 @@ class CycleViewModel(app: Application) : AndroidViewModel(app) {
         addSource(settings)    { calc() }
     }
 
+    // ✅ FIX 1 — now returns 3 months of future periods instead of just the next one.
+    // CalendarFragment and any other consumer can show the full upcoming schedule.
     val predictedPeriodDays: LiveData<Set<LocalDate>> = MediatorLiveData<Set<LocalDate>>().apply {
         fun calc() {
             val pred = _prediction.value ?: run { value = emptySet(); return }
             val dur  = settings.value?.periodDuration ?: 5
-            value    = CycleEngine.predictedPeriodDays(pred.lastPeriodStart, pred.cycleLength, dur)
+            value    = CycleEngine.futurePeriodDays(
+                pred.lastPeriodStart, pred.cycleLength, dur, monthsAhead = 3
+            ).values.flatten().toSet()
         }
         addSource(_prediction) { calc() }
         addSource(settings)    { calc() }
@@ -163,10 +208,13 @@ class CycleViewModel(app: Application) : AndroidViewModel(app) {
 
     fun deletePeriodEntry(id: Int) = viewModelScope.launch { repo.deletePeriodEntry(id) }
 
-    /** Correct a wrong period start date — updates the existing PeriodEntry in place */
+    // ✅ FIX 5 — fetch only the single entry by id instead of loading all entries
+    // Requires repo.getPeriodEntryById(id) — add to CycleRepository and PeriodDao if missing
     fun updatePeriodStartDate(id: Int, newDate: LocalDate) = viewModelScope.launch {
-        val entries = repo.getAllPeriodEntries()
-        val entry   = entries.firstOrNull { it.id == id } ?: return@launch
+        val entry = repo.getPeriodEntryById(id) ?: run {
+            Log.w(TAG, "updatePeriodStartDate: entry id=$id not found")
+            return@launch
+        }
         repo.updatePeriodEntry(entry.copy(startDate = newDate.toString()))
     }
 
@@ -197,10 +245,10 @@ class CycleViewModel(app: Application) : AndroidViewModel(app) {
 
     // ── Settings actions ──────────────────────────────────────────
 
-    fun updateCycleLength(len: Int) = viewModelScope.launch { repo.updateCycleLength(len) }
-    fun updatePeriodDuration(dur: Int) = viewModelScope.launch { repo.updatePeriodDuration(dur) }
-    fun updateLastPeriodStart(date: LocalDate) = viewModelScope.launch { repo.updateLastPeriodStart(date) }
-    fun updateConditions(c: String) = viewModelScope.launch { repo.updateConditions(c) }
+    fun updateCycleLength(len: Int)              = viewModelScope.launch { repo.updateCycleLength(len) }
+    fun updatePeriodDuration(dur: Int)           = viewModelScope.launch { repo.updatePeriodDuration(dur) }
+    fun updateLastPeriodStart(date: LocalDate)   = viewModelScope.launch { repo.updateLastPeriodStart(date) }
+    fun updateConditions(c: String)              = viewModelScope.launch { repo.updateConditions(c) }
 
     fun updateProfile(name: String, age: Int, heightCm: Int, weightKg: Float) = viewModelScope.launch {
         val current = repo.getSettings() ?: return@launch
@@ -216,9 +264,10 @@ class CycleViewModel(app: Application) : AndroidViewModel(app) {
         com.aivigil.periodtracker.notification.AlarmScheduler.cancelAll(getApplication())
         repo.deleteAllData()
     }
-    fun deleteDailyLog(log: DailyLog)    = viewModelScope.launch { repo.deleteDailyLog(log) }
-    fun deleteDailyLogById(id: Int)      = viewModelScope.launch { repo.deleteDailyLogById(id) }
-    fun updateDailyLog(log: DailyLog)    = viewModelScope.launch { repo.updateDailyLog(log) }
+
+    fun deleteDailyLog(log: DailyLog)       = viewModelScope.launch { repo.deleteDailyLog(log) }
+    fun deleteDailyLogById(id: Int)         = viewModelScope.launch { repo.deleteDailyLogById(id) }
+    fun updateDailyLog(log: DailyLog)       = viewModelScope.launch { repo.updateDailyLog(log) }
     suspend fun getLogsForDate(date: LocalDate) = repo.getLogForDate(date)
 
     // ── Onboarding ────────────────────────────────────────────────
@@ -255,7 +304,7 @@ class CycleViewModel(app: Application) : AndroidViewModel(app) {
         repo.markOnboardingComplete()
     }
 
-    // ── Insights: bar chart data ───────────────────────────────────
+    // ── Insights: bar chart data ──────────────────────────────────
 
     fun getBarChartData(): LiveData<List<Pair<String, Int>>> = periodEntries.map { entries ->
         if (entries.size < 2) return@map emptyList()
@@ -270,10 +319,12 @@ class CycleViewModel(app: Application) : AndroidViewModel(app) {
             result.add(Pair(start.format(fmt), days))
         }
 
+        // ✅ FIX 5 — removed the erroneous + 1 from the open cycle length calculation.
+        // ChronoUnit.DAYS.between already returns the correct elapsed day count.
         val latest = sorted.lastOrNull()
         if (latest != null && latest.endDate == null) {
             val start = LocalDate.parse(latest.startDate)
-            val cur   = java.time.temporal.ChronoUnit.DAYS.between(start, LocalDate.now()).toInt() + 1
+            val cur   = java.time.temporal.ChronoUnit.DAYS.between(start, LocalDate.now()).toInt()
             result.add(Pair(start.format(fmt), cur))
         }
 

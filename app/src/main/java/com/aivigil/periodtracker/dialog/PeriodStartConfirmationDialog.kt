@@ -1,5 +1,6 @@
 ﻿package com.aivigil.periodtracker.dialog
 
+import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -19,11 +20,19 @@ enum class PeriodStartResult {
  * Matches the design: drop icon + title + message + red CTA + grey secondary.
  * Does NOT touch Room, repositories, ViewModels or cycle calculations.
  * The caller decides what to do with the result via [onResult].
+ *
+ * [onDismiss] is called when the user dismisses without choosing
+ * (back press, tap outside) so the caller can re-enable save buttons.
  */
 class PeriodStartConfirmationDialog : DialogFragment() {
 
     var onResult: ((PeriodStartResult) -> Unit)? = null
-    private var isHandled = false // ✅ Guard against double-tap/rapid double-click
+
+    // ✅ NEW — called when user dismisses without tapping Yes or No
+    var onDismiss: (() -> Unit)? = null
+
+    // ✅ Guard against double-tap / rapid double-click
+    private var isHandled = false
 
     private var _binding: DialogPeriodStartConfirmationBinding? = null
     private val binding get() = _binding!!
@@ -77,6 +86,16 @@ class PeriodStartConfirmationDialog : DialogFragment() {
         super.onStart()
     }
 
+    // ✅ NEW — fires when the user dismisses without choosing (back press / tap outside)
+    // isHandled is false in that case so onDismiss is only called for true dismissals,
+    // never after Yes/No which already dismiss the dialog themselves.
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        if (!isHandled) {
+            onDismiss?.invoke()
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -87,13 +106,16 @@ class PeriodStartConfirmationDialog : DialogFragment() {
 
         fun show(
             fragmentManager: androidx.fragment.app.FragmentManager,
-            onResult: (PeriodStartResult) -> Unit
+            onResult: (PeriodStartResult) -> Unit,
+            // ✅ NEW — optional, defaults to no-op so existing callers don't break
+            onDismiss: () -> Unit = {}
         ) {
-            // ✅ Prevent showing duplicate dialogs
+            // Prevent showing duplicate dialogs
             if (fragmentManager.findFragmentByTag(TAG) != null) return
 
             PeriodStartConfirmationDialog().apply {
-                this.onResult = onResult
+                this.onResult  = onResult
+                this.onDismiss = onDismiss  // ✅ wire it in
             }.show(fragmentManager, TAG)
         }
     }

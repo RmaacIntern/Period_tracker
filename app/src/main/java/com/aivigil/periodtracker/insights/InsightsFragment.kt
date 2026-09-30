@@ -27,7 +27,6 @@ import com.aivigil.periodtracker.history.PastLogHistoryFragment
 import com.aivigil.periodtracker.databinding.FragmentInsightsBinding
 import com.aivigil.periodtracker.domain.CycleEngine
 import com.aivigil.periodtracker.data.entity.DailyLog
-import com.aivigil.periodtracker.data.entity.UserSettings
 import com.aivigil.periodtracker.viewmodel.CycleViewModel
 import com.aivigil.periodtracker.viewmodel.CycleViewModelFactory
 import java.io.File
@@ -56,10 +55,152 @@ class InsightsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         applyBackgrounds()
         observeData()
         bindClickListeners()
+    }
+
+    // ─────────────────────────────────────────────
+    // OBSERVE DATA
+    // ─────────────────────────────────────────────
+
+    private fun observeData() {
+
+        // ✅ Use vm.prediction as single source of truth — not raw settings
+        vm.prediction.observe(viewLifecycleOwner) { pred ->
+            pred ?: return@observe
+            val s = vm.settings.value ?: return@observe
+
+            val day = CycleEngine.cycleDay(pred.lastPeriodStart, pred.cycleLength)
+
+            binding.tvAvgCycleValue.text  = "${pred.cycleLength} Days"
+            binding.tvAvgPeriodValue.text = "${s.periodDuration} Days"
+
+            // ✅ Correct luteal formula matching CycleEngine.bestPrediction()
+            val ovulationDay = (pred.cycleLength - 14).coerceAtLeast(s.periodDuration + 2)
+            val lutealDays   = pred.cycleLength - ovulationDay
+            binding.tvLutealValue.text = "$lutealDays Days"
+
+            // Symptom peak is set by allLogs observer below
+            binding.tvSymptomPeakValue.text = "Calculating…"
+
+            bindPhaseGuide(
+                day            = day,
+                cycleLength    = pred.cycleLength,
+                periodDuration = s.periodDuration
+            )
+        }
+
+        // Re-trigger phase guide when settings arrive after prediction
+        vm.settings.observe(viewLifecycleOwner) { s ->
+            s ?: return@observe
+            val pred = vm.prediction.value ?: return@observe
+            val day  = CycleEngine.cycleDay(pred.lastPeriodStart, pred.cycleLength)
+            bindPhaseGuide(day, pred.cycleLength, s.periodDuration)
+        }
+
+        vm.allLogs.observe(viewLifecycleOwner) { logs ->
+
+            if (logs.isEmpty()) {
+                binding.barCramping.progress = 0
+                binding.barFatigue.progress  = 0
+                binding.barHeadache.progress = 0
+                binding.tvCrampingPct.text   = "0%"
+                binding.tvFatiguePct.text    = "0%"
+                binding.tvHeadachePct.text   = "0%"
+                binding.tvDailyTrackingLabel.text = "• Daily tracking"
+                binding.tvLastUpdatedLabel.text   = "No entries yet"
+                binding.tvSymptomPeakValue.text   = "Not enough data"
+                return@observe
+            }
+
+            // Deduplicate — keep latest entry per date
+            val uniqueDateLogs = logs
+                .groupBy { it.date }
+                .mapValues { (_, entries) -> entries.maxByOrNull { it.entryNumber }!! }
+                .values.toList()
+
+            val total = uniqueDateLogs.size.toFloat()
+
+            val crampingPercent = ((uniqueDateLogs.count { it.symptoms.contains("Cramps") }   / total) * 100).toInt()
+            val fatiguePercent  = ((uniqueDateLogs.count { it.symptoms.contains("Fatigue") }  / total) * 100).toInt()
+            val headachePercent = ((uniqueDateLogs.count { it.symptoms.contains("Headache") } / total) * 100).toInt()
+
+            binding.barCramping.progress = crampingPercent
+            binding.barFatigue.progress  = fatiguePercent
+            binding.barHeadache.progress = headachePercent
+            binding.tvCrampingPct.text   = "$crampingPercent%"
+            binding.tvFatiguePct.text    = "$fatiguePercent%"
+            binding.tvHeadachePct.text   = "$headachePercent%"
+
+            val todayStr = LocalDate.now().toString()
+            val todayLog = logs
+                .filter { it.date == todayStr }
+                .maxByOrNull { it.entryNumber }
+
+            binding.tvDailyTrackingLabel.text = "• Daily tracking"
+            binding.tvLastUpdatedLabel.text   =
+                if (todayLog != null) "Updated today" else "Not updated today"
+
+            // ✅ Symptom peak from real log data via CycleEngine.detectPmsOnsetDay()
+            val pred = vm.prediction.value
+            if (pred != null) {
+                val logTriples = logs.mapNotNull { log ->
+                    val date = runCatching { LocalDate.parse(log.date) }.getOrNull()
+                        ?: return@mapNotNull null
+                    val cycleDay = CycleEngine.cycleDay(pred.lastPeriodStart, pred.cycleLength, date)
+                    Triple(date, log.symptoms, cycleDay)
+                }
+                val pmsDay = CycleEngine.detectPmsOnsetDay(logTriples)
+                binding.tvSymptomPeakValue.text =
+                    if (pmsDay != null) "Day $pmsDay" else "Not enough data"
+            }
+        }
+    }
+
+    // ─────────────────────────────────────────────
+    // PHASE GUIDE
+    // ─────────────────────────────────────────────
+
+    private fun bindPhaseGuide(day: Int, cycleLength: Int, periodDuration: Int) {
+        val phase = CycleEngine.phase(day, cycleLength, periodDuration)
+
+        // ✅ Derive day range labels from CycleEngine boundaries
+        // so they are correct for all cycle lengths, not just 28-day cycles
+        val ovDay        = (cycleLength - 14).coerceAtLeast(periodDuration + 2)
+        val fertileStart = (ovDay - 5).coerceAtLeast(periodDuration + 1)
+
+        val result = when (phase) {
+            CycleEngine.Phase.MENSTRUAL -> Triple(
+                "Menstrual Phase Guide",
+                "Days 1–$periodDuration",
+                "Rest and nourish your body. Iron-rich foods and gentle movement can support recovery. Prioritize comfortable movement and good sleep."
+            )
+            CycleEngine.Phase.FOLLICULAR -> Triple(
+                "Follicular Phase Guide",
+                "Days ${periodDuration + 1}–${fertileStart - 1}",
+                "Estrogen levels rise steadily toward ovulation. You may notice changes in energy, focus, and mood. Strength training and balanced meals can support your routine."
+            )
+            CycleEngine.Phase.OVULATION -> Triple(
+                "Ovulation Phase Guide",
+                "Days $fertileStart–$ovDay",
+                "This phase can bring changes in energy, mood, and physical sensations. Continue listening to your body and maintain your usual healthy routine."
+            )
+            CycleEngine.Phase.LUTEAL_EARLY -> Triple(
+                "Luteal Phase Guide",
+                "Days ${ovDay + 1}–${ovDay + 3}",
+                "Progesterone rises and then falls. You may notice mood changes, cravings, or lower energy. Focus on balanced meals, hydration, moderate activity, and rest."
+            )
+            CycleEngine.Phase.LUTEAL_LATE -> Triple(
+                "Pre-Menstrual Phase Guide",
+                "Days ${ovDay + 4}–$cycleLength",
+                "PMS symptoms may appear. Take it easier and prioritize self-care. Cravings and mood shifts are normal — be kind to yourself."
+            )
+        }
+
+        binding.tvPhaseGuideTitle.text = result.first
+        binding.tvPhaseDaysBadge.text  = result.second
+        binding.tvPhaseGuideBody.text  = result.third
     }
 
     // ─────────────────────────────────────────────
@@ -67,20 +208,14 @@ class InsightsFragment : Fragment() {
     // ─────────────────────────────────────────────
 
     private fun bindClickListeners() {
-
-        val openHistory = View.OnClickListener {
+        binding.cycleHistoryCard.setOnClickListener {
             parentFragmentManager.beginTransaction()
-                .replace(
-                    R.id.mainFragmentContainer,
-                    PastLogHistoryFragment.newInstance()
-                )
+                .replace(R.id.mainFragmentContainer, PastLogHistoryFragment.newInstance())
                 .addToBackStack("pastLogHistory")
                 .commit()
         }
 
-        binding.cycleHistoryCard.setOnClickListener(openHistory)
-
-         binding.btnDownloadReport.setOnClickListener {
+        binding.btnDownloadReport.setOnClickListener {
             binding.btnDownloadReport.isEnabled = false
             binding.btnDownloadReport.alpha = 0.5f
             exportPdf()
@@ -109,53 +244,45 @@ class InsightsFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val pdf = android.graphics.pdf.PdfDocument()
-                var pageNum = 1
+                var pageNum  = 1
                 var pageInfo = android.graphics.pdf.PdfDocument.PageInfo.Builder(595, 842, pageNum).create()
-                var page = pdf.startPage(pageInfo)
-                var canvas = page.canvas
+                var page     = pdf.startPage(pageInfo)
+                var canvas   = page.canvas
 
                 val pink      = Color.parseColor("#EC4899")
                 val dark      = Color.parseColor("#2D1B33")
                 val grey      = Color.parseColor("#8A7A8F")
                 val linePaint = Paint().apply {
-                    color       = Color.parseColor("#F0E4F5")
-                    strokeWidth = 1f
+                    color = Color.parseColor("#F0E4F5"); strokeWidth = 1f
                 }
                 val headingPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                    color          = pink
-                    textSize       = 13f
-                    isFakeBoldText = true
+                    color = pink; textSize = 13f; isFakeBoldText = true
                 }
                 val bodyPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                    color    = dark
-                    textSize = 10f
+                    color = dark; textSize = 10f
                 }
                 val subPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                    color    = grey
-                    textSize = 9f
+                    color = grey; textSize = 9f
                 }
 
                 val dateStr = LocalDate.now().format(
                     DateTimeFormatter.ofPattern("MMMM d, yyyy", Locale.getDefault())
                 )
 
-                // Header bar
+                // Header
                 canvas.drawRect(0f, 0f, 595f, 65f, Paint().apply { color = pink })
                 canvas.drawText("Period Tracker — Cycle & Daily Logs Report", 24f, 36f,
                     Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                        color          = Color.WHITE
-                        textSize       = 17f
-                        isFakeBoldText = true
+                        color = Color.WHITE; textSize = 17f; isFakeBoldText = true
                     })
                 canvas.drawText("Generated $dateStr", 24f, 54f,
                     Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                        color    = Color.parseColor("#FFD6EA")
-                        textSize = 10f
+                        color = Color.parseColor("#FFD6EA"); textSize = 10f
                     })
 
                 var y = 88f
 
-                // ── Profile ──────────────────────────────
+                // Profile
                 canvas.drawText("PROFILE", 24f, y, headingPaint); y += 16f
                 canvas.drawLine(24f, y, 571f, y, linePaint); y += 10f
 
@@ -165,33 +292,34 @@ class InsightsFragment : Fragment() {
                     24f, y, bodyPaint); y += 14f
                 canvas.drawText("Member since:  ${settings.memberSince}", 24f, y, bodyPaint); y += 20f
 
-                // ── Cycle Stats ──────────────────────────
+                // Cycle Stats
                 canvas.drawText("CYCLE STATISTICS", 24f, y, headingPaint); y += 16f
                 canvas.drawLine(24f, y, 571f, y, linePaint); y += 10f
 
-                val ovulationDay = settings.cycleLength / 2 + 1
+                // ✅ Correct luteal formula in PDF too
+                val ovulationDay = (settings.cycleLength - 14).coerceAtLeast(settings.periodDuration + 2)
                 val lutealDays   = settings.cycleLength - ovulationDay
 
-                canvas.drawText("Cycle length:   ${settings.cycleLength} days", 24f, y, bodyPaint); y += 14f
+                canvas.drawText("Cycle length:    ${settings.cycleLength} days", 24f, y, bodyPaint); y += 14f
                 canvas.drawText("Period duration: ${settings.periodDuration} days", 24f, y, bodyPaint); y += 14f
                 canvas.drawText("Est. luteal phase:       $lutealDays days", 24f, y, bodyPaint); y += 14f
                 canvas.drawText("Last period start:       ${
-                    try { LocalDate.parse(settings.lastPeriodStart).format(fmt) } catch (_: Exception) { settings.lastPeriodStart }
+                    try { LocalDate.parse(settings.lastPeriodStart).format(fmt) }
+                    catch (_: Exception) { settings.lastPeriodStart }
                 }", 24f, y, bodyPaint); y += 14f
-
                 if (settings.conditions.isNotBlank()) {
                     canvas.drawText("Conditions noted:        ${settings.conditions}", 24f, y, bodyPaint); y += 14f
                 }
                 y += 8f
 
-                // ── Symptom Summary ──────────────────────
+                // Symptom Summary
                 val uniqueLogs = logs
                     .groupBy { it.date }
                     .mapValues { (_, e) -> e.maxByOrNull { it.entryNumber }!! }
                     .values.toList()
 
                 if (uniqueLogs.isNotEmpty()) {
-                    val total = uniqueLogs.size.toFloat()
+                    val total      = uniqueLogs.size.toFloat()
                     val crampPct   = ((uniqueLogs.count { it.symptoms.contains("Cramps") }   / total) * 100).toInt()
                     val fatiguePct = ((uniqueLogs.count { it.symptoms.contains("Fatigue") }  / total) * 100).toInt()
                     val headPct    = ((uniqueLogs.count { it.symptoms.contains("Headache") } / total) * 100).toInt()
@@ -200,15 +328,14 @@ class InsightsFragment : Fragment() {
 
                     canvas.drawText("SYMPTOM SUMMARY  (${uniqueLogs.size} days tracked)", 24f, y, headingPaint); y += 16f
                     canvas.drawLine(24f, y, 571f, y, linePaint); y += 10f
-
-                    canvas.drawText("Cramps:   $crampPct%", 24f, y, bodyPaint)
+                    canvas.drawText("Cramps:   $crampPct%",   24f,  y, bodyPaint)
                     canvas.drawText("Fatigue:  $fatiguePct%", 180f, y, bodyPaint)
-                    canvas.drawText("Headache: $headPct%", 330f, y, bodyPaint); y += 14f
-                    canvas.drawText("Nausea:   $nausePct%", 24f, y, bodyPaint)
-                    canvas.drawText("Bloating: $bloatPct%", 180f, y, bodyPaint); y += 20f
+                    canvas.drawText("Headache: $headPct%",    330f, y, bodyPaint); y += 14f
+                    canvas.drawText("Nausea:   $nausePct%",   24f,  y, bodyPaint)
+                    canvas.drawText("Bloating: $bloatPct%",   180f, y, bodyPaint); y += 20f
                 }
 
-                // ── All Daily Logs Table with Time Column ──
+                // Daily Log Table
                 val sortedLogs = logs.sortedWith(
                     compareByDescending<DailyLog> { it.date }.thenByDescending { it.loggedAt }
                 )
@@ -218,66 +345,50 @@ class InsightsFragment : Fragment() {
                     canvas.drawLine(24f, y, 571f, y, linePaint); y += 10f
 
                     fun drawTableHeader(c: Canvas, currentY: Float) {
-                        c.drawText("Date", 24f, currentY, subPaint)
-                        c.drawText("Time", 100f, currentY, subPaint)
-                        c.drawText("Flow", 170f, currentY, subPaint)
-                        c.drawText("Mood", 235f, currentY, subPaint)
+                        c.drawText("Date",     24f,  currentY, subPaint)
+                        c.drawText("Time",     100f, currentY, subPaint)
+                        c.drawText("Flow",     170f, currentY, subPaint)
+                        c.drawText("Mood",     235f, currentY, subPaint)
                         c.drawText("Symptoms", 335f, currentY, subPaint)
-                        c.drawText("BBT", 510f, currentY, subPaint)
+                        c.drawText("BBT",      510f, currentY, subPaint)
                         c.drawLine(24f, currentY + 4f, 571f, currentY + 4f, linePaint)
                     }
 
-                    drawTableHeader(canvas, y)
-                    y += 16f
+                    drawTableHeader(canvas, y); y += 16f
 
                     val rowFmt  = DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.getDefault())
                     val timeFmt = DateTimeFormatter.ofPattern("hh:mm a", Locale.getDefault())
 
                     sortedLogs.forEach { log ->
-                        // Multi-page page overflow check
                         if (y > 780f) {
                             pdf.finishPage(page)
                             pageNum++
                             pageInfo = android.graphics.pdf.PdfDocument.PageInfo.Builder(595, 842, pageNum).create()
-                            page = pdf.startPage(pageInfo)
+                            page   = pdf.startPage(pageInfo)
                             canvas = page.canvas
-
                             canvas.drawRect(0f, 0f, 595f, 36f, Paint().apply { color = pink })
                             canvas.drawText("Period Tracker Report — Page $pageNum", 24f, 24f,
                                 Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                                    color          = Color.WHITE
-                                    textSize       = 13f
-                                    isFakeBoldText = true
+                                    color = Color.WHITE; textSize = 13f; isFakeBoldText = true
                                 })
                             y = 52f
-                            drawTableHeader(canvas, y)
-                            y += 16f
+                            drawTableHeader(canvas, y); y += 16f
                         }
 
-                        val dateLabel = try {
-                            LocalDate.parse(log.date).format(rowFmt)
-                        } catch (_: Exception) { log.date }
-
+                        val dateLabel = try { LocalDate.parse(log.date).format(rowFmt) }
+                        catch (_: Exception) { log.date }
                         val timeLabel = if (log.loggedAt > 0L) {
                             java.time.Instant.ofEpochMilli(log.loggedAt)
                                 .atZone(java.time.ZoneId.systemDefault())
-                                .toLocalTime()
-                                .format(timeFmt)
-                        } else {
-                            "Log #${log.entryNumber}"
-                        }
+                                .toLocalTime().format(timeFmt)
+                        } else "Log #${log.entryNumber}"
 
-                        val flowLabel = log.flow.takeIf { it.isNotEmpty() } ?: "—"
-                        val moodLabel = log.moods.split(",").firstOrNull { it.isNotBlank() } ?: "—"
-                        val sympLabel = log.symptoms.split(",").firstOrNull { it.isNotBlank() } ?: "—"
-                        val bbtLabel  = log.basalTemp?.let { "%.1f°".format(it) } ?: "—"
-
+                        canvas.drawText(log.flow.takeIf { it.isNotEmpty() } ?: "—", 170f, y, bodyPaint)
                         canvas.drawText(dateLabel, 24f,  y, bodyPaint)
                         canvas.drawText(timeLabel, 100f, y, bodyPaint)
-                        canvas.drawText(flowLabel, 170f, y, bodyPaint)
-                        canvas.drawText(moodLabel, 235f, y, bodyPaint)
-                        canvas.drawText(sympLabel, 335f, y, bodyPaint)
-                        canvas.drawText(bbtLabel,  510f, y, bodyPaint)
+                        canvas.drawText(log.moods.split(",").firstOrNull { it.isNotBlank() } ?: "—", 235f, y, bodyPaint)
+                        canvas.drawText(log.symptoms.split(",").firstOrNull { it.isNotBlank() } ?: "—", 335f, y, bodyPaint)
+                        canvas.drawText(log.basalTemp?.let { "%.1f°".format(it) } ?: "—", 510f, y, bodyPaint)
                         y += 15f
                     }
                 }
@@ -287,21 +398,41 @@ class InsightsFragment : Fragment() {
                     pdf.finishPage(page)
                     pageNum++
                     pageInfo = android.graphics.pdf.PdfDocument.PageInfo.Builder(595, 842, pageNum).create()
-                    page = pdf.startPage(pageInfo)
+                    page   = pdf.startPage(pageInfo)
                     canvas = page.canvas
                     y = 40f
                 }
-
                 canvas.drawLine(24f, y + 10f, 571f, y + 10f, linePaint)
                 canvas.drawText(
                     "Period Tracker • Private & local • Data never leaves your device",
                     24f, y + 24f, subPaint
                 )
-
                 pdf.finishPage(page)
 
-                // Save PDF
                 val fileName = "PeriodTracker_Report_${LocalDate.now()}.pdf"
+
+                // ✅ openSheet defined once — used by both API branches
+                suspend fun openSheet(uri: android.net.Uri) = withContext(Dispatchers.Main) {
+                    if (!isAdded) return@withContext
+                    val openPdfAction: () -> Unit = {
+                        val intent = Intent(Intent.ACTION_VIEW).apply {
+                            setDataAndType(uri, "application/pdf")
+                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
+                        try { startActivity(intent) }
+                        catch (_: Exception) {
+                            try { startActivity(Intent.createChooser(intent, "Open PDF with...")) }
+                            catch (_: Exception) {
+                                Toast.makeText(requireContext(), "No PDF viewer app found", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                    com.aivigil.periodtracker.profile.sheets.PdfReadySheet(
+                        fileName = fileName,
+                        onOpen   = openPdfAction
+                    ).show(parentFragmentManager, com.aivigil.periodtracker.profile.sheets.PdfReadySheet.TAG)
+                }
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     val values = ContentValues().apply {
@@ -313,184 +444,25 @@ class InsightsFragment : Fragment() {
                         .insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)!!
                     requireContext().contentResolver.openOutputStream(uri)!!.use { pdf.writeTo(it) }
                     pdf.close()
-
-                    withContext(Dispatchers.Main) {
-                        if (!isAdded) return@withContext
-                        val openPdfAction = {
-                            val openIntent = Intent(Intent.ACTION_VIEW).apply {
-                                setDataAndType(uri, "application/pdf")
-                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            }
-                            try {
-                                startActivity(openIntent)
-                            } catch (_: Exception) {
-                                try {
-                                    startActivity(Intent.createChooser(openIntent, "Open PDF with..."))
-                                } catch (_: Exception) {
-                                    Toast.makeText(requireContext(), "No PDF viewer app found", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                        }
-
-                        com.aivigil.periodtracker.profile.sheets.PdfReadySheet(
-                            fileName = fileName,
-                            onOpen   = openPdfAction
-                        ).show(parentFragmentManager, com.aivigil.periodtracker.profile.sheets.PdfReadySheet.TAG)
-                    }
-
+                    openSheet(uri)
                 } else {
                     val dir  = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
                     val file = File(dir, fileName)
                     FileOutputStream(file).use { pdf.writeTo(it) }
                     pdf.close()
-
                     val uri = FileProvider.getUriForFile(
-                        requireContext(),
-                        "${requireContext().packageName}.provider",
-                        file
+                        requireContext(), "${requireContext().packageName}.provider", file
                     )
-
-                    withContext(Dispatchers.Main) {
-                        if (!isAdded) return@withContext
-                        val openPdfAction = {
-                            val openIntent = Intent(Intent.ACTION_VIEW).apply {
-                                setDataAndType(uri, "application/pdf")
-                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            }
-                            try {
-                                startActivity(openIntent)
-                            } catch (_: Exception) {
-                                try {
-                                    startActivity(Intent.createChooser(openIntent, "Open PDF with..."))
-                                } catch (_: Exception) {
-                                    Toast.makeText(requireContext(), "No PDF viewer app found", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                        }
-
-                        com.aivigil.periodtracker.profile.sheets.PdfReadySheet(
-                            fileName = fileName,
-                            onOpen   = openPdfAction
-                        ).show(parentFragmentManager, com.aivigil.periodtracker.profile.sheets.PdfReadySheet.TAG)
-                    }
+                    openSheet(uri)
                 }
 
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    if (isAdded) {
-                        Toast.makeText(requireContext(), "Export failed: ${e.message}", Toast.LENGTH_LONG).show()
-                    }
+                    if (isAdded) Toast.makeText(requireContext(),
+                        "Export failed: ${e.message}", Toast.LENGTH_LONG).show()
                 }
             }
         }
-    }
-
-    // ─────────────────────────────────────────────
-    // OBSERVE DATA
-    // ─────────────────────────────────────────────
-
-    private fun observeData() {
-
-        vm.settings.observe(viewLifecycleOwner) { s ->
-
-            s ?: return@observe
-
-            val lastPeriod = LocalDate.parse(s.lastPeriodStart)
-            val day = CycleEngine.cycleDay(lastPeriod, s.cycleLength)
-
-            binding.tvAvgCycleValue.text = "${s.cycleLength} Days"
-            binding.tvAvgPeriodValue.text = "${s.periodDuration} Days"
-
-            val ovulationDay = s.cycleLength / 2 + 1
-            val lutealDays   = s.cycleLength - ovulationDay
-            binding.tvLutealValue.text = "$lutealDays Days"
-
-            val symptomPeakDay = (s.cycleLength - 3).coerceAtLeast(1)
-            binding.tvSymptomPeakValue.text = "Day $symptomPeakDay"
-
-            bindPhaseGuide(day = day, cycleLength = s.cycleLength, periodDuration = s.periodDuration)
-        }
-
-        vm.allLogs.observe(viewLifecycleOwner) { logs ->
-
-            if (logs.isEmpty()) {
-                binding.barCramping.progress = 0
-                binding.barFatigue.progress  = 0
-                binding.barHeadache.progress = 0
-                binding.tvCrampingPct.text   = "0%"
-                binding.tvFatiguePct.text    = "0%"
-                binding.tvHeadachePct.text   = "0%"
-                binding.tvDailyTrackingLabel.text = "• Daily tracking"
-                binding.tvLastUpdatedLabel.text   = "No entries yet"
-                return@observe
-            }
-
-            // Deduplicate: keep only latest entry per date
-            val uniqueDateLogs = logs
-                .groupBy { it.date }
-                .mapValues { (_, entries) -> entries.maxByOrNull { it.entryNumber }!! }
-                .values.toList()
-
-            val total = uniqueDateLogs.size.toFloat()
-
-            val crampingPercent  = ((uniqueDateLogs.count { it.symptoms.contains("Cramps") }   / total) * 100).toInt()
-            val fatiguePercent   = ((uniqueDateLogs.count { it.symptoms.contains("Fatigue") }  / total) * 100).toInt()
-            val headachePercent  = ((uniqueDateLogs.count { it.symptoms.contains("Headache") } / total) * 100).toInt()
-
-            binding.barCramping.progress = crampingPercent
-            binding.barFatigue.progress  = fatiguePercent
-            binding.barHeadache.progress = headachePercent
-            binding.tvCrampingPct.text   = "$crampingPercent%"
-            binding.tvFatiguePct.text    = "$fatiguePercent%"
-            binding.tvHeadachePct.text   = "$headachePercent%"
-
-            val todayStr = LocalDate.now().toString()
-            val todayLog = logs
-                .filter { it.date == todayStr }
-                .maxByOrNull { it.entryNumber }
-
-            binding.tvDailyTrackingLabel.text = "• Daily tracking"
-            binding.tvLastUpdatedLabel.text   =
-                if (todayLog != null) "Updated today" else "Not updated today"
-        }
-    }
-
-    // ─────────────────────────────────────────────
-    // PHASE GUIDE
-    // ─────────────────────────────────────────────
-
-    private fun bindPhaseGuide(day: Int, cycleLength: Int, periodDuration: Int) {
-
-        val phase = CycleEngine.phase(day, cycleLength, periodDuration)
-
-        val result = when (phase) {
-            CycleEngine.Phase.MENSTRUAL -> Triple(
-                "Menstrual Phase Guide",
-                "Days 1–$periodDuration",
-                "Rest and nourish your body. Iron-rich foods and gentle movement can support recovery. Prioritize comfortable movement and good sleep."
-            )
-            CycleEngine.Phase.FOLLICULAR -> Triple(
-                "Follicular Phase Guide",
-                "Days ${periodDuration + 1}–${cycleLength - 15}",
-                "Estrogen levels rise steadily toward ovulation. You may notice changes in energy, focus, and mood. Strength training and balanced meals can support your routine."
-            )
-            CycleEngine.Phase.OVULATION -> Triple(
-                "Ovulation Phase Guide",
-                "Days ${cycleLength - 15}–${cycleLength - 12}",
-                "This phase can bring changes in energy, mood, and physical sensations. Continue listening to your body and maintain your usual healthy routine."
-            )
-            else -> Triple(
-                "Luteal Phase Guide",
-                "Days ${cycleLength - 11}–$cycleLength",
-                "Progesterone rises and then falls. You may notice mood changes, cravings, or lower energy. Focus on balanced meals, hydration, moderate activity, and rest."
-            )
-        }
-
-        binding.tvPhaseGuideTitle.text = result.first
-        binding.tvPhaseDaysBadge.text  = result.second
-        binding.tvPhaseGuideBody.text  = result.third
     }
 
     // ─────────────────────────────────────────────
@@ -498,17 +470,9 @@ class InsightsFragment : Fragment() {
     // ─────────────────────────────────────────────
 
     private fun applyBackgrounds() {
-
-        listOf(
-            binding.cardAvgCycle,
-            binding.cardAvgPeriod,
-            binding.cardLuteal,
-            binding.cardSymptomPeak
-        ).forEach { card ->
-            card.background = roundedBg("#FFFFFF", 22f)
-            card.isClickable = true
-            card.isFocusable = true
-        }
+        listOf(binding.cardAvgCycle, binding.cardAvgPeriod,
+            binding.cardLuteal,  binding.cardSymptomPeak)
+            .forEach { it.background = roundedBg("#FFFFFF", 22f) }
 
         binding.iconAvgCycle.background  = roundedBg("#FFF0F7", 12f)
         binding.iconAvgPeriod.background = roundedBg("#F3EDFF", 12f)
@@ -527,8 +491,8 @@ class InsightsFragment : Fragment() {
 
         binding.cyclePatternsCard.background = roundedBg("#FFFFFF", 22f)
 
-        binding.exportCard.background  = roundedBg("#FFFFFF", 22f)
-        binding.iconExport.background  = roundedBg("#FFF0F7", 14f)
+        binding.exportCard.background = roundedBg("#FFFFFF", 22f)
+        binding.iconExport.background = roundedBg("#FFF0F7", 14f)
     }
 
     private fun roundedBg(colorHex: String, radiusDp: Float): GradientDrawable {

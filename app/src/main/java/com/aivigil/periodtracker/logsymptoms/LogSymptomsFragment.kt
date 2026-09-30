@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ScrollView
 import android.widget.Toast
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -54,7 +56,10 @@ class LogSymptomsFragment : Fragment() {
     private val isPastDate: Boolean get() = targetDate.isBefore(LocalDate.now())
 
     // ── State ─────────────────────────────────────────────────────
-    private var basalTemp = 97.8f
+
+    // ✅ FIX 6 — neutral clinical default (98.0°F) instead of 97.8°F.
+    // basalTempChanged guards against saving this default if user never touches the control.
+    private var basalTemp = 98.0f
     private var basalTempChanged = false
     private var editingEntryId: Int? = null
 
@@ -105,15 +110,30 @@ class LogSymptomsFragment : Fragment() {
 
     // ── Cycle banner ──────────────────────────────────────────────
 
+    // ✅ FIX 1 — observe vm.prediction instead of calling CycleEngine
+    // directly with raw settings. Keeps the fragment as a pure consumer
+    // of the ViewModel's single prediction source of truth.
     private fun bindCycleBanner() {
+        vm.prediction.observe(viewLifecycleOwner) { pred ->
+            pred ?: return@observe
+            val s = vm.settings.value ?: return@observe
+            val dayNum = CycleEngine.cycleDay(pred.lastPeriodStart, pred.cycleLength, targetDate)
+            val phase  = CycleEngine.phase(dayNum, pred.cycleLength, s.periodDuration)
+            binding.tvBannerCycleDay.text = "CYCLE DAY · DAY $dayNum"
+            binding.tvBannerPhase.text    =
+                "${CycleEngine.phaseName(phase)} · ${CycleEngine.phaseDescription(phase)}"
+            Log.d(TAG, "bindCycleBanner: targetDate=$targetDate dayNum=$dayNum " +
+                    "phase=${CycleEngine.phaseName(phase)}")
+        }
+        // Also re-trigger when settings arrive after prediction
         vm.settings.observe(viewLifecycleOwner) { s ->
             s ?: return@observe
-            val lastPeriod = LocalDate.parse(s.lastPeriodStart)
-            val dayNum = (java.time.temporal.ChronoUnit.DAYS
-                .between(lastPeriod, targetDate).toInt() + 1).coerceAtLeast(1)
-            val phase = CycleEngine.phase(dayNum, s.cycleLength, s.periodDuration)
+            val pred = vm.prediction.value ?: return@observe
+            val dayNum = CycleEngine.cycleDay(pred.lastPeriodStart, pred.cycleLength, targetDate)
+            val phase  = CycleEngine.phase(dayNum, pred.cycleLength, s.periodDuration)
             binding.tvBannerCycleDay.text = "CYCLE DAY · DAY $dayNum"
-            binding.tvBannerPhase.text    = "${CycleEngine.phaseName(phase)} · ${CycleEngine.phaseDescription(phase)}"
+            binding.tvBannerPhase.text    =
+                "${CycleEngine.phaseName(phase)} · ${CycleEngine.phaseDescription(phase)}"
         }
     }
 
@@ -242,6 +262,8 @@ class LogSymptomsFragment : Fragment() {
 
     // ── Scroll ────────────────────────────────────────────────────
 
+    // ✅ FIX 5 — safely cast root to ScrollView or NestedScrollView
+    // instead of calling smoothScrollTo() on an arbitrary View
     private fun scrollToSection() {
         if (scrollTo == "top") return
         binding.root.post {
@@ -252,7 +274,9 @@ class LogSymptomsFragment : Fragment() {
                 "notes"    -> binding.sectionNotes
                 else       -> null
             }
-            target?.let { binding.root.smoothScrollTo(0, it.top) }
+            target ?: return@post
+            // ✅ binding.root is NestedScrollView — cast directly, no when needed
+            binding.root.smoothScrollTo(0, target.top)
         }
     }
 
@@ -267,11 +291,11 @@ class LogSymptomsFragment : Fragment() {
                 Log.w(TAG, "bindClickListeners: save already in progress — ignoring tap")
                 return@OnClickListener
             }
-            // ✅ Disable both buttons immediately to prevent double tap
-            binding.btnSave.isEnabled       = false
+            // Disable both buttons immediately to prevent double tap
+            binding.btnSave.isEnabled         = false
             binding.btnSaveDailyLog.isEnabled = false
-            binding.btnSave.alpha           = 0.5f
-            binding.btnSaveDailyLog.alpha   = 0.5f
+            binding.btnSave.alpha             = 0.5f
+            binding.btnSaveDailyLog.alpha     = 0.5f
             initiateSave()
         }
 
@@ -282,7 +306,7 @@ class LogSymptomsFragment : Fragment() {
     // ── Save flow ─────────────────────────────────────────────────
 
     private fun initiateSave() {
-        // ✅ Double guard — catches any path that bypasses the click listener
+        // Double guard — catches any path that bypasses the click listener
         if (isSaving) {
             Log.w(TAG, "initiateSave: already saving — ignoring duplicate call")
             return
@@ -305,14 +329,24 @@ class LogSymptomsFragment : Fragment() {
 
         if (shouldAsk) {
             Log.i(TAG, "initiateSave: showing period start dialog")
-            PeriodStartConfirmationDialog.show(childFragmentManager) { result ->
-                Log.i(TAG, "initiateSave: dialog result=$result")
-                viewLifecycleOwner.lifecycleScope.launch {
-                    val confirmed = result == PeriodStartResult.PERIOD_STARTED
-                    doSave(flow, moods, symptoms, cervical, lh, bbt, notes,
-                        periodConfirmed = confirmed)
+            PeriodStartConfirmationDialog.show(
+                childFragmentManager,
+                onResult = { result ->
+                    Log.i(TAG, "initiateSave: dialog result=$result")
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        val confirmed = result == PeriodStartResult.PERIOD_STARTED
+                        doSave(flow, moods, symptoms, cervical, lh, bbt, notes,
+                            periodConfirmed = confirmed)
+                    }
+                },
+                // ✅ FIX 4 — re-enable buttons when user dismisses dialog without choosing.
+                // Without this, buttons stay disabled permanently if the user taps outside
+                // the dialog or presses back.
+                onDismiss = {
+                    Log.i(TAG, "initiateSave: dialog dismissed without selection — resetting")
+                    resetSaveButtons()
                 }
-            }
+            )
         } else {
             Log.i(TAG, "initiateSave: skipping dialog — flow='$flow' not period-starting")
             doSave(flow, moods, symptoms, cervical, lh, bbt, notes,
@@ -357,6 +391,9 @@ class LogSymptomsFragment : Fragment() {
                 }
                 if (!isAdded) return@launch
                 val ctx = context ?: return@launch
+                // ✅ FIX 2 — reset isSaving before navigating away so if
+                // popBackStack() is delayed or fails, buttons are usable again
+                isSaving = false
                 Toast.makeText(ctx,
                     if (periodConfirmed) "Period logged ✓" else "Log updated ✓",
                     Toast.LENGTH_SHORT).show()
@@ -380,6 +417,9 @@ class LogSymptomsFragment : Fragment() {
                 )
                 if (!isAdded) return@launch
                 val ctx = context ?: return@launch
+                // ✅ FIX 2 — reset isSaving before navigating away so if
+                // popBackStack() is delayed or fails, buttons are usable again
+                isSaving = false
                 Toast.makeText(ctx,
                     if (periodConfirmed) "Period logged ✓" else "Log saved ✓",
                     Toast.LENGTH_SHORT).show()
@@ -388,14 +428,14 @@ class LogSymptomsFragment : Fragment() {
         }
     }
 
-    // ✅ Re-enable buttons if save fails or is aborted
+    // ✅ Re-enable buttons if save fails, is aborted, or dialog is dismissed
     private fun resetSaveButtons() {
         isSaving = false
         _binding?.let {
-            it.btnSave.isEnabled        = true
+            it.btnSave.isEnabled          = true
             it.btnSaveDailyLog.isEnabled  = true
-            it.btnSave.alpha            = 1.0f
-            it.btnSaveDailyLog.alpha    = 1.0f
+            it.btnSave.alpha              = 1.0f
+            it.btnSaveDailyLog.alpha      = 1.0f
         }
     }
 

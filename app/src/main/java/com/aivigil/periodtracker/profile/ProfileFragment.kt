@@ -2,7 +2,6 @@
 
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.viewModelScope
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
@@ -30,7 +28,6 @@ import com.aivigil.periodtracker.profile.sheets.PeriodDurationSheet
 import com.aivigil.periodtracker.profile.sheets.WeightSheet
 import com.aivigil.periodtracker.viewmodel.CycleViewModel
 import com.aivigil.periodtracker.viewmodel.CycleViewModelFactory
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -40,8 +37,6 @@ class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
-
-
 
     private val vm: CycleViewModel by activityViewModels {
         CycleViewModelFactory(requireActivity().application)
@@ -56,13 +51,9 @@ class ProfileFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(
-        view: View,
-        savedInstanceState: Bundle?
-    ) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        setupUi()
+        setupSwitches()
         observeData()
         bindClickListeners()
     }
@@ -71,127 +62,83 @@ class ProfileFragment : Fragment() {
     // UI SETUP
     // ============================================================
 
-    private fun setupUi() {
-        setupAvatar()
-        setupSwitches()
-    }
-
-    private fun setupAvatar() {
-        binding.tvAvatar.background = GradientDrawable(
-            GradientDrawable.Orientation.TL_BR,
-            intArrayOf(
-                Color.parseColor("#EC4899"),
-                Color.parseColor("#A855F7")
-            )
-        ).apply {
-            shape = GradientDrawable.OVAL
-        }
-    }
+    // ✅ REMOVED setupAvatar() — the XML already uses @drawable/bg_avatar
+    // for the gradient oval. Overriding it in code with a GradientDrawable
+    // was redundant and ignored the drawable's corner radius/shape attributes.
 
     private fun setupSwitches() {
-
-        val pink = Color.parseColor("#EC4899")
+        val pink     = Color.parseColor("#EC4899")
         val pinkTrack = Color.parseColor("#FBCFE8")
-
         val offThumb = Color.parseColor("#D0C8D5")
         val offTrack = Color.parseColor("#EDE6F0")
 
         val thumbColors = ColorStateList(
-            arrayOf(
-                intArrayOf(android.R.attr.state_checked),
-                intArrayOf()
-            ),
+            arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
             intArrayOf(pink, offThumb)
         )
-
         val trackColors = ColorStateList(
-            arrayOf(
-                intArrayOf(android.R.attr.state_checked),
-                intArrayOf()
-            ),
+            arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
             intArrayOf(pinkTrack, offTrack)
         )
 
-        listOf(
-            binding.switchPeriod,
-            binding.switchOvul,
-            binding.switchDaily
-        ).forEach { switch ->
-            switch.thumbTintList = thumbColors
-            switch.trackTintList = trackColors
-        }
+        listOf(binding.switchPeriod, binding.switchOvul, binding.switchDaily)
+            .forEach { switch ->
+                switch.thumbTintList = thumbColors
+                switch.trackTintList = trackColors
+            }
     }
 
     // ============================================================
-    // OBSERVE DATABASE
+    // OBSERVE DATA
     // ============================================================
 
     private fun observeData() {
+        val dateFmt         = DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.getDefault())
+        val memberSinceFmt  = DateTimeFormatter.ofPattern("MMM yyyy", Locale.getDefault())
 
-        val dateFormatter =
-            DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.getDefault())
+        vm.settings.observe(viewLifecycleOwner) { s ->
+            s ?: return@observe
 
-        val memberSinceFormatter =
-            DateTimeFormatter.ofPattern("MMM yyyy", Locale.getDefault())
+            // ── Profile header ────────────────────────────────────
+            binding.tvAvatar.text      = s.userName.firstOrNull()?.uppercase() ?: "S"
+            binding.tvProfileName.text = s.userName
+            binding.tvMemberSince.text = try {
+                "Member since ${LocalDate.parse(s.memberSince).format(memberSinceFmt)}"
+            } catch (_: Exception) { "Member since ${s.memberSince}" }
 
-        vm.settings.observe(viewLifecycleOwner) { settings ->
+            // ── Cycle settings ────────────────────────────────────
+            binding.tvCycleLengthValue.text   = "${s.cycleLength} days"
+            binding.tvPeriodDurationValue.text = "${s.periodDuration} days"
+            binding.tvLastPeriodValue.text = try {
+                LocalDate.parse(s.lastPeriodStart).format(dateFmt)
+            } catch (_: Exception) { s.lastPeriodStart }
 
-            settings ?: return@observe
+            // ── Health profile ────────────────────────────────────
+            binding.tvAgeValue.text      = "${s.age} yrs"
+            binding.tvHeightValue.text   = "${s.heightCm} cm"
+            binding.tvWeightValue.text   = "${s.weightKg.toInt()} kg"
+            binding.tvActivityValue.text = s.activityLevel
 
-            // ----------------------------------------------------
-            // PROFILE HEADER
-            // ----------------------------------------------------
-
-            binding.tvAvatar.text =
-                settings.userName.firstOrNull()?.uppercase() ?: "S"
-
-            binding.tvProfileName.text = settings.userName
-
-            binding.tvMemberSince.text =
-                try {
-                    "Member since ${
-                        LocalDate.parse(settings.memberSince).format(memberSinceFormatter)
-                    }"
-                } catch (_: Exception) {
-                    "Member since ${settings.memberSince}"
-                }
-
-            // ----------------------------------------------------
-            // CYCLE SETTINGS
-            // ----------------------------------------------------
-
-            binding.tvCycleLengthValue.text   = "${settings.cycleLength} days"
-            binding.tvPeriodDurationValue.text = "${settings.periodDuration} days"
-
-            binding.tvLastPeriodValue.text =
-                try {
-                    LocalDate.parse(settings.lastPeriodStart).format(dateFormatter)
-                } catch (_: Exception) {
-                    settings.lastPeriodStart
-                }
-
-            // ----------------------------------------------------
-            // HEALTH PROFILE
-            // ----------------------------------------------------
-
-            binding.tvAgeValue.text      = "${settings.age} yrs"
-            binding.tvHeightValue.text   = "${settings.heightCm} cm"
-            binding.tvWeightValue.text   = "${settings.weightKg.toInt()} kg"
-            binding.tvActivityValue.text = settings.activityLevel
-
-            // Conditions: show count summary, not the full comma list
-            val condList = settings.conditions
-                .split(",")
-                .map { it.trim() }
-                .filter { it.isNotBlank() }
+            val condList = s.conditions.split(",").map { it.trim() }.filter { it.isNotBlank() }
             binding.tvConditionsValue.text = when {
                 condList.isEmpty() -> "None"
                 condList.size == 1 -> condList[0]
                 else               -> "${condList.size} conditions"
             }
+            binding.tvGoalValue.text = s.goal
 
-            binding.tvGoalValue.text = settings.goal
-            binding.rowActivity.setOnClickListener { showActivitySheet() }
+            // ✅ FIX — tvCycleTypeBadge exists in XML but was never updated from
+            // the fragment, so it always showed the hardcoded "Regular Cycle" text.
+            // Now it's set from real cycle regularity data via vm.periodEntries.
+        }
+
+        // ✅ FIX — wire tvCycleTypeBadge to real regularity data
+        vm.periodEntries.observe(viewLifecycleOwner) { entries ->
+            val dates = entries.map {
+                runCatching { LocalDate.parse(it.startDate) }.getOrNull()
+            }.filterNotNull()
+            val regularity = com.aivigil.periodtracker.domain.CycleEngine.cycleRegularity(dates)
+            binding.tvCycleTypeBadge.text = regularity
         }
     }
 
@@ -201,64 +148,28 @@ class ProfileFragment : Fragment() {
 
     private fun bindClickListeners() {
 
-        // --------------------------------------------------------
-        // PROFILE EDIT (name + age + height + weight combined)
-        // --------------------------------------------------------
+        // ── Profile edit ──────────────────────────────────────────
+        binding.btnEdit.setOnClickListener { showEditProfileSheet() }
 
-        binding.btnEdit.setOnClickListener {
-            showEditProfileSheet()
-        }
-
-        // --------------------------------------------------------
-        // CYCLE SETTINGS — each card opens its own sheet
-        // --------------------------------------------------------
-
-        binding.cardCycleLength.setOnClickListener {
-            showCycleLengthSheet()
-        }
-
-        binding.cardPeriodDuration.setOnClickListener {
-            showPeriodDurationSheet()
-        }
-
-        binding.cardLastPeriod.setOnClickListener {
-            showLastPeriodSheet()
-        }
+        // ── Cycle settings ────────────────────────────────────────
+        binding.cardCycleLength.setOnClickListener   { showCycleLengthSheet() }
+        binding.cardPeriodDuration.setOnClickListener { showPeriodDurationSheet() }
+        binding.cardLastPeriod.setOnClickListener    { showLastPeriodSheet() }
         binding.btnEditLastPeriod.setOnClickListener { showLastPeriodSheet() }
 
-        // --------------------------------------------------------
-        // HEALTH PROFILE — individual rows
-        // --------------------------------------------------------
+        // ── Health profile ────────────────────────────────────────
+        binding.rowAge.setOnClickListener        { showAgeSheet() }
+        binding.rowHeight.setOnClickListener     { showHeightSheet() }
+        binding.rowWeight.setOnClickListener     { showWeightSheet() }
+        binding.rowActivity.setOnClickListener   { showActivitySheet() }
+        binding.rowConditions.setOnClickListener { showConditionsSheet() }
 
-        binding.rowAge.setOnClickListener {
-            showAgeSheet()
-        }
+        // ── Privacy ───────────────────────────────────────────────
+        binding.rowDeleteData.setOnClickListener { showDeleteDialog() }
 
-        binding.rowHeight.setOnClickListener {
-            showHeightSheet()
-        }
-
-        binding.rowWeight.setOnClickListener {
-            showWeightSheet()
-        }
-
-        binding.rowConditions.setOnClickListener {
-            showConditionsSheet()
-        }
-
-        // --------------------------------------------------------
-        // PRIVACY
-        // --------------------------------------------------------
-
-        binding.rowDeleteData.setOnClickListener {
-            showDeleteDialog()
-        }
-
-        // --------------------------------------------------------
-        // REMINDERS
-        // --------------------------------------------------------
-
-        val prefs = requireContext().getSharedPreferences("reminder_prefs", android.content.Context.MODE_PRIVATE)
+        // ── Reminders ─────────────────────────────────────────────
+        val prefs = requireContext()
+            .getSharedPreferences("reminder_prefs", android.content.Context.MODE_PRIVATE)
 
         binding.switchPeriod.isChecked = prefs.getBoolean("period_reminder", true)
         binding.switchOvul.isChecked   = prefs.getBoolean("ovulation_reminder", true)
@@ -272,7 +183,7 @@ class ProfileFragment : Fragment() {
                     Log.d("ProfileFragment", "Period alarm ON — scheduling for $date")
                     AlarmScheduler.schedulePeriodAlarms(requireContext(), date)
                 } else {
-                    Log.w("ProfileFragment", "Period alarm ON — no prediction available, skipping")
+                    Log.w("ProfileFragment", "Period alarm ON — no prediction yet, skipping")
                 }
             } else {
                 Log.d("ProfileFragment", "Period alarm OFF — cancelling")
@@ -288,10 +199,7 @@ class ProfileFragment : Fragment() {
                     Log.d("ProfileFragment", "Ovulation alarm ON — scheduling for $date")
                     AlarmScheduler.scheduleOvulationAlarm(requireContext(), date)
                 } else {
-                    Log.w(
-                        "ProfileFragment",
-                        "Ovulation alarm ON — no prediction available, skipping"
-                    )
+                    Log.w("ProfileFragment", "Ovulation alarm ON — no prediction yet, skipping")
                 }
             } else {
                 Log.d("ProfileFragment", "Ovulation alarm OFF — cancelling")
@@ -302,7 +210,7 @@ class ProfileFragment : Fragment() {
         binding.switchDaily.setOnCheckedChangeListener { _, checked ->
             prefs.edit().putBoolean("daily_reminder", checked).apply()
             if (checked) {
-                Log.d("ProfileFragment", "Daily log reminder ON — scheduling WorkManager")
+                Log.d("ProfileFragment", "Daily reminder ON — scheduling WorkManager")
                 val request = PeriodicWorkRequestBuilder<DailyLogReminderWorker>(1, TimeUnit.DAYS)
                     .setInitialDelay(calculateDelayUntil8pm(), TimeUnit.MILLISECONDS)
                     .build()
@@ -312,153 +220,88 @@ class ProfileFragment : Fragment() {
                     request
                 )
             } else {
-                Log.d("ProfileFragment", "Daily log reminder OFF — cancelling WorkManager")
-                WorkManager.getInstance(requireContext()).cancelUniqueWork("daily_log_reminder")
+                Log.d("ProfileFragment", "Daily reminder OFF — cancelling WorkManager")
+                WorkManager.getInstance(requireContext())
+                    .cancelUniqueWork("daily_log_reminder")
             }
         }
     }
 
     // ============================================================
-    // EDIT PROFILE (combined: name, age, height, weight)
+    // SHEETS
     // ============================================================
 
     private fun showEditProfileSheet() {
-
-        val settings = vm.settings.value ?: return
-
+        val s = vm.settings.value ?: return
         EditProfileSheet(
-            currentName     = settings.userName,
-            currentAge      = settings.age,
-            currentHeightCm = settings.heightCm,
-            currentWeightKg = settings.weightKg
+            currentName     = s.userName,
+            currentAge      = s.age,
+            currentHeightCm = s.heightCm,
+            currentWeightKg = s.weightKg
         ) { name, age, heightCm, weightKg ->
-
             vm.updateProfile(name, age, heightCm, weightKg)
-
         }.show(childFragmentManager, EditProfileSheet.TAG)
     }
 
-    // ============================================================
-    // CYCLE LENGTH
-    // ============================================================
-
     private fun showCycleLengthSheet() {
-
-        val currentCycleLength = vm.settings.value?.cycleLength ?: 28
-
-        CycleLengthSheet(currentCycleLength) { newLength ->
-
+        CycleLengthSheet(vm.settings.value?.cycleLength ?: 28) { newLength ->
             vm.updateCycleLength(newLength)
-
         }.show(childFragmentManager, CycleLengthSheet.TAG)
     }
 
-    // ============================================================
-    // PERIOD DURATION
-    // ============================================================
-
     private fun showPeriodDurationSheet() {
-
-        val currentDuration = vm.settings.value?.periodDuration ?: 5
-
-        PeriodDurationSheet(currentDuration) { newDuration ->
-
+        PeriodDurationSheet(vm.settings.value?.periodDuration ?: 5) { newDuration ->
             vm.updatePeriodDuration(newDuration)
-
         }.show(childFragmentManager, PeriodDurationSheet.TAG)
     }
 
-    // ============================================================
-    // LAST PERIOD START
-    // ============================================================
-
     private fun showLastPeriodSheet() {
-
-        val currentDate = vm.settings.value
-            ?.lastPeriodStart
-            ?.let {
-                try { LocalDate.parse(it) } catch (_: Exception) { null }
-            }
+        val current = vm.settings.value?.lastPeriodStart
+            ?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
             ?: LocalDate.now()
-
-        LastPeriodSheet(currentDate) { newDate ->
-
+        LastPeriodSheet(current) { newDate ->
             vm.updateLastPeriodStart(newDate)
-
         }.show(childFragmentManager, LastPeriodSheet.TAG)
     }
 
-    // ============================================================
-    // AGE  (individual sheet)
-    // ============================================================
-
     private fun showAgeSheet() {
-
-        val currentAge = vm.settings.value?.age ?: 25
-
-        AgeSheet(currentAge) { newAge ->
-
+        AgeSheet(vm.settings.value?.age ?: 25) { newAge ->
             val s = vm.settings.value ?: return@AgeSheet
-            vm.updateProfile(
-                name      = s.userName,
-                age       = newAge,
-                heightCm  = s.heightCm,
-                weightKg  = s.weightKg
-            )
-
+            vm.updateProfile(s.userName, newAge, s.heightCm, s.weightKg)
         }.show(childFragmentManager, AgeSheet.TAG)
     }
 
-    // ============================================================
-    // HEIGHT  (individual sheet)
-    // ============================================================
-
     private fun showHeightSheet() {
-
-        val currentHeight = vm.settings.value?.heightCm ?: 160
-
-        HeightSheet(currentHeight) { newHeight ->
-
+        HeightSheet(vm.settings.value?.heightCm ?: 160) { newHeight ->
             val s = vm.settings.value ?: return@HeightSheet
-            vm.updateProfile(
-                name      = s.userName,
-                age       = s.age,
-                heightCm  = newHeight,
-                weightKg  = s.weightKg
-            )
-
+            vm.updateProfile(s.userName, s.age, newHeight, s.weightKg)
         }.show(childFragmentManager, HeightSheet.TAG)
     }
 
-    // ============================================================
-    // WEIGHT  (individual sheet)
-    // ============================================================
-
     private fun showWeightSheet() {
-
-        val currentWeight = vm.settings.value?.weightKg ?: 60f
-
-        WeightSheet(currentWeight) { newWeight ->
-
+        WeightSheet(vm.settings.value?.weightKg ?: 60f) { newWeight ->
             val s = vm.settings.value ?: return@WeightSheet
-            vm.updateProfile(
-                name      = s.userName,
-                age       = s.age,
-                heightCm  = s.heightCm,
-                weightKg  = newWeight
-            )
-
+            vm.updateProfile(s.userName, s.age, s.heightCm, newWeight)
         }.show(childFragmentManager, WeightSheet.TAG)
     }
 
-    // ============================================================
-    // CONDITIONS — opens bottom sheet with chips + symptom bars
-    // ============================================================
-
     private fun showConditionsSheet() {
-        val logs       = vm.allLogs.value ?: emptyList()
-        val conditions = vm.settings.value?.conditions ?: ""
-        ConditionsSheet(logs, conditions).show(childFragmentManager, ConditionsSheet.TAG)
+        ConditionsSheet(
+            vm.allLogs.value ?: emptyList(),
+            vm.settings.value?.conditions ?: ""
+        ).show(childFragmentManager, ConditionsSheet.TAG)
+    }
+
+    private fun showActivitySheet() {
+        val current = vm.settings.value?.activityLevel ?: "BALANCED"
+        val level = try {
+            OnboardingFragment5.ActivityLevel.valueOf(current)
+        } catch (_: Exception) {
+            OnboardingFragment5.ActivityLevel.BALANCED
+        }
+        ActivitySheet(level) { newLevel ->
+            vm.updateActivityLevel(newLevel.name)
+        }.show(childFragmentManager, ActivitySheet.TAG)
     }
 
     // ============================================================
@@ -466,7 +309,6 @@ class ProfileFragment : Fragment() {
     // ============================================================
 
     private fun showDeleteDialog() {
-
         android.app.AlertDialog.Builder(requireContext())
             .setTitle("Delete all data?")
             .setMessage(
@@ -481,27 +323,16 @@ class ProfileFragment : Fragment() {
             .show()
     }
 
+    // ============================================================
+    // HELPERS
+    // ============================================================
+
     private fun calculateDelayUntil8pm(): Long {
-        val now = java.time.LocalDateTime.now()
+        val now    = java.time.LocalDateTime.now()
         var target = now.withHour(20).withMinute(0).withSecond(0)
         if (now.isAfter(target)) target = target.plusDays(1)
         return java.time.Duration.between(now, target).toMillis()
     }
-
-    private fun showActivitySheet() {
-        val current = vm.settings.value?.activityLevel ?: "BALANCED"
-        val level = try {
-            OnboardingFragment5.ActivityLevel.valueOf(current)
-        } catch (e: Exception) {
-            OnboardingFragment5.ActivityLevel.BALANCED
-        }
-        ActivitySheet(level) { newLevel ->
-            vm.updateActivityLevel(newLevel.name)
-        }.show(childFragmentManager, ActivitySheet.TAG)
-    }
-
-
-
 
     // ============================================================
     // CLEANUP
@@ -511,6 +342,4 @@ class ProfileFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
-
 }

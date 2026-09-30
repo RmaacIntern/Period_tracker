@@ -9,6 +9,9 @@ import android.view.View
  * Draws a simple bar chart of cycle lengths.
  * Bars are pink→purple gradient fill. Current month bar is lighter.
  * Labels show day count above each bar, month name below.
+ *
+ * Data is set by InsightsFragment via [bars] property.
+ * The view starts empty — no hardcoded placeholder data.
  */
 class CycleBarChartView @JvmOverloads constructor(
     context: Context,
@@ -23,52 +26,60 @@ class CycleBarChartView @JvmOverloads constructor(
         val currentDay: Int? = null
     )
 
-    var bars: List<CycleBar> = listOf(
-        CycleBar("May", 28),
-        CycleBar("Jun", 29),
-        CycleBar("Jul", 27),
-        CycleBar("Aug", 28),
-        CycleBar("Sep", 28),
-        CycleBar("Oct", 28, isCurrent = true, currentDay = 18)
-    )
+    // ✅ FIX 6 — starts empty; InsightsFragment sets real data via vm.getBarChartData()
+    // Old: hardcoded listOf(CycleBar("May", 28), ...) that always showed regardless of real data
+    var bars: List<CycleBar> = emptyList()
         set(value) { field = value; invalidate() }
 
-    private val barPaint    = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
-    private val textPaint   = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+    private val barPaint     = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
+    private val textPaint    = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         textAlign = Paint.Align.CENTER; typeface = Typeface.DEFAULT_BOLD
     }
-    private val labelPaint  = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+    private val labelPaint   = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         textAlign = Paint.Align.CENTER; typeface = Typeface.DEFAULT
     }
     private val avgLinePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.STROKE; strokeWidth = 1.5f; pathEffect = DashPathEffect(floatArrayOf(6f, 4f), 0f)
+        style = Paint.Style.STROKE; strokeWidth = 1.5f
+        pathEffect = DashPathEffect(floatArrayOf(6f, 4f), 0f)
         color = Color.parseColor("#8A7A8F")
     }
     private val avgTextPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         textAlign = Paint.Align.LEFT; typeface = Typeface.DEFAULT_BOLD
         color = Color.parseColor("#2D1B33")
     }
+    private val emptyPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        textAlign = Paint.Align.CENTER
+        color = Color.parseColor("#8A7A8F")
+    }
 
     private val rectF = RectF()
 
     override fun onDraw(canvas: Canvas) {
-        if (bars.isEmpty()) return
+        // ✅ Show a friendly empty state instead of crashing or showing nothing
+        if (bars.isEmpty()) {
+            emptyPaint.textSize = 13f * resources.displayMetrics.density * 0.7f
+            canvas.drawText(
+                "Log your first period to see cycle history",
+                width / 2f, height / 2f, emptyPaint
+            )
+            return
+        }
 
-        val w = width.toFloat()
-        val h = height.toFloat()
-        val topPad    = 28f   // room for day labels above bars
-        val bottomPad = 24f   // room for month labels below bars
+        val w         = width.toFloat()
+        val h         = height.toFloat()
+        val topPad    = 28f
+        val bottomPad = 24f
         val chartH    = h - topPad - bottomPad
         val maxDays   = bars.maxOf { it.days }.coerceAtLeast(30).toFloat()
         val avgDays   = bars.map { it.days }.average().toInt()
 
-        val totalBars  = bars.size
-        val barWidth   = (w * 0.75f) / totalBars
-        val barGap     = (w * 0.25f) / (totalBars + 1)
-        val cornerR    = barWidth * 0.3f
+        val totalBars = bars.size
+        val barWidth  = (w * 0.75f) / totalBars
+        val barGap    = (w * 0.25f) / (totalBars + 1)
+        val cornerR   = barWidth * 0.3f
 
-        textPaint.textSize  = 11f * resources.displayMetrics.density * 0.7f
-        labelPaint.textSize = 10f * resources.displayMetrics.density * 0.7f
+        textPaint.textSize    = 11f * resources.displayMetrics.density * 0.7f
+        labelPaint.textSize   = 10f * resources.displayMetrics.density * 0.7f
         avgTextPaint.textSize = 10f * resources.displayMetrics.density * 0.7f
 
         // Draw avg line
@@ -88,10 +99,10 @@ class CycleBarChartView @JvmOverloads constructor(
             if (bar.isCurrent) {
                 // Light purple tint for current in-progress bar
                 barPaint.shader = null
-                barPaint.color = Color.parseColor("#EDE8FC")
+                barPaint.color  = Color.parseColor("#EDE8FC")
                 canvas.drawRoundRect(rectF, cornerR, cornerR, barPaint)
 
-                // Show "D18" badge on top
+                // Show "D{n}" badge on top
                 val badgePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                     color = Color.parseColor("#EC4899"); style = Paint.Style.FILL
                 }
@@ -101,16 +112,24 @@ class CycleBarChartView @JvmOverloads constructor(
                 val badgeT = top - badgeH - 4f
                 val badgeR = RectF(badgeL, badgeT, badgeL + badgeW, badgeT + badgeH)
                 canvas.drawRoundRect(badgeR, 6f, 6f, badgePaint)
+
                 val bp = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                    color = Color.WHITE; textAlign = Paint.Align.CENTER
-                    textSize = 9f * resources.displayMetrics.density * 0.7f; typeface = Typeface.DEFAULT_BOLD
+                    color     = Color.WHITE
+                    textAlign = Paint.Align.CENTER
+                    textSize  = 9f * resources.displayMetrics.density * 0.7f
+                    typeface  = Typeface.DEFAULT_BOLD
                 }
-                canvas.drawText("D${bar.currentDay}", left + barWidth / 2f, badgeT + 12f, bp)
+                canvas.drawText(
+                    "D${bar.currentDay ?: "?"}",
+                    left + barWidth / 2f, badgeT + 12f, bp
+                )
             } else {
                 // Gradient fill for completed bars
-                val grad = LinearGradient(left, top, left, bottom,
+                val grad = LinearGradient(
+                    left, top, left, bottom,
                     Color.parseColor("#EC4899"), Color.parseColor("#A855F7"),
-                    Shader.TileMode.CLAMP)
+                    Shader.TileMode.CLAMP
+                )
                 barPaint.shader = grad
                 canvas.drawRoundRect(rectF, cornerR, cornerR, barPaint)
                 barPaint.shader = null

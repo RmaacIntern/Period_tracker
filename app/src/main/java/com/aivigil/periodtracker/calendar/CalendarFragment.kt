@@ -65,7 +65,10 @@ class CalendarFragment : Fragment() {
         val today = LocalDate.now()
         val periodDays        = CycleEngine.periodDays(pred.lastPeriodStart, s.periodDuration)
         val fertileWindowDays = CycleEngine.fertileWindowDays(pred.fertileStart, pred.fertileEnd)
-        val predictedDays     = CycleEngine.predictedPeriodDays(pred.lastPeriodStart, pred.cycleLength, s.periodDuration)
+
+        val predictedDays = CycleEngine.futurePeriodDays(
+            pred.lastPeriodStart, pred.cycleLength, s.periodDuration, monthsAhead = 3
+        ).values.flatten().toSet()
         val currentDay        = CycleEngine.cycleDay(pred.lastPeriodStart, pred.cycleLength)
 
         android.util.Log.i("CalendarFragment", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
@@ -96,7 +99,7 @@ class CalendarFragment : Fragment() {
             android.util.Log.e("CalendarFragment", "EDGE CASE: ovulationDate=${pred.ovulationDate} is after nextPeriodDate!")
 
         binding.cycleCalendarView.apply {
-            displayMonth        = this@CalendarFragment.displayMonth
+            displayMonth = this@CalendarFragment.displayMonth
             selectedDate        = this@CalendarFragment.selectedDate
             this.periodDays          = periodDays
             this.fertileWindowDays   = fertileWindowDays
