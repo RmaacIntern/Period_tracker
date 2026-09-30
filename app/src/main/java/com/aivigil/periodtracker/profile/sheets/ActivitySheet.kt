@@ -84,13 +84,13 @@ class ActivitySheet(
     private fun render() {
         // Reset all
         listOf(cardGentle, cardBalanced, cardActive).forEach {
-            it.background = roundedBg("#F7F0F5", 14f)
+            it.background = roundedBg(requireContext().getColor(R.color.option_card_bg), 14f)
         }
         listOf(tvGentleLabel, tvBalancedLabel, tvActiveLabel).forEach {
-            it.setTextColor(Color.parseColor("#2D1B33"))
+            it.setTextColor(requireContext().getColor(R.color.text_primary))
         }
         listOf(tvGentleDesc, tvBalancedDesc, tvActiveDesc).forEach {
-            it.setTextColor(Color.parseColor("#8A7A8F"))
+            it.setTextColor(requireContext().getColor(R.color.text_secondary))
         }
         setUnchecked(checkGentle, ivCheckGentle)
         setUnchecked(checkBalanced, ivCheckBalanced)
@@ -133,10 +133,10 @@ class ActivitySheet(
         intArrayOf(Color.parseColor("#E63A5E"), Color.parseColor("#A855F7"))
     ).apply { cornerRadius = 14f * resources.displayMetrics.density }
 
-    private fun roundedBg(hex: String, r: Float) = GradientDrawable().apply {
+    private fun roundedBg(color: Int, r: Float) = GradientDrawable().apply {
         shape = GradientDrawable.RECTANGLE
         cornerRadius = r * resources.displayMetrics.density
-        setColor(Color.parseColor(hex))
+        setColor(color)
     }
 
     private fun filledCircle(hex: String) = GradientDrawable().apply {

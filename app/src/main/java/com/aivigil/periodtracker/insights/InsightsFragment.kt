@@ -27,6 +27,7 @@ import com.aivigil.periodtracker.history.PastLogHistoryFragment
 import com.aivigil.periodtracker.databinding.FragmentInsightsBinding
 import com.aivigil.periodtracker.domain.CycleEngine
 import com.aivigil.periodtracker.data.entity.DailyLog
+import com.aivigil.periodtracker.util.ThemeHelper
 import com.aivigil.periodtracker.viewmodel.CycleViewModel
 import com.aivigil.periodtracker.viewmodel.CycleViewModelFactory
 import java.io.File
@@ -470,37 +471,30 @@ class InsightsFragment : Fragment() {
     // ─────────────────────────────────────────────
 
     private fun applyBackgrounds() {
+        val ctx = requireContext()
         listOf(binding.cardAvgCycle, binding.cardAvgPeriod,
             binding.cardLuteal,  binding.cardSymptomPeak)
-            .forEach { it.background = roundedBg("#FFFFFF", 22f) }
+            .forEach { it.background = ThemeHelper.cardBg(ctx, 22f) }
 
-        binding.iconAvgCycle.background  = roundedBg("#FFF0F7", 12f)
-        binding.iconAvgPeriod.background = roundedBg("#F3EDFF", 12f)
-        binding.iconLuteal.background    = roundedBg("#F3EDFF", 12f)
-        binding.iconSymptom.background   = roundedBg("#FFF0F7", 12f)
+        binding.iconAvgCycle.background  = ThemeHelper.iconCirclePink(ctx)
+        binding.iconAvgPeriod.background = ThemeHelper.iconCirclePurple(ctx)
+        binding.iconLuteal.background    = ThemeHelper.iconCirclePurple(ctx)
+        binding.iconSymptom.background   = ThemeHelper.iconCirclePink(ctx)
 
-        binding.cycleHistoryCard.background  = roundedBg("#FFFFFF", 22f)
+        binding.cycleHistoryCard.background  = ThemeHelper.cardBg(ctx, 22f)
         binding.cycleHistoryCard.isClickable = true
         binding.cycleHistoryCard.isFocusable = true
 
-        binding.tvCycleHistoryIcon.background = roundedBg("#FFF0F7", 14f)
-        binding.tvHistoryArrow.background     = roundedBg("#FFF0F7", 50f)
+        binding.tvCycleHistoryIcon.background = ThemeHelper.iconCirclePink(ctx)
+        binding.tvHistoryArrow.background     = ThemeHelper.iconCirclePink(ctx)
 
-        binding.phaseGuideCard.background   = roundedBg("#FFFFFF", 22f)
-        binding.tvPhaseDaysBadge.background = roundedBg("#F3EDFF", 50f)
+        binding.phaseGuideCard.background   = ThemeHelper.cardBg(ctx, 22f)
+        binding.tvPhaseDaysBadge.background = ThemeHelper.innerCardBg(ctx, 50f)
 
-        binding.cyclePatternsCard.background = roundedBg("#FFFFFF", 22f)
+        binding.cyclePatternsCard.background = ThemeHelper.cardBg(ctx, 22f)
 
-        binding.exportCard.background = roundedBg("#FFFFFF", 22f)
-        binding.iconExport.background = roundedBg("#FFF0F7", 14f)
-    }
-
-    private fun roundedBg(colorHex: String, radiusDp: Float): GradientDrawable {
-        return GradientDrawable().apply {
-            shape        = GradientDrawable.RECTANGLE
-            cornerRadius = radiusDp * resources.displayMetrics.density
-            setColor(Color.parseColor(colorHex))
-        }
+        binding.exportCard.background = ThemeHelper.cardBg(ctx, 22f)
+        binding.iconExport.background = ThemeHelper.iconCirclePink(ctx)
     }
 
     override fun onDestroyView() {

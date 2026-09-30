@@ -2,5 +2,5 @@
 <!-- res/color/selector_chip_bg.xml -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:color="#EC4899" android:state_checked="true" />
-    <item android:color="#F9F3FB" />
+    <item android:color="@color/chip_bg" />
 </selector>

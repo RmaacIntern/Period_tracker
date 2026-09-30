@@ -22,7 +22,7 @@
             android:textSize="12sp"
             android:textStyle="bold"
             android:letterSpacing="0.05"
-            android:textColor="#2D1B33"
+            android:textColor="@color/text_primary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/tvDayCycleDay"
             app:layout_constraintTop_toTopOf="parent" />
@@ -47,7 +47,7 @@
             android:layout_marginTop="2dp"
             android:text="2 entries"
             android:textSize="11sp"
-            android:textColor="#8A7A8F"
+            android:textColor="@color/text_secondary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvDayDate" />
 

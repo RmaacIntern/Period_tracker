@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingBottom="32dp">
+    android:paddingBottom="32dp"
+    android:background="@drawable/bottom_sheet_bg">
 
     <!-- Handle -->
     <View
@@ -12,8 +13,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="12dp"
         android:layout_marginBottom="20dp"
-        android:background="#E0D6E8"
-        android:backgroundTint="#E0D6E8" />
+        android:background="@drawable/sheet_handle" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -23,7 +23,7 @@
         android:text="Activity Level"
         android:textSize="17sp"
         android:textStyle="bold"
-        android:textColor="#2D1B33" />
+        android:textColor="@color/text_primary" />
 
     <!-- Gentle -->
     <LinearLayout
@@ -49,7 +49,7 @@
                 android:text="Gentle"
                 android:textSize="15sp"
                 android:textStyle="bold"
-                android:textColor="#2D1B33" />
+                android:textColor="@color/text_primary" />
 
             <TextView
                 android:id="@+id/tvGentleDesc"
@@ -58,7 +58,7 @@
                 android:layout_marginTop="2dp"
                 android:text="Light walks, yoga, low-impact movement"
                 android:textSize="12sp"
-                android:textColor="#8A7A8F" />
+                android:textColor="@color/text_secondary" />
         </LinearLayout>
 
         <FrameLayout
@@ -100,7 +100,7 @@
                 android:text="Balanced"
                 android:textSize="15sp"
                 android:textStyle="bold"
-                android:textColor="#2D1B33" />
+                android:textColor="@color/text_primary" />
 
             <TextView
                 android:id="@+id/tvBalancedDesc"
@@ -109,7 +109,7 @@
                 android:layout_marginTop="2dp"
                 android:text="Mix of rest and moderate exercise"
                 android:textSize="12sp"
-                android:textColor="#8A7A8F" />
+                android:textColor="@color/text_secondary" />
         </LinearLayout>
 
         <FrameLayout
@@ -151,7 +151,7 @@
                 android:text="Very Active"
                 android:textSize="15sp"
                 android:textStyle="bold"
-                android:textColor="#2D1B33" />
+                android:textColor="@color/text_primary" />
 
             <TextView
                 android:id="@+id/tvActiveDesc"
@@ -160,7 +160,7 @@
                 android:layout_marginTop="2dp"
                 android:text="Intense workouts, sports or high daily activity"
                 android:textSize="12sp"
-                android:textColor="#8A7A8F" />
+                android:textColor="@color/text_secondary" />
         </LinearLayout>
 
         <FrameLayout

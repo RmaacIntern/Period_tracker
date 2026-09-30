@@ -19,19 +19,21 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
+        <!-- ✅ FIX — #2D1B33 → @color/text_primary -->
         <TextView
             android:id="@+id/statLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="11sp"
             android:textStyle="bold"
-            android:textColor="#2D1B33" />
+            android:textColor="@color/text_primary" />
 
+        <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
         <TextView
             android:id="@+id/statValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="10sp"
-            android:textColor="#8A7A8F" />
+            android:textColor="@color/text_secondary" />
     </LinearLayout>
 </LinearLayout>

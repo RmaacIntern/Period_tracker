@@ -1,8 +1,6 @@
 ﻿package com.aivigil.periodtracker.splash
 
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -22,6 +20,7 @@ import com.aivigil.periodtracker.ads.ShowAds
 import com.aivigil.periodtracker.databinding.ActivitySplashBinding
 import com.aivigil.periodtracker.databinding.SmallBannerBinding
 import com.aivigil.periodtracker.onboarding.OnboardingActivity
+import com.aivigil.periodtracker.util.ThemeHelper
 import com.google.android.libraries.ads.mobile.sdk.MobileAds
 import com.google.android.libraries.ads.mobile.sdk.initialization.InitializationConfig
 import com.google.firebase.FirebaseApp
@@ -34,7 +33,6 @@ class SplashActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySplashBinding
     private var bannerAdHelper: BannerAdHelper? = null
-
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -52,30 +50,21 @@ class SplashActivity : AppCompatActivity() {
 
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.splashRoot) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            // Apply bottom padding to root so ALL content shifts up
             v.setPadding(
                 systemBars.left,
                 systemBars.top,
                 systemBars.right,
-                systemBars.bottom  // ← this pushes banner above nav bar
+                systemBars.bottom
             )
             insets
         }
 
-
-
-
-
-        binding.splashRoot.background = GradientDrawable(
-            GradientDrawable.Orientation.TL_BR,
-            intArrayOf(
-                Color.parseColor("#F0E6FA"),
-                Color.parseColor("#FDE8F3"),
-                Color.parseColor("#FFFFFF")
-            )
-        )
+        // ✅ FIX — replaced hardcoded Color.parseColor hex with ThemeHelper
+        // so the gradient adapts to dark mode automatically via values-night/colors.xml
+        binding.splashRoot.background = ThemeHelper.splashGradient(this)
 
         binding.logoCircle.clipToOutline = true
         binding.logoCircle.outlineProvider = android.view.ViewOutlineProvider.BACKGROUND
@@ -101,7 +90,6 @@ class SplashActivity : AppCompatActivity() {
         AdsRemoteConfig.load {
             runOnUiThread {
                 if (isFinishing || isDestroyed) return@runOnUiThread
-
                 if (AdsRemoteConfig.isAnyAdEnabled()) {
                     initializeAds()
                 } else {
@@ -121,26 +109,20 @@ class SplashActivity : AppCompatActivity() {
             Log.d(TAG, "Ads SDK already initialized")
             loadBannerAd()
             startSplash()
-
             return
         }
 
         Thread {
             try {
-                val config = InitializationConfig.Builder(
-                    AdConstants.APP_ID
-                ).build()
-
+                val config = InitializationConfig.Builder(AdConstants.APP_ID).build()
                 MobileAds.initialize(applicationContext, config)
-
                 Log.d(TAG, "Ads SDK initialized")
                 runOnUiThread {
                     if (isFinishing || isDestroyed) return@runOnUiThread
-                    appOpenAdManager.onSdkInitialized()   // ← add
+                    appOpenAdManager.onSdkInitialized()
                     loadBannerAd()
                     startSplash()
                 }
-
             } catch (e: Exception) {
                 Log.e(TAG, "Ads SDK initialization failed", e)
                 runOnUiThread {
@@ -157,14 +139,8 @@ class SplashActivity : AppCompatActivity() {
 
     private fun loadBannerAd() {
         if (isFinishing || isDestroyed) return
-
         val smallBannerBinding = SmallBannerBinding.bind(binding.smallAd.root)
-
-        bannerAdHelper = BannerAdHelper(
-            activity = this,
-            adUnitId = AdConstants.BANNER_AD_UNIT_ID
-        )
-
+        bannerAdHelper = BannerAdHelper(activity = this, adUnitId = AdConstants.BANNER_AD_UNIT_ID)
         bannerAdHelper?.loadInto(smallBannerBinding)
     }
 
@@ -174,40 +150,27 @@ class SplashActivity : AppCompatActivity() {
 
     private fun startSplash() {
         if (isFinishing || isDestroyed) return
-
         Log.d(TAG, "Splash started")
 
         adReady = false
         binding.progressBar.progress = 0
 
-        // ── Load interstitial in parallel with timer ───────────────
         if (AdsRemoteConfig.show_splash_interstitial) {
-
             Log.d(TAG, "Loading splash interstitial")
-
             LoadAds.preloadSplash(
                 object : LoadAds.OnSplashAdLoadListener {
-
                     override fun onAdLoaded() {
                         runOnUiThread {
                             if (isFinishing || isDestroyed || opened) return@runOnUiThread
-
                             Log.d(TAG, "Ad loaded → showing immediately")
-
                             adReady = true
-                            // Timer keeps running in background (DO NOT stop it)
-                            // Show ad RIGHT NOW
-                           showSplashAd()
+                            showSplashAd()
                         }
                     }
-
                     override fun onAdUnavailable() {
                         runOnUiThread {
                             if (isFinishing || isDestroyed || opened) return@runOnUiThread
-
                             Log.d(TAG, "Ad unavailable → timer continues")
-
-                            // Timer is still running → let it finish naturally
                             adReady = false
                         }
                     }
@@ -215,30 +178,24 @@ class SplashActivity : AppCompatActivity() {
             )
         }
 
-        // ── Timer runs as fallback ─────────────────────────────────
         startSplashTimer()
     }
 
     // ─────────────────────────────────────────────────────────────
-    // SPLASH TIMER — fallback if ad never loads
+    // SPLASH TIMER
     // ─────────────────────────────────────────────────────────────
 
     private fun startSplashTimer() {
-        val duration = AdsRemoteConfig.max_splash_time_ms
-
+        val duration  = AdsRemoteConfig.max_splash_time_ms
         val startTime = System.currentTimeMillis()
 
         val progressRunnable = object : Runnable {
             override fun run() {
                 if (opened) return
-
-                val elapsed = System.currentTimeMillis() - startTime
-                val progress = ((elapsed.toFloat() / duration) * 100)
-                    .toInt()
-                    .coerceIn(0, 100)
+                val elapsed  = System.currentTimeMillis() - startTime
+                val progress = ((elapsed.toFloat() / duration) * 100).toInt().coerceIn(0, 100)
 
                 binding.progressBar.progress = progress
-
                 binding.tvLoading.text = when {
                     progress < 30 -> "Loading..."
                     progress < 60 -> "Setting things up..."
@@ -247,14 +204,11 @@ class SplashActivity : AppCompatActivity() {
                 }
 
                 if (elapsed >= duration) {
-                    // ← Only navigate if ad is NOT showing
                     if (!adReady) {
                         Log.d(TAG, "Timer done, no ad → going next")
                         openNextScreen()
                     } else {
                         Log.d(TAG, "Timer done, ad is showing → waiting for dismiss")
-                        // Do nothing — openNextScreen() will be called
-                        // from ShowAds.showSplash dismiss callback
                     }
                 } else {
                     handler.postDelayed(this, 50)
@@ -275,16 +229,11 @@ class SplashActivity : AppCompatActivity() {
             openNextScreen()
             return
         }
-
         Log.d(TAG, "Showing splash interstitial")
-
-        // ← Keep adReady = true while ad is ON SCREEN
-        // so timer knows not to navigate away
-
         ShowAds.showSplash(this) {
             runOnUiThread {
                 Log.d(TAG, "Ad dismissed → now safe to go next")
-                adReady = false  // ← reset only after dismiss
+                adReady = false
                 openNextScreen()
             }
         }
@@ -305,12 +254,8 @@ class SplashActivity : AppCompatActivity() {
             val repo = com.aivigil.periodtracker.data.repository.CycleRepository
                 .getInstance(applicationContext)
             val done = repo.isOnboardingComplete.first()
-
             Log.d(TAG, "Opening next screen — onboardingDone=$done")
-
-            val dest = if (done) MainActivity::class.java
-            else      OnboardingActivity::class.java
-
+            val dest = if (done) MainActivity::class.java else OnboardingActivity::class.java
             startActivity(Intent(this@SplashActivity, dest))
             finish()
         }
@@ -325,10 +270,4 @@ class SplashActivity : AppCompatActivity() {
         bannerAdHelper?.destroy()
         super.onDestroy()
     }
-
-    // ─────────────────────────────────────────────────────────────
-// ANIMATE PROGRESS TO 100% THEN CALLBACK
-// ─────────────────────────────────────────────────────────────
-
-
 }

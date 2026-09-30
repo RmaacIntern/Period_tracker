@@ -10,6 +10,7 @@
     android:paddingBottom="24dp"
     tools:context=".onboarding.OnboardingFragment4">
 
+    <!-- heartIconCircle background set in Kotlin via ThemeHelper.iconCirclePink() -->
     <FrameLayout
         android:id="@+id/heartIconCircle"
         android:layout_width="56dp"
@@ -26,6 +27,7 @@
             android:textSize="22sp" />
     </FrameLayout>
 
+    <!-- ✅ FIX — #3D1B2E → @color/text_primary -->
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="match_parent"
@@ -34,9 +36,10 @@
         android:text="Anything your body\nlives with?"
         android:textSize="22sp"
         android:textStyle="bold"
-        android:textColor="#3D1B2E"
+        android:textColor="@color/text_primary"
         app:layout_constraintTop_toBottomOf="@id/heartIconCircle" />
 
+    <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
     <TextView
         android:id="@+id/tvSubtitle"
         android:layout_width="match_parent"
@@ -44,9 +47,10 @@
         android:layout_marginTop="8dp"
         android:text="Period Tracker quietly adapts its predictions, cycle insights, and helpful tips around your health. Pick all that apply, or none."
         android:textSize="13sp"
-        android:textColor="#8A7A8F"
+        android:textColor="@color/text_secondary"
         app:layout_constraintTop_toBottomOf="@id/tvTitle" />
 
+    <!-- Chips use @style/ConditionChip — Material handles dark mode for chip colors -->
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/conditionsChipGroup"
         android:layout_width="match_parent"
@@ -125,6 +129,7 @@
         app:chipStartPadding="16dp"
         app:layout_constraintTop_toBottomOf="@id/conditionsChipGroup" />
 
+    <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
     <TextView
         android:id="@+id/tvFooterNote"
         android:layout_width="0dp"
@@ -133,7 +138,7 @@
         android:gravity="center"
         android:text="🔒 Kept confidential and securely stored on-device"
         android:textSize="11sp"
-        android:textColor="#8A7A8F"
+        android:textColor="@color/text_secondary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />

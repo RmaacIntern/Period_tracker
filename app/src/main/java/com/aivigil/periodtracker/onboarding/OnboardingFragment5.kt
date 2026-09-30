@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.aivigil.periodtracker.R
 import com.aivigil.periodtracker.databinding.FragmentOnboarding5Binding
+import com.aivigil.periodtracker.util.ThemeHelper
 
 class OnboardingFragment5 : Fragment() {
 
@@ -19,7 +20,7 @@ class OnboardingFragment5 : Fragment() {
 
     enum class ActivityLevel { GENTLE, BALANCED, VERY_ACTIVE }
 
-    private var selectedLevel = ActivityLevel.BALANCED // matches screenshot's default
+    private var selectedLevel = ActivityLevel.BALANCED
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,21 +33,13 @@ class OnboardingFragment5 : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Same gradient background as all other onboarding screens
-        binding.onboarding5Root.background = GradientDrawable(
-            GradientDrawable.Orientation.TOP_BOTTOM,
-            intArrayOf(
-                Color.parseColor("#FDF2F5"),
-                Color.parseColor("#FBF5F8"),
-                Color.parseColor("#FFFFFF")
-            )
-        )
+        // ✅ FIX — replaced hardcoded gradient and icon circle with ThemeHelper
+        binding.onboarding5Root.background = ThemeHelper.onboardingGradient(requireContext())
+        binding.moveIconCircle.background  = ThemeHelper.iconCirclePink(requireContext())
 
-        binding.moveIconCircle.background = filledCircle("#FDE2E9")
-
-        binding.cardGentle.setOnClickListener { selectLevel(ActivityLevel.GENTLE) }
+        binding.cardGentle.setOnClickListener   { selectLevel(ActivityLevel.GENTLE) }
         binding.cardBalanced.setOnClickListener { selectLevel(ActivityLevel.BALANCED) }
-        binding.cardActive.setOnClickListener { selectLevel(ActivityLevel.VERY_ACTIVE) }
+        binding.cardActive.setOnClickListener   { selectLevel(ActivityLevel.VERY_ACTIVE) }
 
         renderSelection()
     }
@@ -57,44 +50,49 @@ class OnboardingFragment5 : Fragment() {
     }
 
     private fun renderSelection() {
-        // Reset all cards to unselected (white) state first
-        binding.cardGentle.background = roundedBg("#FFFFFF", 18f)
-        binding.cardBalanced.background = roundedBg("#FFFFFF", 18f)
-        binding.cardActive.background = roundedBg("#FFFFFF", 18f)
+        // ✅ FIX — unselected card bg uses ThemeHelper.cardBg() so dark mode
+        // shows a dark card instead of white
+        binding.cardGentle.background   = ThemeHelper.cardBg(requireContext(), 18f)
+        binding.cardBalanced.background = ThemeHelper.cardBg(requireContext(), 18f)
+        binding.cardActive.background   = ThemeHelper.cardBg(requireContext(), 18f)
 
-        binding.tvGentleLabel.setTextColor(Color.parseColor("#2D1B33"))
-        binding.tvGentleDesc.setTextColor(Color.parseColor("#8A7A8F"))
-        binding.tvBalancedLabel.setTextColor(Color.parseColor("#2D1B33"))
-        binding.tvBalancedDesc.setTextColor(Color.parseColor("#8A7A8F"))
-        binding.tvActiveLabel.setTextColor(Color.parseColor("#2D1B33"))
-        binding.tvActiveDesc.setTextColor(Color.parseColor("#8A7A8F"))
+        // ✅ FIX — unselected text colors use context.getColor() from color resources
+        val textPrimary   = requireContext().getColor(R.color.text_primary)
+        val textSecondary = requireContext().getColor(R.color.text_secondary)
 
-        // Unchecked state for all: outline circle, no background fill, muted grey icon
+        binding.tvGentleLabel.setTextColor(textPrimary)
+        binding.tvGentleDesc.setTextColor(textSecondary)
+        binding.tvBalancedLabel.setTextColor(textPrimary)
+        binding.tvBalancedDesc.setTextColor(textSecondary)
+        binding.tvActiveLabel.setTextColor(textPrimary)
+        binding.tvActiveDesc.setTextColor(textSecondary)
+
         setUnchecked(binding.checkGentle, binding.ivCheckGentle)
         setUnchecked(binding.checkBalanced, binding.ivCheckBalanced)
         setUnchecked(binding.checkActive, binding.ivCheckActive)
 
-        // Highlight the selected card with the gradient + white text + white filled checkmark
         val (card, labelView, descView, circleView, iconView) = when (selectedLevel) {
-            ActivityLevel.GENTLE -> CardRefs(binding.cardGentle, binding.tvGentleLabel, binding.tvGentleDesc, binding.checkGentle, binding.ivCheckGentle)
-            ActivityLevel.BALANCED -> CardRefs(binding.cardBalanced, binding.tvBalancedLabel, binding.tvBalancedDesc, binding.checkBalanced, binding.ivCheckBalanced)
-            ActivityLevel.VERY_ACTIVE -> CardRefs(binding.cardActive, binding.tvActiveLabel, binding.tvActiveDesc, binding.checkActive, binding.ivCheckActive)
+            ActivityLevel.GENTLE      -> CardRefs(binding.cardGentle,   binding.tvGentleLabel,   binding.tvGentleDesc,   binding.checkGentle,   binding.ivCheckGentle)
+            ActivityLevel.BALANCED    -> CardRefs(binding.cardBalanced, binding.tvBalancedLabel, binding.tvBalancedDesc, binding.checkBalanced, binding.ivCheckBalanced)
+            ActivityLevel.VERY_ACTIVE -> CardRefs(binding.cardActive,   binding.tvActiveLabel,   binding.tvActiveDesc,   binding.checkActive,   binding.ivCheckActive)
         }
 
+        // Selected card always uses brand gradient — looks correct in both modes
         card.background = gradientBg()
         labelView.setTextColor(Color.WHITE)
         descView.setTextColor(Color.parseColor("#F5E6F0"))
         setChecked(circleView, iconView)
     }
 
-    /** Selected state: white filled circle, colored checkmark on top of the gradient card. */
     private fun setChecked(circle: View, icon: ImageView) {
-        circle.background = filledCircle("#FFFFFF")
+        circle.background = GradientDrawable().apply {
+            shape = GradientDrawable.OVAL
+            setColor(Color.WHITE)
+        }
         icon.setImageResource(R.drawable.ic_check)
         icon.setColorFilter(Color.parseColor("#E63A5E"))
     }
 
-    /** Unselected state: no fill, muted outline circle from ic_uncheck's own stroke color. */
     private fun setUnchecked(circle: View, icon: ImageView) {
         circle.background = null
         icon.setImageResource(R.drawable.ic_uncheck)
@@ -116,18 +114,6 @@ class OnboardingFragment5 : Fragment() {
         cornerRadius = 18f * resources.displayMetrics.density
     }
 
-    private fun filledCircle(colorHex: String) = GradientDrawable().apply {
-        shape = GradientDrawable.OVAL
-        setColor(Color.parseColor(colorHex))
-    }
-
-    private fun roundedBg(colorHex: String, radius: Float) = GradientDrawable().apply {
-        shape = GradientDrawable.RECTANGLE
-        cornerRadius = radius
-        setColor(Color.parseColor(colorHex))
-    }
-
-    /** Call from the Activity's Continue button, and later when saving to Room. */
     fun getSelectedActivityLevel(): ActivityLevel = selectedLevel
 
     override fun onDestroyView() {

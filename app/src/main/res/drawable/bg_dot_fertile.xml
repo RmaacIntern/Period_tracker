@@ -2,6 +2,6 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
 
-    <solid android:color="#3B7A57" />
+    <solid android:color="@color/cycle_fertile" />
 
 </shape>

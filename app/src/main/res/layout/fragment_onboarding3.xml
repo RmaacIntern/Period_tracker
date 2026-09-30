@@ -8,6 +8,7 @@
     android:paddingHorizontal="24dp"
     tools:context=".onboarding.OnboardingFragment3">
 
+    <!-- ✅ FIX — #3D1B2E → @color/text_primary -->
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="match_parent"
@@ -16,9 +17,10 @@
         android:text="A little about\nyour body"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:textColor="#3D1B2E"
+        android:textColor="@color/text_primary"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
     <TextView
         android:id="@+id/tvSubtitle"
         android:layout_width="match_parent"
@@ -26,10 +28,10 @@
         android:layout_marginTop="8dp"
         android:text="Height and weight help personalize your cycle insights and health information. No judgment here, ever."
         android:textSize="13sp"
-        android:textColor="#8A7A8F"
+        android:textColor="@color/text_secondary"
         app:layout_constraintTop_toBottomOf="@id/tvTitle" />
 
-    <!-- Height card -->
+    <!-- heightCard background set in Kotlin via ThemeHelper.cardBg() -->
     <LinearLayout
         android:id="@+id/heightCard"
         android:layout_width="match_parent"
@@ -45,14 +47,16 @@
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
+            <!-- ✅ FIX — #2D1B33 → @color/text_primary -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="📏 Height"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:textColor="#2D1B33" />
+                android:textColor="@color/text_primary" />
 
+            <!-- brand pink — kept hardcoded -->
             <TextView
                 android:id="@+id/tvHeightValue"
                 android:layout_width="0dp"
@@ -76,21 +80,23 @@
             android:value="162"
             app:thumbColor="#E63A5E"
             app:trackColorActive="#E63A5E"
-            app:trackColorInactive="#F0DDE3"
+            app:trackColorInactive="@color/slider_track_inactive"
             app:labelBehavior="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="130 cm"
                 android:textSize="11sp"
-                android:textColor="#8A7A8F" />
+                android:textColor="@color/text_secondary" />
 
+            <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -98,11 +104,11 @@
                 android:gravity="end"
                 android:text="210 cm"
                 android:textSize="11sp"
-                android:textColor="#8A7A8F" />
+                android:textColor="@color/text_secondary" />
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Weight card -->
+    <!-- weightCard background set in Kotlin via ThemeHelper.cardBg() -->
     <LinearLayout
         android:id="@+id/weightCard"
         android:layout_width="match_parent"
@@ -118,14 +124,16 @@
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
+            <!-- ✅ FIX — #2D1B33 → @color/text_primary -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="⚖️ Weight"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:textColor="#2D1B33" />
+                android:textColor="@color/text_primary" />
 
+            <!-- brand pink — kept hardcoded -->
             <TextView
                 android:id="@+id/tvWeightValue"
                 android:layout_width="0dp"
@@ -149,21 +157,23 @@
             android:value="60"
             app:thumbColor="#E63A5E"
             app:trackColorActive="#E63A5E"
-            app:trackColorInactive="#F0DDE3"
+            app:trackColorInactive="@color/slider_track_inactive"
             app:labelBehavior="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="35 kg"
                 android:textSize="11sp"
-                android:textColor="#8A7A8F" />
+                android:textColor="@color/text_secondary" />
 
+            <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -171,10 +181,11 @@
                 android:gravity="end"
                 android:text="140 kg"
                 android:textSize="11sp"
-                android:textColor="#8A7A8F" />
+                android:textColor="@color/text_secondary" />
         </LinearLayout>
     </LinearLayout>
 
+    <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
     <TextView
         android:id="@+id/tvFooterNote"
         android:layout_width="0dp"
@@ -183,7 +194,7 @@
         android:gravity="center"
         android:text="🔒 Kept confidential and securely stored on-device"
         android:textSize="11sp"
-        android:textColor="#8A7A8F"
+        android:textColor="@color/text_secondary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />

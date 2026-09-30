@@ -5,6 +5,7 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import com.aivigil.periodtracker.R
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -28,18 +29,19 @@ class CycleCalendarView @JvmOverloads constructor(
         set(value) { field = value; invalidate() }
     var onDateSelected: ((LocalDate) -> Unit)? = null
 
-    // ------------------------------------------------------------
-    // MATCHED COLORS
-    // ------------------------------------------------------------
-    private val colorPeriod    = Color.parseColor("#C2185B")   // Dark Pink / Magenta
-    private val colorOvul      = Color.parseColor("#E66A28")   // Warm Orange
-    private val colorFertile   = Color.parseColor("#E8F5E9")   // Light Sage Green BG
-    private val colorFertileTx = Color.parseColor("#3B7A57")   // Fertile Sage Green Text
-    private val colorPred      = Color.parseColor("#FBCFE8")   // Light Pink BG
-    private val colorPredTx    = Color.parseColor("#EC4899")   // Pink Accent Text
-    private val colorToday     = Color.parseColor("#EC4899")   // Today Pink Border/Accent
-    private val colorNormal    = Color.parseColor("#2D1B33")   // Dark Text
-    private val colorOther     = Color.parseColor("#C8BEC8")   // Grey Other-month
+    // ── Semantic medical colors — kept hardcoded (correct in both modes) ──
+    private val colorPeriod    = Color.parseColor("#C2185B")
+    private val colorOvul      = Color.parseColor("#E66A28")
+    // Pale fills + their text flip for dark mode (values-night/colors.xml)
+    private val colorFertile   get() = context.getColor(R.color.cycle_fertile_bg)
+    private val colorFertileTx get() = context.getColor(R.color.cycle_fertile)
+    private val colorPred      get() = context.getColor(R.color.cycle_predicted)
+    private val colorPredTx    get() = context.getColor(R.color.cycle_predicted_text)
+    private val colorToday     = Color.parseColor("#EC4899")
+
+    // ✅ FIX — text colors use color resources so they adapt to dark mode
+    private val colorNormal get() = context.getColor(R.color.text_primary)
+    private val colorOther  get() = context.getColor(R.color.text_secondary)
 
     private val circlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
     private val strokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -72,15 +74,13 @@ class CycleCalendarView @JvmOverloads constructor(
         val prevMonth   = displayMonth.minusMonths(1)
         val nextMonth   = displayMonth.plusMonths(1)
 
-        // Draw weekday headers
         textPaint.textSize = cellW * 0.27f
-        textPaint.color    = Color.parseColor("#9CA3AF")
+        textPaint.color    = colorOther
         textPaint.typeface = Typeface.DEFAULT
         weekdays.forEachIndexed { col, d ->
             canvas.drawText(d, col * cellW + cellW / 2f, hdrH * 0.72f, textPaint)
         }
 
-        // Draw each day
         for (row in 0 until 6) {
             for (col in 0 until 7) {
                 val n = row * 7 + col - offset + 1

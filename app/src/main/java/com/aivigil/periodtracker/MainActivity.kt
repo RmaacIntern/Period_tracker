@@ -144,7 +144,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateTabColors(selectedId: Int) {
         val selectedColor   = android.graphics.Color.parseColor("#FFFFFF")
-        val unselectedColor = android.graphics.Color.parseColor("#8A7A8F")
+        val unselectedColor = ContextCompat.getColor(this, R.color.text_secondary)  // dark-mode aware
 
         // Reset all to unselected — INVISIBLE keeps space reserved
         listOf(

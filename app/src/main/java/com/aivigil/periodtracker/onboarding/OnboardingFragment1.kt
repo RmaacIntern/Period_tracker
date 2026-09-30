@@ -1,7 +1,5 @@
 ﻿package com.aivigil.periodtracker.onboarding
 
-import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.aivigil.periodtracker.ads.NativeAdHelper
 import com.aivigil.periodtracker.databinding.FragmentOnboarding1Binding
+import com.aivigil.periodtracker.util.ThemeHelper
 
 class OnboardingFragment1 : Fragment() {
 
@@ -27,25 +26,19 @@ class OnboardingFragment1 : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Root gradient background
-        binding.onboarding1Root.background = GradientDrawable(
-            GradientDrawable.Orientation.TOP_BOTTOM,
-            intArrayOf(
-                Color.parseColor("#FDF2F5"),
-                Color.parseColor("#FBF5F8"),
-                Color.parseColor("#FFFFFF")
-            )
-        )
+        // ✅ FIX — replaced hardcoded Color.parseColor("#FDF2F5/FBF5F8/FFFFFF")
+        binding.onboarding1Root.background = ThemeHelper.onboardingGradient(requireContext())
 
-        // Icon circle
+        // Icon circle — clipToOutline handled in XML already, kept for safety
         binding.iconCircle.clipToOutline = true
         binding.iconCircle.outlineProvider = android.view.ViewOutlineProvider.BACKGROUND
 
-        // Backgrounds
-        binding.badgePrivacy.background = roundedBg("#FDE2E9", 20f)
-        binding.nameInputCard.background = roundedBg("#FFFFFF", 20f)
+        // ✅ FIX — replaced hardcoded Color.parseColor("#FDE2E9") rounded rect
+        binding.badgePrivacy.background = ThemeHelper.cardBg(requireContext(), 20f)
 
-        // Scroll to input on focus — ✅ single listener, no duplicate
+        // ✅ FIX — replaced hardcoded Color.parseColor("#FFFFFF") rounded rect
+        binding.nameInputCard.background = ThemeHelper.cardBg(requireContext(), 20f)
+
         binding.etName.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 binding.scrollView.postDelayed({
@@ -54,15 +47,8 @@ class OnboardingFragment1 : Fragment() {
             }
         }
 
-        // Native ad
         nativeAdHelper = NativeAdHelper(requireContext())
         nativeAdHelper?.loadInto(binding.nativeAdContainer)
-    }
-
-    private fun roundedBg(colorHex: String, radius: Float) = GradientDrawable().apply {
-        shape = GradientDrawable.RECTANGLE
-        cornerRadius = radius
-        setColor(Color.parseColor(colorHex))
     }
 
     fun showNameError(message: String = "* Name is required") {

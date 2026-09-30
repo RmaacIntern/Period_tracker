@@ -25,7 +25,7 @@
         android:text="Health Conditions"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="#2D1B33" />
+        android:textColor="@color/text_primary" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -34,12 +34,12 @@
         android:layout_marginTop="4dp"
         android:text="Based on your logged symptoms"
         android:textSize="12sp"
-        android:textColor="#8A7A8F" />
+        android:textColor="@color/text_secondary" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#F5EEF8"
+        android:background="@color/surface_muted"
         android:layout_marginTop="16dp" />
 
     <!-- ── Onboarding conditions section ── -->
@@ -59,7 +59,7 @@
             android:text="Your health conditions"
             android:textSize="13sp"
             android:textStyle="bold"
-            android:textColor="#2D1B33" />
+            android:textColor="@color/text_primary" />
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/conditionsChipGroup"
@@ -72,7 +72,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#F5EEF8"
+            android:background="@color/surface_muted"
             android:layout_marginTop="16dp" />
 
     </LinearLayout>
@@ -100,7 +100,7 @@
             android:text="No symptoms logged yet"
             android:textSize="15sp"
             android:textStyle="bold"
-            android:textColor="#2D1B33" />
+            android:textColor="@color/text_primary" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -109,7 +109,7 @@
             android:gravity="center"
             android:text="Start logging daily symptoms and\nyour health patterns will appear here."
             android:textSize="12sp"
-            android:textColor="#8A7A8F" />
+            android:textColor="@color/text_secondary" />
 
     </LinearLayout>
 
@@ -135,7 +135,7 @@
                 android:layout_height="wrap_content"
                 android:text="🔴 Cramps"
                 android:textSize="14sp"
-                android:textColor="#2D1B33"
+                android:textColor="@color/text_primary"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -148,7 +148,7 @@
                 android:layout_height="6dp"
                 android:layout_marginEnd="10dp"
                 android:progressTint="#EC4899"
-                android:progressBackgroundTint="#F5EEF8"
+                android:progressBackgroundTint="@color/surface_muted"
                 android:max="100"
                 android:progress="0"
                 app:layout_constraintEnd_toStartOf="@id/tvCrampsCount"
@@ -169,7 +169,7 @@
                 app:layout_constraintBottom_toBottomOf="parent" />
 
             <View android:layout_width="0dp" android:layout_height="1dp"
-                android:background="#F5EEF8"
+                android:background="@color/surface_muted"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
@@ -183,7 +183,7 @@
             android:layout_height="56dp">
 
             <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                android:text="💡 Headache" android:textSize="14sp" android:textColor="#2D1B33"
+                android:text="💡 Headache" android:textSize="14sp" android:textColor="@color/text_primary"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toStartOf="@id/barHeadache" />
 
@@ -191,7 +191,7 @@
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                 android:layout_width="100dp" android:layout_height="6dp"
                 android:layout_marginEnd="10dp"
-                android:progressTint="#A855F7" android:progressBackgroundTint="#F5EEF8"
+                android:progressTint="#A855F7" android:progressBackgroundTint="@color/surface_muted"
                 android:max="100" android:progress="0"
                 app:layout_constraintEnd_toStartOf="@id/tvHeadacheCount"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
@@ -203,7 +203,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
 
-            <View android:layout_width="0dp" android:layout_height="1dp" android:background="#F5EEF8"
+            <View android:layout_width="0dp" android:layout_height="1dp" android:background="@color/surface_muted"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -216,7 +216,7 @@
             android:layout_height="56dp">
 
             <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                android:text="🌀 Bloating" android:textSize="14sp" android:textColor="#2D1B33"
+                android:text="🌀 Bloating" android:textSize="14sp" android:textColor="@color/text_primary"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toStartOf="@id/barBloating" />
 
@@ -224,7 +224,7 @@
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                 android:layout_width="100dp" android:layout_height="6dp"
                 android:layout_marginEnd="10dp"
-                android:progressTint="#EC4899" android:progressBackgroundTint="#F5EEF8"
+                android:progressTint="#EC4899" android:progressBackgroundTint="@color/surface_muted"
                 android:max="100" android:progress="0"
                 app:layout_constraintEnd_toStartOf="@id/tvBloatingCount"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
@@ -236,7 +236,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
 
-            <View android:layout_width="0dp" android:layout_height="1dp" android:background="#F5EEF8"
+            <View android:layout_width="0dp" android:layout_height="1dp" android:background="@color/surface_muted"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -249,7 +249,7 @@
             android:layout_height="56dp">
 
             <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                android:text="🌙 Fatigue" android:textSize="14sp" android:textColor="#2D1B33"
+                android:text="🌙 Fatigue" android:textSize="14sp" android:textColor="@color/text_primary"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toStartOf="@id/barFatigue" />
 
@@ -257,7 +257,7 @@
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                 android:layout_width="100dp" android:layout_height="6dp"
                 android:layout_marginEnd="10dp"
-                android:progressTint="#A855F7" android:progressBackgroundTint="#F5EEF8"
+                android:progressTint="#A855F7" android:progressBackgroundTint="@color/surface_muted"
                 android:max="100" android:progress="0"
                 app:layout_constraintEnd_toStartOf="@id/tvFatigueCount"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
@@ -269,7 +269,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
 
-            <View android:layout_width="0dp" android:layout_height="1dp" android:background="#F5EEF8"
+            <View android:layout_width="0dp" android:layout_height="1dp" android:background="@color/surface_muted"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -282,7 +282,7 @@
             android:layout_height="56dp">
 
             <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                android:text="💗 Tender Breasts" android:textSize="14sp" android:textColor="#2D1B33"
+                android:text="💗 Tender Breasts" android:textSize="14sp" android:textColor="@color/text_primary"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toStartOf="@id/barTenderBreasts" />
 
@@ -290,7 +290,7 @@
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                 android:layout_width="100dp" android:layout_height="6dp"
                 android:layout_marginEnd="10dp"
-                android:progressTint="#EC4899" android:progressBackgroundTint="#F5EEF8"
+                android:progressTint="#EC4899" android:progressBackgroundTint="@color/surface_muted"
                 android:max="100" android:progress="0"
                 app:layout_constraintEnd_toStartOf="@id/tvTenderBreastsCount"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
@@ -302,7 +302,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
 
-            <View android:layout_width="0dp" android:layout_height="1dp" android:background="#F5EEF8"
+            <View android:layout_width="0dp" android:layout_height="1dp" android:background="@color/surface_muted"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -315,7 +315,7 @@
             android:layout_height="56dp">
 
             <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                android:text="🦴 Backache" android:textSize="14sp" android:textColor="#2D1B33"
+                android:text="🦴 Backache" android:textSize="14sp" android:textColor="@color/text_primary"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toStartOf="@id/barBackache" />
 
@@ -323,7 +323,7 @@
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                 android:layout_width="100dp" android:layout_height="6dp"
                 android:layout_marginEnd="10dp"
-                android:progressTint="#A855F7" android:progressBackgroundTint="#F5EEF8"
+                android:progressTint="#A855F7" android:progressBackgroundTint="@color/surface_muted"
                 android:max="100" android:progress="0"
                 app:layout_constraintEnd_toStartOf="@id/tvBackacheCount"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
@@ -335,7 +335,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
 
-            <View android:layout_width="0dp" android:layout_height="1dp" android:background="#F5EEF8"
+            <View android:layout_width="0dp" android:layout_height="1dp" android:background="@color/surface_muted"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -348,7 +348,7 @@
             android:layout_height="56dp">
 
             <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                android:text="✨ Acne" android:textSize="14sp" android:textColor="#2D1B33"
+                android:text="✨ Acne" android:textSize="14sp" android:textColor="@color/text_primary"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toStartOf="@id/barAcne" />
 
@@ -356,7 +356,7 @@
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                 android:layout_width="100dp" android:layout_height="6dp"
                 android:layout_marginEnd="10dp"
-                android:progressTint="#EC4899" android:progressBackgroundTint="#F5EEF8"
+                android:progressTint="#EC4899" android:progressBackgroundTint="@color/surface_muted"
                 android:max="100" android:progress="0"
                 app:layout_constraintEnd_toStartOf="@id/tvAcneCount"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
@@ -368,7 +368,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
 
-            <View android:layout_width="0dp" android:layout_height="1dp" android:background="#F5EEF8"
+            <View android:layout_width="0dp" android:layout_height="1dp" android:background="@color/surface_muted"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -381,7 +381,7 @@
             android:layout_height="56dp">
 
             <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                android:text="🤢 Nausea" android:textSize="14sp" android:textColor="#2D1B33"
+                android:text="🤢 Nausea" android:textSize="14sp" android:textColor="@color/text_primary"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toStartOf="@id/barNausea" />
 
@@ -389,7 +389,7 @@
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                 android:layout_width="100dp" android:layout_height="6dp"
                 android:layout_marginEnd="10dp"
-                android:progressTint="#A855F7" android:progressBackgroundTint="#F5EEF8"
+                android:progressTint="#A855F7" android:progressBackgroundTint="@color/surface_muted"
                 android:max="100" android:progress="0"
                 app:layout_constraintEnd_toStartOf="@id/tvNauseaCount"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
@@ -401,7 +401,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
 
-            <View android:layout_width="0dp" android:layout_height="1dp" android:background="#F5EEF8"
+            <View android:layout_width="0dp" android:layout_height="1dp" android:background="@color/surface_muted"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -414,7 +414,7 @@
             android:layout_height="56dp">
 
             <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                android:text="🍫 Cravings" android:textSize="14sp" android:textColor="#2D1B33"
+                android:text="🍫 Cravings" android:textSize="14sp" android:textColor="@color/text_primary"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toStartOf="@id/barCravings" />
 
@@ -422,7 +422,7 @@
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                 android:layout_width="100dp" android:layout_height="6dp"
                 android:layout_marginEnd="10dp"
-                android:progressTint="#EC4899" android:progressBackgroundTint="#F5EEF8"
+                android:progressTint="#EC4899" android:progressBackgroundTint="@color/surface_muted"
                 android:max="100" android:progress="0"
                 app:layout_constraintEnd_toStartOf="@id/tvCravingsCount"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
@@ -444,7 +444,7 @@
             android:layout_marginBottom="8dp"
             android:text="ⓘ  Based on your daily log history. Log symptoms regularly for accurate patterns."
             android:textSize="11sp"
-            android:textColor="#8A7A8F"
+            android:textColor="@color/text_secondary"
             android:lineSpacingExtra="2dp" />
 
     </LinearLayout>

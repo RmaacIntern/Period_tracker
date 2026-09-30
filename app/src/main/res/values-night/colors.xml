@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ── Brand — unchanged in dark mode ─────────────────────── -->
+    <color name="brand_pink">#EC4899</color>
+    <color name="brand_purple">#A855F7</color>
+    <color name="brand_purple_deep">#A78BFA</color>
+
+    <!-- ── Semantic — DARK MODE ───────────────────────────────── -->
+
+    <!-- Page / screen background — deep dark, not pure black -->
+    <color name="surface_bg">#121014</color>
+
+    <!-- Card background -->
+    <color name="surface_card">#1E1A22</color>
+
+    <!-- Inner card / sub-row background -->
+    <color name="surface_card_inner">#261F2B</color>
+
+    <!-- Onboarding screen gradient start / mid / end -->
+    <color name="onboarding_grad_start">#1A1320</color>
+    <color name="onboarding_grad_mid">#161019</color>
+    <color name="onboarding_grad_end">#121014</color>
+
+    <!-- Primary text — near white -->
+    <color name="text_primary">#F0EAF4</color>
+
+    <!-- Secondary / muted text -->
+    <color name="text_secondary">#9E8FA8</color>
+
+    <!-- Card stroke / divider — subtle in dark -->
+    <color name="stroke_card">#2E2535</color>
+
+    <!-- Badge / chip background -->
+    <color name="badge_bg">#2A1F3D</color>
+
+    <!-- Input card -->
+    <color name="input_card_bg">#1E1A22</color>
+
+    <!-- Privacy banner -->
+    <color name="privacy_banner_bg">#0D2818</color>
+
+    <!-- Insight banner -->
+    <color name="insight_banner_bg">#1F1730</color>
+
+    <!-- Basal temp card -->
+    <color name="basal_card_bg">#261520</color>
+
+    <!-- Splash screen diagonal gradient -->
+    <color name="splash_grad_start">#1A1020</color>
+    <color name="splash_grad_mid">#1E1320</color>
+
+    <!-- Icon soft backgrounds — darkened versions -->
+    <color name="icon_bg_pink">#3D1A26</color>
+    <color name="icon_bg_purple">#251A3D</color>
+    <color name="icon_bg_green">#152A1E</color>
+    <color name="icon_bg_teal">#133028</color>
+
+    <!-- ── Legacy tokens that are used as surfaces ─────────────── -->
+    <color name="card_bg">#1E1A22</color>
+    <color name="colorGrayNew">#3A3440</color>
+
+    <!-- ── Dark-mode tokens (added 2026-09-30) — see values/colors.xml for light + usage -->
+    <color name="app_bg">#121014</color>
+    <color name="text_hint">#6B5E73</color>
+    <color name="text_plum">#C49AC4</color>
+    <color name="text_success">#4ADE80</color>
+    <color name="surface_muted">#2A2230</color>
+    <color name="option_card_bg">#261F2B</color>
+    <color name="stroke_checkbox">#4A3F52</color>
+    <color name="stroke_pink">#5A2A44</color>
+    <color name="stroke_green">#1A4028</color>
+    <color name="sheet_handle">#4A3F52</color>
+    <color name="divider">#2E2535</color>
+    <color name="divider_soft">#2E2535</color>
+    <color name="switch_off_thumb">#6B5E73</color>
+    <color name="tint_purple_soft">#2A1F3D</color>
+    <color name="tint_pink_soft">#3D1A26</color>
+    <color name="tint_pink_chip">#3D1A26</color>
+    <color name="period_confirm_outer">#3D1A26</color>
+    <color name="progress_track">#3A2530</color>
+    <color name="progress_track_secondary">#5A2F42</color>
+    <color name="slider_track_inactive">#3A2A33</color>
+    <color name="slider_track_inactive_alt">#3A2A33</color>
+    <color name="chip_bg">#261F2B</color>
+    <color name="nav_inactive">#7A6C82</color>
+    <color name="cycle_fertile">#5FB887</color>
+    <color name="cycle_fertile_bg">#1A3326</color>
+    <color name="cycle_predicted">#6B2F52</color>
+    <color name="cycle_predicted_text">#FBCFE8</color>
+    <color name="bar_current">#2E2545</color>
+    <color name="history_card_bg">#1E1A22</color>
+    <color name="history_card_stroke">#2E2535</color>
+    <color name="ad_placeholder_bg">#2A2F33</color>
+</resources>

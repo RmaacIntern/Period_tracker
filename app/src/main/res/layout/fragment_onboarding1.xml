@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Footer note pinned just above the banner ad -->
+    <!-- ✅ FIX — replaced hardcoded #8A7A8F with @color/text_secondary -->
     <TextView
         android:id="@+id/tvFooterNote"
         android:layout_width="match_parent"
@@ -26,12 +26,11 @@
         android:gravity="center"
         android:text="🔒 Kept confidential and securely stored on-device"
         android:textSize="11sp"
-        android:textColor="#8A7A8F"
+        android:textColor="@color/text_secondary"
         app:layout_constraintBottom_toTopOf="@id/bannerAdContainer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- ScrollView fills space between top and footer note -->
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
@@ -84,6 +83,7 @@
                 </FrameLayout>
             </FrameLayout>
 
+            <!-- ✅ FIX — replaced hardcoded #3D1B2E with @color/text_primary -->
             <TextView
                 android:id="@+id/tvTitle"
                 android:layout_width="match_parent"
@@ -93,8 +93,9 @@
                 android:text="Welcome to\nPeriod Tracker"
                 android:textSize="26sp"
                 android:textStyle="bold"
-                android:textColor="#3D1B2E" />
+                android:textColor="@color/text_primary" />
 
+            <!-- ✅ FIX — replaced hardcoded #8A7A8F with @color/text_secondary -->
             <TextView
                 android:id="@+id/tvSubtitle"
                 android:layout_width="match_parent"
@@ -103,8 +104,10 @@
                 android:gravity="center"
                 android:text="Your private companion for your cycle, periods and fertility. Your answers stay on your phone, always."
                 android:textSize="13sp"
-                android:textColor="#8A7A8F" />
+                android:textColor="@color/text_secondary" />
 
+            <!-- badgePrivacy background set in Kotlin via ThemeHelper.cardBg() -->
+            <!-- textColor #E63A5E is brand pink — kept hardcoded, looks fine in both modes -->
             <TextView
                 android:id="@+id/badgePrivacy"
                 android:layout_width="wrap_content"
@@ -118,6 +121,7 @@
                 android:textStyle="bold"
                 android:textColor="#E63A5E" />
 
+            <!-- nameInputCard background set in Kotlin via ThemeHelper.cardBg() -->
             <LinearLayout
                 android:id="@+id/nameInputCard"
                 android:layout_width="match_parent"
@@ -134,7 +138,7 @@
                     app:boxCornerRadiusTopEnd="14dp"
                     app:boxCornerRadiusBottomStart="14dp"
                     app:boxCornerRadiusBottomEnd="14dp"
-                    app:boxStrokeColor="#F0DDE3"
+                    app:boxStrokeColor="@color/slider_track_inactive"
                     app:hintEnabled="false">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -149,6 +153,7 @@
                         android:maxLength="15" />
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <!-- error text — brand pink, fine in both modes -->
                 <TextView
                     android:id="@+id/tvNameError"
                     android:layout_width="match_parent"
@@ -162,7 +167,6 @@
 
             </LinearLayout>
 
-            <!-- ✅ Fixed: match_parent, no bg, no constraint attrs -->
             <FrameLayout
                 android:id="@+id/nativeAdContainer"
                 android:layout_width="match_parent"

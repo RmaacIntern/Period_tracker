@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="#FBF5F8">
+    android:background="@color/surface_bg">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,8 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:paddingHorizontal="20dp"
-            android:background="#FBF5F8">
-
+            android:background="@color/surface_bg">
             <TextView
                 android:id="@+id/tvCalendarTitle"
                 android:layout_width="0dp"
@@ -27,13 +26,10 @@
                 android:text="Calendar"
                 android:textSize="22sp"
                 android:textStyle="bold"
-                android:textColor="#2D1B33"
+                android:textColor="@color/text_primary"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"/>
-
-
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- MONTH + NAV ROW -->
@@ -51,7 +47,7 @@
                 android:text="October 2024"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:textColor="#2D1B33"
+                android:textColor="@color/text_primary"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
@@ -75,7 +71,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent">
-
                 <TextView
                     android:id="@+id/btnPrevMonth"
                     android:layout_width="36dp"
@@ -84,8 +79,7 @@
                     android:text="‹"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:textColor="#2D1B33" />
-
+                    android:textColor="@color/text_primary" />
                 <TextView
                     android:id="@+id/btnNextMonth"
                     android:layout_width="36dp"
@@ -94,10 +88,8 @@
                     android:text="›"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:textColor="#2D1B33" />
-
+                    android:textColor="@color/text_primary" />
             </LinearLayout>
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- VIEW MODE TABS -->
@@ -107,7 +99,6 @@
             android:orientation="horizontal"
             android:paddingHorizontal="20dp"
             android:paddingBottom="12dp">
-
             <TextView
                 android:id="@+id/tabMonth"
                 android:layout_width="wrap_content"
@@ -118,9 +109,6 @@
                 android:textStyle="bold"
                 android:textColor="#FFFFFF"
                 android:paddingHorizontal="22dp" />
-
-
-
         </LinearLayout>
 
         <!-- CALENDAR CARD -->
@@ -142,7 +130,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- 3-segment progress bar with updated colors -->
             <LinearLayout
                 android:id="@+id/cycleProgressBar"
                 android:layout_width="0dp"
@@ -153,28 +140,15 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cycleCalendarView">
-
-                <View
-                    android:id="@+id/barPeriod"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="5"
-                    android:background="#C2185B" /> <!-- Period Pink -->
-
-                <View
-                    android:id="@+id/barFertile"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="9"
-                    android:background="#3B7A57" /> <!-- Fertile Sage Green -->
-
-                <View
-                    android:id="@+id/barRemaining"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="14"
-                    android:background="#6D6D6D" /> <!-- Muted Safe Slate -->
-
+                <View android:id="@+id/barPeriod"
+                    android:layout_width="0dp" android:layout_height="match_parent"
+                    android:layout_weight="5" android:background="#C2185B" />
+                <View android:id="@+id/barFertile"
+                    android:layout_width="0dp" android:layout_height="match_parent"
+                    android:layout_weight="9" android:background="@color/cycle_fertile" />
+                <View android:id="@+id/barRemaining"
+                    android:layout_width="0dp" android:layout_height="match_parent"
+                    android:layout_weight="14" android:background="#6D6D6D" />
             </LinearLayout>
 
             <TextView
@@ -183,7 +157,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="Cycle Day 1"
-                android:textColor="#8A7A8F"
+                android:textColor="@color/text_secondary"
                 android:textSize="10sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cycleProgressBar" />
@@ -194,11 +168,10 @@
                 android:layout_height="wrap_content"
                 android:text="Est. 28 Days"
                 android:textSize="10sp"
-                android:textColor="#8A7A8F"
+                android:textColor="@color/text_secondary"
                 android:layout_marginTop="4dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cycleProgressBar" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- LEGEND -->
@@ -216,40 +189,26 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
+                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:gravity="center_vertical"
                     android:layout_marginBottom="8dp">
                     <View android:id="@+id/legendPeriodDot"
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:background="#C2185B" /> <!-- Period Pink -->
+                        android:layout_width="10dp" android:layout_height="10dp"
+                        android:background="#C2185B" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Period" android:textSize="12sp" android:textColor="#2D1B33"
+                        android:text="Period" android:textSize="12sp" android:textColor="@color/text_primary"
                         android:layout_marginStart="8dp" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <View
-                        android:id="@+id/legendOvulationDot"
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:background="#7C3AED" /> <!-- Accent Purple -->
-                    <TextView android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Ovulation"
-                        android:textSize="12sp"
-                        android:textColor="#2D1B33"
+                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:gravity="center_vertical">
+                    <View android:id="@+id/legendOvulationDot"
+                        android:layout_width="10dp" android:layout_height="10dp"
+                        android:background="@color/brand_purple_deep" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="Ovulation" android:textSize="12sp" android:textColor="@color/text_primary"
                         android:layout_marginStart="8dp" />
                 </LinearLayout>
-
             </LinearLayout>
 
             <LinearLayout
@@ -258,37 +217,27 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
+                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:gravity="center_vertical"
                     android:layout_marginBottom="8dp">
                     <View android:id="@+id/legendFertileDot"
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:background="#3B7A57" /> <!-- Fertile Sage Green -->
+                        android:layout_width="10dp" android:layout_height="10dp"
+                        android:background="@color/cycle_fertile" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Fertile window" android:textSize="12sp" android:textColor="#2D1B33"
+                        android:text="Fertile window" android:textSize="12sp" android:textColor="@color/text_primary"
                         android:layout_marginStart="8dp" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
+                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:gravity="center_vertical">
                     <View android:id="@+id/legendPredictedDot"
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:background="#FBCFE8" /> <!-- Light Soft Pink -->
+                        android:layout_width="10dp" android:layout_height="10dp"
+                        android:background="@color/cycle_predicted" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Predicted Period" android:textSize="12sp" android:textColor="#2D1B33"
+                        android:text="Predicted Period" android:textSize="12sp" android:textColor="@color/text_primary"
                         android:layout_marginStart="8dp" />
                 </LinearLayout>
-
             </LinearLayout>
-
         </LinearLayout>
 
         <!-- SELECTED DAY DETAIL CARD -->
@@ -308,7 +257,7 @@
                 android:text="Monday, October 14"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="#2D1B33"
+                android:textColor="@color/text_primary"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/tvPhaseBadge" />
@@ -320,7 +269,7 @@
                 android:text="☀ Fertile Window"
                 android:textSize="11sp"
                 android:textStyle="bold"
-                android:textColor="#3B7A57"
+                android:textColor="@color/cycle_fertile"
                 android:paddingHorizontal="10dp"
                 android:paddingVertical="5dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -333,7 +282,7 @@
                 android:layout_marginTop="2dp"
                 android:text="Cycle Day 12 · 14 Days until next period"
                 android:textSize="12sp"
-                android:textColor="#8A7A8F"
+                android:textColor="@color/text_secondary"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvSelectedDayFull" />
@@ -349,149 +298,65 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvSelectedDaySub">
 
-                <!-- Energy card -->
-                <LinearLayout
-                    android:id="@+id/cardEnergy"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="6dp"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:padding="12dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="⚡"
-                        android:textSize="18sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="ENERGY"
-                        android:textSize="9sp"
-                        android:textStyle="bold"
-                        android:letterSpacing="0.05"
-                        android:textColor="#8A7A8F" />
-
-                    <TextView
-                        android:id="@+id/tvEnergyValue"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="High"
-                        android:textSize="13sp"
-                        android:textStyle="bold"
-                        android:textColor="#2D1B33" />
-
-                    <TextView
-                        android:id="@+id/tvEnergySource"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="3dp"
-                        android:text="estimated"
-                        android:textSize="9sp"
-                        android:textColor="#A855F7" />
-
+                <LinearLayout android:id="@+id/cardEnergy"
+                    android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:layout_marginEnd="6dp"
+                    android:orientation="vertical" android:gravity="center" android:padding="12dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="⚡" android:textSize="18sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp" android:text="ENERGY"
+                        android:textSize="9sp" android:textStyle="bold" android:letterSpacing="0.05"
+                        android:textColor="@color/text_secondary" />
+                    <TextView android:id="@+id/tvEnergyValue"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp" android:text="High"
+                        android:textSize="13sp" android:textStyle="bold" android:textColor="@color/text_primary" />
+                    <TextView android:id="@+id/tvEnergySource"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp" android:text="estimated"
+                        android:textSize="9sp" android:textColor="#A855F7" />
                 </LinearLayout>
 
-                <!-- Libido card -->
-                <LinearLayout
-                    android:id="@+id/cardLibido"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="6dp"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:padding="12dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🤍"
-                        android:textSize="18sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="LIBIDO"
-                        android:textSize="9sp"
-                        android:textStyle="bold"
-                        android:letterSpacing="0.05"
-                        android:textColor="#8A7A8F" />
-
-                    <TextView
-                        android:id="@+id/tvLibidoValue"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="Normal"
-                        android:textSize="13sp"
-                        android:textStyle="bold"
-                        android:textColor="#2D1B33" />
-
-                    <TextView
-                        android:id="@+id/tvLibidoSource"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="3dp"
-                        android:text="estimated"
-                        android:textSize="9sp"
-                        android:textColor="#A855F7" />
-
+                <LinearLayout android:id="@+id/cardLibido"
+                    android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:layout_marginEnd="6dp"
+                    android:orientation="vertical" android:gravity="center" android:padding="12dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="🤍" android:textSize="18sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp" android:text="LIBIDO"
+                        android:textSize="9sp" android:textStyle="bold" android:letterSpacing="0.05"
+                        android:textColor="@color/text_secondary" />
+                    <TextView android:id="@+id/tvLibidoValue"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp" android:text="Normal"
+                        android:textSize="13sp" android:textStyle="bold" android:textColor="@color/text_primary" />
+                    <TextView android:id="@+id/tvLibidoSource"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp" android:text="estimated"
+                        android:textSize="9sp" android:textColor="#A855F7" />
                 </LinearLayout>
 
-                <!-- Sleep card -->
-                <LinearLayout
-                    android:id="@+id/cardSleep"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                <LinearLayout android:id="@+id/cardSleep"
+                    android:layout_width="0dp" android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:padding="12dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🌙"
-                        android:textSize="18sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="SLEEP"
-                        android:textSize="9sp"
-                        android:textStyle="bold"
-                        android:letterSpacing="0.05"
-                        android:textColor="#8A7A8F" />
-
-                    <TextView
-                        android:id="@+id/tvSleepValue"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="7.5 hrs"
-                        android:textSize="13sp"
-                        android:textStyle="bold"
-                        android:textColor="#2D1B33" />
-
-                    <TextView
-                        android:id="@+id/tvSleepSource"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="3dp"
-                        android:text="estimated"
-                        android:textSize="9sp"
-                        android:textColor="#A855F7" />
-
+                    android:orientation="vertical" android:gravity="center" android:padding="12dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="🌙" android:textSize="18sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp" android:text="SLEEP"
+                        android:textSize="9sp" android:textStyle="bold" android:letterSpacing="0.05"
+                        android:textColor="@color/text_secondary" />
+                    <TextView android:id="@+id/tvSleepValue"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp" android:text="7.5 hrs"
+                        android:textSize="13sp" android:textStyle="bold" android:textColor="@color/text_primary" />
+                    <TextView android:id="@+id/tvSleepSource"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp" android:text="estimated"
+                        android:textSize="9sp" android:textColor="#A855F7" />
                 </LinearLayout>
-
             </LinearLayout>
 
             <!-- Cervical fluid row -->
@@ -505,47 +370,35 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/dayStatRow">
 
-                <TextView
-                    android:id="@+id/iconCervical"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:gravity="center"
-                    android:text="💧"
-                    android:textSize="15sp"
+                <TextView android:id="@+id/iconCervical"
+                    android:layout_width="32dp" android:layout_height="32dp"
+                    android:gravity="center" android:text="💧" android:textSize="15sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
 
                 <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginStart="10dp"
+                    android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:layout_marginStart="10dp"
                     app:layout_constraintStart_toEndOf="@id/iconCervical"
                     app:layout_constraintEnd_toStartOf="@id/tvFertilityChance"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent">
-
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Cervical Fluid" android:textSize="10sp" android:textColor="#8A7A8F" />
+                        android:text="Cervical Fluid" android:textSize="10sp" android:textColor="@color/text_secondary" />
                     <TextView android:id="@+id/tvCervicalValue"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
                         android:text="Creamy · Low viscosity" android:textSize="13sp"
-                        android:textStyle="bold" android:textColor="#2D1B33" />
+                        android:textStyle="bold" android:textColor="@color/text_primary" />
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tvFertilityChance"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Chances: High"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
+                <TextView android:id="@+id/tvFertilityChance"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Chances: High" android:textSize="11sp" android:textStyle="bold"
                     android:textColor="#EC4899"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
-
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <!-- Period Start Section -->
@@ -560,59 +413,24 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cervicalRow">
 
-                <!-- Header row -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:gravity="center_vertical"
                     android:layout_marginBottom="10dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="🩸  Period Start"
-                        android:textSize="13sp"
-                        android:textStyle="bold"
-                        android:textColor="#2D1B33" />
-
-                    <TextView
-                        android:id="@+id/tvPeriodStartStatus"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Not set"
-                        android:textSize="11sp"
-                        android:textColor="#8A7A8F" />
-
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:text="🩸  Period Start"
+                        android:textSize="13sp" android:textStyle="bold" android:textColor="@color/text_primary" />
+                    <TextView android:id="@+id/tvPeriodStartStatus"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="Not set" android:textSize="11sp" android:textColor="@color/text_secondary" />
                 </LinearLayout>
 
-
-                <!-- Log Period Start button -->
                 <com.aivigil.periodtracker.widgets.GradientButton
                     android:id="@+id/btnLogPeriodStart"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:text="🩸  Log Period Start" />
-
             </LinearLayout>
-
-            <!-- Divider -->
-
-
-            <!-- Edit Log gradient button -->
-<!--
-            <com.aivigil.periodtracker.widgets.GradientButton
-                android:id="@+id/btnEditLog"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:text="📅  Edit Log for Oct 14"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/dividerPeriodLog" />
--->
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -626,50 +444,31 @@
             android:layout_marginTop="14dp"
             android:padding="14dp">
 
-            <TextView
-                android:id="@+id/ivTipImage"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:gravity="center"
-                android:text="🌸"
-                android:textSize="28sp"
+            <TextView android:id="@+id/ivTipImage"
+                android:layout_width="64dp" android:layout_height="64dp"
+                android:gravity="center" android:text="🌸" android:textSize="28sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginStart="12dp"
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                android:orientation="vertical" android:layout_marginStart="12dp"
                 app:layout_constraintStart_toEndOf="@id/ivTipImage"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
-
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:text="DAILY TIP" android:textSize="9sp" android:textStyle="bold"
                     android:letterSpacing="0.08" android:textColor="#EC4899" />
-
                 <TextView android:id="@+id/tvTipTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:text=""
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="#2D1B33" />
-
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp" android:text=""
+                    android:textSize="14sp" android:textStyle="bold" android:textColor="@color/text_primary" />
                 <TextView android:id="@+id/tvTipBody"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text=""
-                    android:textSize="11sp"
-                    android:textColor="#8A7A8F"
-                    android:maxLines="2"
-                    android:ellipsize="end" />
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp" android:text=""
+                    android:textSize="11sp" android:textColor="@color/text_secondary"
+                    android:maxLines="2" android:ellipsize="end" />
             </LinearLayout>
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>

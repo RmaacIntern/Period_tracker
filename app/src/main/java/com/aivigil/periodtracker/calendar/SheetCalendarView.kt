@@ -5,6 +5,7 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import com.aivigil.periodtracker.R
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -20,20 +21,20 @@ class SheetCalendarView @JvmOverloads constructor(
 
     var displayMonth: YearMonth = YearMonth.now()
         set(value) { field = value; invalidate() }
-
     var selectedDate: LocalDate = LocalDate.now()
         set(value) { field = value; invalidate() }
-
     var maxDate: LocalDate = LocalDate.now()
         set(value) { field = value; invalidate() }
-
     var onDateSelected: ((LocalDate) -> Unit)? = null
 
-    private val colorSelected  = Color.parseColor("#EC4899")
-    private val colorToday     = Color.parseColor("#EC4899")
-    private val colorNormal    = Color.parseColor("#2D1B33")
-    private val colorDisabled  = Color.parseColor("#C8BEC8")
-    private val colorOther     = Color.parseColor("#C8BEC8")
+    // Brand pink — correct in both modes
+    private val colorSelected = Color.parseColor("#EC4899")
+    private val colorToday    = Color.parseColor("#EC4899")
+
+    // ✅ FIX — use color resources so text adapts to dark mode
+    private val colorNormal   get() = context.getColor(R.color.text_primary)
+    private val colorDisabled get() = context.getColor(R.color.text_secondary)
+    private val colorOther    get() = context.getColor(R.color.text_secondary)
 
     private val fillPaint   = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
     private val strokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -58,7 +59,6 @@ class SheetCalendarView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         val daysInMonth = displayMonth.lengthOfMonth()
         val first       = displayMonth.atDay(1)
-        // Sunday-first: Sun=0 Mon=1 … Sat=6
         val offset      = first.dayOfWeek.value % 7
         val prevMonth   = displayMonth.minusMonths(1)
         val nextMonth   = displayMonth.plusMonths(1)
@@ -73,10 +73,10 @@ class SheetCalendarView @JvmOverloads constructor(
                 }
                 cells[row][col] = date
 
-                val inMonth   = n in 1..daysInMonth
-                val isFuture  = date.isAfter(maxDate)
+                val inMonth    = n in 1..daysInMonth
+                val isFuture   = date.isAfter(maxDate)
                 val isSelected = date == selectedDate
-                val isToday   = date == LocalDate.now()
+                val isToday    = date == LocalDate.now()
 
                 val cx = col * cellW + cellW / 2f
                 val cy = row * cellH + cellH / 2f
@@ -88,13 +88,13 @@ class SheetCalendarView @JvmOverloads constructor(
                     isSelected -> {
                         fillPaint.color = colorSelected
                         canvas.drawCircle(cx, cy, r, fillPaint)
-                        textPaint.color = Color.WHITE
+                        textPaint.color    = Color.WHITE
                         textPaint.typeface = Typeface.DEFAULT_BOLD
                     }
                     isToday && !isSelected -> {
-                        strokePaint.color = colorToday
+                        strokePaint.color  = colorToday
                         canvas.drawCircle(cx, cy, r, strokePaint)
-                        textPaint.color = colorToday
+                        textPaint.color    = colorToday
                         textPaint.typeface = Typeface.DEFAULT_BOLD
                     }
                     isFuture || !inMonth -> {
@@ -128,6 +128,6 @@ class SheetCalendarView @JvmOverloads constructor(
             }
             return true
         }
-        return true   // ← was: super.onTouchEvent(e)
+        return true
     }
 }

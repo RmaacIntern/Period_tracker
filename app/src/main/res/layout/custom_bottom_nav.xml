@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="64dp"
     android:orientation="horizontal"
-    android:background="@android:color/white"
+    android:background="@color/surface_card"
     android:elevation="12dp"
     android:paddingStart="8dp"
     android:paddingEnd="8dp"
@@ -29,7 +29,6 @@
             android:contentDescription="Home"
             android:layout_gravity="center_vertical" />
 
-        <!-- Space always reserved even when gone -->
         <TextView
             android:id="@+id/labelHome"
             android:layout_width="wrap_content"
@@ -42,7 +41,6 @@
             android:visibility="invisible"
             android:textColor="@android:color/white"
             android:layout_gravity="center_vertical" />
-
     </LinearLayout>
 
     <!-- Calendar -->
@@ -76,7 +74,6 @@
             android:visibility="invisible"
             android:textColor="@android:color/white"
             android:layout_gravity="center_vertical" />
-
     </LinearLayout>
 
     <!-- Insights -->
@@ -110,7 +107,6 @@
             android:visibility="invisible"
             android:textColor="@android:color/white"
             android:layout_gravity="center_vertical" />
-
     </LinearLayout>
 
     <!-- Profile -->
@@ -144,7 +140,6 @@
             android:visibility="invisible"
             android:textColor="@android:color/white"
             android:layout_gravity="center_vertical" />
-
     </LinearLayout>
 
 </LinearLayout>

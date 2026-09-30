@@ -8,6 +8,7 @@
     android:paddingHorizontal="24dp"
     tools:context=".onboarding.OnboardingFragment6">
 
+    <!-- goalIconCircle background set in Kotlin via ThemeHelper.iconCirclePink() -->
     <FrameLayout
         android:id="@+id/goalIconCircle"
         android:layout_width="56dp"
@@ -24,7 +25,7 @@
             android:contentDescription="Goal icon" />
     </FrameLayout>
 
-    <!-- ✅ FIX — added start + end constraints so match_parent width works correctly -->
+    <!-- ✅ FIX — #3D1B2E → @color/text_primary -->
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="0dp"
@@ -33,12 +34,12 @@
         android:text="What brings you\nhere, lovely?"
         android:textSize="22sp"
         android:textStyle="bold"
-        android:textColor="#3D1B2E"
+        android:textColor="@color/text_primary"
         app:layout_constraintTop_toBottomOf="@id/goalIconCircle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- ✅ FIX — added start + end constraints -->
+    <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
     <TextView
         android:id="@+id/tvSubtitle"
         android:layout_width="0dp"
@@ -46,12 +47,12 @@
         android:layout_marginTop="8dp"
         android:text="Everything you need — cycle tracking, ovulation and fertile window, all in one place."
         android:textSize="13sp"
-        android:textColor="#8A7A8F"
+        android:textColor="@color/text_secondary"
         app:layout_constraintTop_toBottomOf="@id/tvTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- ✅ FIX — added bottom constraint to anchor nativeAdContainer correctly -->
+    <!-- cardGoal background set in Kotlin — always brand gradient (fine in both modes) -->
     <LinearLayout
         android:id="@+id/cardGoal"
         android:layout_width="0dp"
@@ -64,7 +65,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Row 1: Track my cycle -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -84,6 +84,7 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
 
+                <!-- White text on gradient — correct in both modes -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -101,12 +102,10 @@
                     android:textColor="#F5E6F0" />
             </LinearLayout>
 
-            <!-- Single tick — top right of card -->
             <FrameLayout
                 android:id="@+id/checkGoal"
                 android:layout_width="24dp"
                 android:layout_height="24dp">
-
                 <ImageView
                     android:id="@+id/ivCheckGoal"
                     android:layout_width="14dp"
@@ -117,7 +116,6 @@
             </FrameLayout>
         </LinearLayout>
 
-        <!-- Divider -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -125,7 +123,6 @@
             android:layout_marginBottom="14dp"
             android:background="#4DFFFFFF" />
 
-        <!-- Row 2: Ovulation & Fertile Window -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -163,7 +160,6 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- ✅ FIX — added top constraint to anchor below cardGoal -->
     <FrameLayout
         android:id="@+id/nativeAdContainer"
         android:layout_width="0dp"
@@ -177,6 +173,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
     <TextView
         android:id="@+id/tvFooterNote"
         android:layout_width="match_parent"
@@ -185,7 +182,7 @@
         android:gravity="center"
         android:text="🔒 Kept confidential and securely stored on-device"
         android:textSize="11sp"
-        android:textColor="#8A7A8F"
+        android:textColor="@color/text_secondary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

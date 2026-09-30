@@ -1,16 +1,13 @@
 ﻿package com.aivigil.periodtracker.onboarding
 
-import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
 import androidx.fragment.app.Fragment
-
 import com.aivigil.periodtracker.ads.NativeAdHelper
 import com.aivigil.periodtracker.databinding.FragmentOnboarding2Binding
+import com.aivigil.periodtracker.util.ThemeHelper
 
 class OnboardingFragment2 : Fragment() {
 
@@ -31,24 +28,12 @@ class OnboardingFragment2 : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Root gradient background
-        binding.onboarding2Root.background = GradientDrawable(
-            GradientDrawable.Orientation.TOP_BOTTOM,
-            intArrayOf(
-                Color.parseColor("#FDF2F5"),
-                Color.parseColor("#FBF5F8"),
-                Color.parseColor("#FFFFFF")
-            )
-        )
+        // ✅ FIX — replaced hardcoded gradient with ThemeHelper
+        binding.onboarding2Root.background = ThemeHelper.onboardingGradient(requireContext())
 
-        // Age card
-        binding.ageCard.background = GradientDrawable().apply {
-            shape = GradientDrawable.RECTANGLE
-            cornerRadius = 22f * resources.displayMetrics.density
-            setColor(Color.parseColor("#FFFFFF"))
-        }
+        // ✅ FIX — replaced hardcoded #FFFFFF card background with ThemeHelper
+        binding.ageCard.background = ThemeHelper.cardBg(requireContext(), 22f)
 
-        // Slider
         binding.ageSlider.value = selectedAge.toFloat()
         binding.tvAgeValue.text = selectedAge.toString()
         binding.ageSlider.addOnChangeListener { _, value, _ ->
@@ -56,10 +41,7 @@ class OnboardingFragment2 : Fragment() {
             binding.tvAgeValue.text = selectedAge.toString()
         }
 
-        // Native ad — null-safe, won't crash if container not found
-        // Native ad
-        nativeAdHelper = NativeAdHelper(requireContext())       // in Fragment
-
+        nativeAdHelper = NativeAdHelper(requireContext())
         nativeAdHelper?.loadInto(binding.nativeAdContainer)
     }
 

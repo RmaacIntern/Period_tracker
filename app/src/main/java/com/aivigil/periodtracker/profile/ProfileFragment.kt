@@ -1,5 +1,7 @@
 ﻿package com.aivigil.periodtracker.profile
 
+import com.aivigil.periodtracker.R
+
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
@@ -68,9 +70,9 @@ class ProfileFragment : Fragment() {
 
     private fun setupSwitches() {
         val pink     = Color.parseColor("#EC4899")
-        val pinkTrack = Color.parseColor("#FBCFE8")
-        val offThumb = Color.parseColor("#D0C8D5")
-        val offTrack = Color.parseColor("#EDE6F0")
+        val pinkTrack = requireContext().getColor(R.color.stroke_pink)
+        val offThumb = requireContext().getColor(R.color.switch_off_thumb)
+        val offTrack = requireContext().getColor(R.color.divider)
 
         val thumbColors = ColorStateList(
             arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),

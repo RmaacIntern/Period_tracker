@@ -1,5 +1,7 @@
 ﻿package com.aivigil.periodtracker.insights
 
+import com.aivigil.periodtracker.R
+
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
@@ -41,15 +43,15 @@ class CycleBarChartView @JvmOverloads constructor(
     private val avgLinePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE; strokeWidth = 1.5f
         pathEffect = DashPathEffect(floatArrayOf(6f, 4f), 0f)
-        color = Color.parseColor("#8A7A8F")
+        color = context.getColor(R.color.text_secondary)
     }
     private val avgTextPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         textAlign = Paint.Align.LEFT; typeface = Typeface.DEFAULT_BOLD
-        color = Color.parseColor("#2D1B33")
+        color = context.getColor(R.color.text_primary)
     }
     private val emptyPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         textAlign = Paint.Align.CENTER
-        color = Color.parseColor("#8A7A8F")
+        color = context.getColor(R.color.text_secondary)
     }
 
     private val rectF = RectF()
@@ -99,7 +101,7 @@ class CycleBarChartView @JvmOverloads constructor(
             if (bar.isCurrent) {
                 // Light purple tint for current in-progress bar
                 barPaint.shader = null
-                barPaint.color  = Color.parseColor("#EDE8FC")
+                barPaint.color  = context.getColor(R.color.bar_current)
                 canvas.drawRoundRect(rectF, cornerR, cornerR, barPaint)
 
                 // Show "D{n}" badge on top
@@ -135,12 +137,12 @@ class CycleBarChartView @JvmOverloads constructor(
                 barPaint.shader = null
 
                 // Day label above bar
-                textPaint.color = Color.parseColor("#2D1B33")
+                textPaint.color = context.getColor(R.color.text_primary)
                 canvas.drawText("${bar.days}d", left + barWidth / 2f, top - 6f, textPaint)
             }
 
             // Month label below chart
-            labelPaint.color = Color.parseColor("#8A7A8F")
+            labelPaint.color = context.getColor(R.color.text_secondary)
             canvas.drawText(bar.month, left + barWidth / 2f, topPad + chartH + bottomPad - 4f, labelPaint)
         }
     }

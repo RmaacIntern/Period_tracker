@@ -6,9 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ScrollView
 import android.widget.Toast
-import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -17,6 +15,7 @@ import com.aivigil.periodtracker.databinding.FragmentLogSymptomsBinding
 import com.aivigil.periodtracker.domain.CycleEngine
 import com.aivigil.periodtracker.dialog.PeriodStartConfirmationDialog
 import com.aivigil.periodtracker.dialog.PeriodStartResult
+import com.aivigil.periodtracker.util.ThemeHelper
 import com.aivigil.periodtracker.viewmodel.CycleViewModel
 import com.aivigil.periodtracker.viewmodel.CycleViewModelFactory
 import android.util.Log
@@ -42,7 +41,6 @@ class LogSymptomsFragment : Fragment() {
 
     private val TAG = "LogSymptomsFragment"
 
-    // ── Arguments ─────────────────────────────────────────────────
     private val targetDate: LocalDate by lazy {
         arguments?.getString(ARG_DATE)?.let { LocalDate.parse(it) } ?: LocalDate.now()
     }
@@ -55,15 +53,9 @@ class LogSymptomsFragment : Fragment() {
     private val isToday: Boolean get() = targetDate == LocalDate.now()
     private val isPastDate: Boolean get() = targetDate.isBefore(LocalDate.now())
 
-    // ── State ─────────────────────────────────────────────────────
-
-    // ✅ FIX 6 — neutral clinical default (98.0°F) instead of 97.8°F.
-    // basalTempChanged guards against saving this default if user never touches the control.
     private var basalTemp = 98.0f
     private var basalTempChanged = false
     private var editingEntryId: Int? = null
-
-    // ✅ Guard against double save
     private var isSaving = false
 
     override fun onCreateView(
@@ -88,13 +80,15 @@ class LogSymptomsFragment : Fragment() {
     // ── Backgrounds ───────────────────────────────────────────────
 
     private fun applyBackgrounds() {
+        // Brand gradient banner — correct in both modes
         binding.cycleBanner.background = GradientDrawable(
             GradientDrawable.Orientation.LEFT_RIGHT,
             intArrayOf(Color.parseColor("#EC4899"), Color.parseColor("#A855F7"))
         ).apply { cornerRadius = 16f * resources.displayMetrics.density }
 
-        binding.basalTempCard.background = roundedBg("#FDF0F5", 14f)
-        binding.infoBanner.background    = roundedBg("#F3EEFF", 12f)
+        // ✅ FIX — replaced hardcoded #FDF0F5 and #F3EEFF with ThemeHelper
+        binding.basalTempCard.background = ThemeHelper.basalCardBg(requireContext(), 14f)
+        binding.infoBanner.background    = ThemeHelper.insightBannerBg(requireContext(), 12f)
     }
 
     // ── Top bar ───────────────────────────────────────────────────
@@ -110,9 +104,6 @@ class LogSymptomsFragment : Fragment() {
 
     // ── Cycle banner ──────────────────────────────────────────────
 
-    // ✅ FIX 1 — observe vm.prediction instead of calling CycleEngine
-    // directly with raw settings. Keeps the fragment as a pure consumer
-    // of the ViewModel's single prediction source of truth.
     private fun bindCycleBanner() {
         vm.prediction.observe(viewLifecycleOwner) { pred ->
             pred ?: return@observe
@@ -122,10 +113,7 @@ class LogSymptomsFragment : Fragment() {
             binding.tvBannerCycleDay.text = "CYCLE DAY · DAY $dayNum"
             binding.tvBannerPhase.text    =
                 "${CycleEngine.phaseName(phase)} · ${CycleEngine.phaseDescription(phase)}"
-            Log.d(TAG, "bindCycleBanner: targetDate=$targetDate dayNum=$dayNum " +
-                    "phase=${CycleEngine.phaseName(phase)}")
         }
-        // Also re-trigger when settings arrive after prediction
         vm.settings.observe(viewLifecycleOwner) { s ->
             s ?: return@observe
             val pred = vm.prediction.value ?: return@observe
@@ -142,10 +130,7 @@ class LogSymptomsFragment : Fragment() {
     private fun loadExistingLogOnce() {
         viewLifecycleOwner.lifecycleScope.launch {
             val logs = vm.getLogsForDate(targetDate)
-            if (logs.isEmpty()) {
-                Log.d(TAG, "loadExistingLogOnce: no log for $targetDate — blank form")
-                return@launch
-            }
+            if (logs.isEmpty()) return@launch
 
             val log = if (targetEntryId != -1) {
                 editingEntryId = targetEntryId
@@ -154,11 +139,8 @@ class LogSymptomsFragment : Fragment() {
                 editingEntryId = null
                 null
             }
-
             log ?: return@launch
-            Log.d(TAG, "loadExistingLogOnce: pre-filling entryId=${log.entryId} for $targetDate")
 
-            // Flow
             when (log.flow) {
                 "None"     -> binding.chipFlowNone.isChecked     = true
                 "Spotting" -> binding.chipFlowSpotting.isChecked = true
@@ -167,7 +149,6 @@ class LogSymptomsFragment : Fragment() {
                 "Heavy"    -> binding.chipFlowHeavy.isChecked    = true
             }
 
-            // Moods
             val moodMap = mapOf(
                 "😊 Happy"       to binding.chipMoodHappy,
                 "😌 Calm"        to binding.chipMoodCalm,
@@ -179,7 +160,6 @@ class LogSymptomsFragment : Fragment() {
             )
             log.moods.split(",").map { it.trim() }.forEach { moodMap[it]?.isChecked = true }
 
-            // Symptoms
             val sympMap = mapOf(
                 "Cramps"         to binding.chipSympCramps,
                 "Headache"       to binding.chipSympHeadache,
@@ -193,7 +173,6 @@ class LogSymptomsFragment : Fragment() {
             )
             log.symptoms.split(",").map { it.trim() }.forEach { sympMap[it]?.isChecked = true }
 
-            // Cervical
             val cervMap = mapOf(
                 "Dry"               to binding.chipCervDry,
                 "Sticky"            to binding.chipCervSticky,
@@ -203,7 +182,6 @@ class LogSymptomsFragment : Fragment() {
             )
             cervMap[log.cervicalFluid]?.isChecked = true
 
-            // LH
             try {
                 when (log.lhTestResult) {
                     "Positive" -> binding.chipLhPositive.isChecked  = true
@@ -212,16 +190,13 @@ class LogSymptomsFragment : Fragment() {
                 }
             } catch (_: Exception) {}
 
-            // BBT
             log.basalTemp?.let {
                 basalTemp = it
                 basalTempChanged = false
                 updateTempDisplay()
             }
 
-            // Notes
             if (log.notes.isNotEmpty()) binding.etNotes.setText(log.notes)
-
             scrollToSection()
         }
     }
@@ -262,8 +237,6 @@ class LogSymptomsFragment : Fragment() {
 
     // ── Scroll ────────────────────────────────────────────────────
 
-    // ✅ FIX 5 — safely cast root to ScrollView or NestedScrollView
-    // instead of calling smoothScrollTo() on an arbitrary View
     private fun scrollToSection() {
         if (scrollTo == "top") return
         binding.root.post {
@@ -275,7 +248,6 @@ class LogSymptomsFragment : Fragment() {
                 else       -> null
             }
             target ?: return@post
-            // ✅ binding.root is NestedScrollView — cast directly, no when needed
             binding.root.smoothScrollTo(0, target.top)
         }
     }
@@ -285,20 +257,14 @@ class LogSymptomsFragment : Fragment() {
     private fun bindClickListeners() {
         binding.btnBack.setOnClickListener { parentFragmentManager.popBackStack() }
 
-        // ✅ Single shared listener — both buttons do the same thing
         val saveClick = View.OnClickListener {
-            if (isSaving) {
-                Log.w(TAG, "bindClickListeners: save already in progress — ignoring tap")
-                return@OnClickListener
-            }
-            // Disable both buttons immediately to prevent double tap
+            if (isSaving) return@OnClickListener
             binding.btnSave.isEnabled         = false
             binding.btnSaveDailyLog.isEnabled = false
             binding.btnSave.alpha             = 0.5f
             binding.btnSaveDailyLog.alpha     = 0.5f
             initiateSave()
         }
-
         binding.btnSave.setOnClickListener(saveClick)
         binding.btnSaveDailyLog.setOnClickListener(saveClick)
     }
@@ -306,11 +272,7 @@ class LogSymptomsFragment : Fragment() {
     // ── Save flow ─────────────────────────────────────────────────
 
     private fun initiateSave() {
-        // Double guard — catches any path that bypasses the click listener
-        if (isSaving) {
-            Log.w(TAG, "initiateSave: already saving — ignoring duplicate call")
-            return
-        }
+        if (isSaving) return
         isSaving = true
 
         val flow     = collectFlow()
@@ -320,35 +282,21 @@ class LogSymptomsFragment : Fragment() {
         val lh       = collectLhResult()
         val bbt      = if (basalTempChanged) basalTemp else null
         val notes    = binding.etNotes.text.toString().trim()
-
-        Log.d(TAG, "initiateSave: date=$targetDate isPast=$isPastDate " +
-                "editId=$editingEntryId flow=$flow moods=$moods symptoms=$symptoms")
-
         val shouldAsk = CycleEngine.shouldStartNewCycle(flow)
-        Log.d(TAG, "initiateSave: shouldAsk=$shouldAsk flow='$flow'")
 
         if (shouldAsk) {
-            Log.i(TAG, "initiateSave: showing period start dialog")
             PeriodStartConfirmationDialog.show(
                 childFragmentManager,
                 onResult = { result ->
-                    Log.i(TAG, "initiateSave: dialog result=$result")
                     viewLifecycleOwner.lifecycleScope.launch {
                         val confirmed = result == PeriodStartResult.PERIOD_STARTED
                         doSave(flow, moods, symptoms, cervical, lh, bbt, notes,
                             periodConfirmed = confirmed)
                     }
                 },
-                // ✅ FIX 4 — re-enable buttons when user dismisses dialog without choosing.
-                // Without this, buttons stay disabled permanently if the user taps outside
-                // the dialog or presses back.
-                onDismiss = {
-                    Log.i(TAG, "initiateSave: dialog dismissed without selection — resetting")
-                    resetSaveButtons()
-                }
+                onDismiss = { resetSaveButtons() }
             )
         } else {
-            Log.i(TAG, "initiateSave: skipping dialog — flow='$flow' not period-starting")
             doSave(flow, moods, symptoms, cervical, lh, bbt, notes,
                 periodConfirmed = false)
         }
@@ -360,39 +308,24 @@ class LogSymptomsFragment : Fragment() {
         periodConfirmed: Boolean
     ) {
         val existingId = editingEntryId
-
         if (existingId != null) {
-            // ── EDIT MODE ─────────────────────────────────────────
-            Log.i(TAG, "doSave: UPDATE entryId=$existingId date=$targetDate " +
-                    "confirmed=$periodConfirmed")
             viewLifecycleOwner.lifecycleScope.launch {
                 val existing = vm.getLogsForDate(targetDate)
                     .firstOrNull { it.entryId == existingId }
-                if (existing == null) {
-                    Log.e(TAG, "doSave: entryId=$existingId not found — aborting")
-                    resetSaveButtons()
-                    return@launch
-                }
-                vm.updateDailyLog(
-                    existing.copy(
-                        flow          = flow,
-                        moods         = moods.joinToString(","),
-                        symptoms      = symptoms.joinToString(","),
-                        cervicalFluid = cervical,
-                        basalTemp     = bbt ?: existing.basalTemp,
-                        lhTestResult  = lh,
-                        notes         = notes,
-                        loggedAt      = System.currentTimeMillis()
-                    )
-                )
-                if (periodConfirmed) {
-                    Log.i(TAG, "doSave: UPDATE + periodConfirmed → logPeriodStart($targetDate)")
-                    vm.logPeriodStart(targetDate)
-                }
+                if (existing == null) { resetSaveButtons(); return@launch }
+                vm.updateDailyLog(existing.copy(
+                    flow          = flow,
+                    moods         = moods.joinToString(","),
+                    symptoms      = symptoms.joinToString(","),
+                    cervicalFluid = cervical,
+                    basalTemp     = bbt ?: existing.basalTemp,
+                    lhTestResult  = lh,
+                    notes         = notes,
+                    loggedAt      = System.currentTimeMillis()
+                ))
+                if (periodConfirmed) vm.logPeriodStart(targetDate)
                 if (!isAdded) return@launch
                 val ctx = context ?: return@launch
-                // ✅ FIX 2 — reset isSaving before navigating away so if
-                // popBackStack() is delayed or fails, buttons are usable again
                 isSaving = false
                 Toast.makeText(ctx,
                     if (periodConfirmed) "Period logged ✓" else "Log updated ✓",
@@ -400,9 +333,6 @@ class LogSymptomsFragment : Fragment() {
                 parentFragmentManager.popBackStack()
             }
         } else {
-            // ── NEW MODE ──────────────────────────────────────────
-            Log.i(TAG, "doSave: INSERT date=$targetDate flow=$flow " +
-                    "confirmed=$periodConfirmed")
             viewLifecycleOwner.lifecycleScope.launch {
                 vm.saveDailyLog(
                     date            = targetDate,
@@ -417,8 +347,6 @@ class LogSymptomsFragment : Fragment() {
                 )
                 if (!isAdded) return@launch
                 val ctx = context ?: return@launch
-                // ✅ FIX 2 — reset isSaving before navigating away so if
-                // popBackStack() is delayed or fails, buttons are usable again
                 isSaving = false
                 Toast.makeText(ctx,
                     if (periodConfirmed) "Period logged ✓" else "Log saved ✓",
@@ -428,14 +356,13 @@ class LogSymptomsFragment : Fragment() {
         }
     }
 
-    // ✅ Re-enable buttons if save fails, is aborted, or dialog is dismissed
     private fun resetSaveButtons() {
         isSaving = false
         _binding?.let {
-            it.btnSave.isEnabled          = true
-            it.btnSaveDailyLog.isEnabled  = true
-            it.btnSave.alpha              = 1.0f
-            it.btnSaveDailyLog.alpha      = 1.0f
+            it.btnSave.isEnabled         = true
+            it.btnSaveDailyLog.isEnabled = true
+            it.btnSave.alpha             = 1.0f
+            it.btnSaveDailyLog.alpha     = 1.0f
         }
     }
 
@@ -488,14 +415,6 @@ class LogSymptomsFragment : Fragment() {
             else                             -> "Not Tested"
         }
     } catch (_: Exception) { "Not Tested" }
-
-    // ── Helpers ───────────────────────────────────────────────────
-
-    private fun roundedBg(colorHex: String, radiusDp: Float) = GradientDrawable().apply {
-        shape        = GradientDrawable.RECTANGLE
-        cornerRadius = radiusDp * resources.displayMetrics.density
-        setColor(Color.parseColor(colorHex))
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -1,5 +1,7 @@
 ﻿package com.aivigil.periodtracker.profile.sheets
 
+import com.aivigil.periodtracker.R
+
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
@@ -43,7 +45,7 @@ class ConditionsSheet(
                     text = label
                     isClickable = false
                     isCheckable = false
-                    chipBackgroundColor = ColorStateList.valueOf(Color.parseColor("#FCE4EC"))
+                    chipBackgroundColor = ColorStateList.valueOf(requireContext().getColor(R.color.tint_pink_chip))
                     setTextColor(Color.parseColor("#E63A5E"))
                     textSize = 12f
                     chipStrokeWidth = 0f

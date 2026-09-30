@@ -25,7 +25,7 @@
         android:text="When did your period start?"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:textColor="#2D1B33" />
+        android:textColor="@color/text_primary" />
 
     <!-- Selected date row -->
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -41,7 +41,7 @@
             android:text="Thu, Sep 17"
             android:textSize="28sp"
             android:textStyle="bold"
-            android:textColor="#2D1B33"
+            android:textColor="@color/text_primary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
@@ -53,7 +53,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#F5EEF8"
+        android:background="@color/surface_muted"
         android:layout_marginTop="12dp" />
 
     <!-- Month nav row -->
@@ -71,7 +71,7 @@
             android:text="September 2026"
             android:textSize="15sp"
             android:textStyle="bold"
-            android:textColor="#2D1B33"
+            android:textColor="@color/text_primary"
 
             android:drawablePadding="4dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -94,7 +94,7 @@
                 android:text="‹"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:textColor="#2D1B33" />
+                android:textColor="@color/text_primary" />
 
             <TextView
                 android:id="@+id/btnCalSheetNext"
@@ -104,7 +104,7 @@
                 android:text="›"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:textColor="#2D1B33" />
+                android:textColor="@color/text_primary" />
 
         </LinearLayout>
 
@@ -119,25 +119,25 @@
 
         <TextView android:layout_width="0dp" android:layout_height="32dp"
             android:layout_weight="1" android:gravity="center"
-            android:text="S" android:textSize="12sp" android:textColor="#8A7A8F" />
+            android:text="S" android:textSize="12sp" android:textColor="@color/text_secondary" />
         <TextView android:layout_width="0dp" android:layout_height="32dp"
             android:layout_weight="1" android:gravity="center"
-            android:text="M" android:textSize="12sp" android:textColor="#8A7A8F" />
+            android:text="M" android:textSize="12sp" android:textColor="@color/text_secondary" />
         <TextView android:layout_width="0dp" android:layout_height="32dp"
             android:layout_weight="1" android:gravity="center"
-            android:text="T" android:textSize="12sp" android:textColor="#8A7A8F" />
+            android:text="T" android:textSize="12sp" android:textColor="@color/text_secondary" />
         <TextView android:layout_width="0dp" android:layout_height="32dp"
             android:layout_weight="1" android:gravity="center"
-            android:text="W" android:textSize="12sp" android:textColor="#8A7A8F" />
+            android:text="W" android:textSize="12sp" android:textColor="@color/text_secondary" />
         <TextView android:layout_width="0dp" android:layout_height="32dp"
             android:layout_weight="1" android:gravity="center"
-            android:text="T" android:textSize="12sp" android:textColor="#8A7A8F" />
+            android:text="T" android:textSize="12sp" android:textColor="@color/text_secondary" />
         <TextView android:layout_width="0dp" android:layout_height="32dp"
             android:layout_weight="1" android:gravity="center"
-            android:text="F" android:textSize="12sp" android:textColor="#8A7A8F" />
+            android:text="F" android:textSize="12sp" android:textColor="@color/text_secondary" />
         <TextView android:layout_width="0dp" android:layout_height="32dp"
             android:layout_weight="1" android:gravity="center"
-            android:text="S" android:textSize="12sp" android:textColor="#8A7A8F" />
+            android:text="S" android:textSize="12sp" android:textColor="@color/text_secondary" />
     </LinearLayout>
 
     <!-- Calendar grid -->
@@ -163,7 +163,7 @@
             android:gravity="center"
             android:text="Cancel"
             android:textSize="15sp"
-            android:textColor="#8A7A8F" />
+            android:textColor="@color/text_secondary" />
 
         <TextView
             android:id="@+id/btnPeriodDateOk"

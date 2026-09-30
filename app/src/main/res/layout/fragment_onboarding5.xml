@@ -8,6 +8,7 @@
     android:paddingHorizontal="24dp"
     tools:context=".onboarding.OnboardingFragment5">
 
+    <!-- moveIconCircle background set in Kotlin via ThemeHelper.iconCirclePink() -->
     <FrameLayout
         android:id="@+id/moveIconCircle"
         android:layout_width="56dp"
@@ -24,6 +25,7 @@
             android:contentDescription="Movement icon" />
     </FrameLayout>
 
+    <!-- ✅ FIX — #3D1B2E → @color/text_primary -->
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="match_parent"
@@ -32,9 +34,10 @@
         android:text="How does your body\nlike to move?"
         android:textSize="22sp"
         android:textStyle="bold"
-        android:textColor="#3D1B2E"
+        android:textColor="@color/text_primary"
         app:layout_constraintTop_toBottomOf="@id/moveIconCircle" />
 
+    <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
     <TextView
         android:id="@+id/tvSubtitle"
         android:layout_width="match_parent"
@@ -42,8 +45,10 @@
         android:layout_marginTop="8dp"
         android:text="Period Tracker matches workout and rest suggestions to each cycle phase."
         android:textSize="13sp"
-        android:textColor="#8A7A8F"
+        android:textColor="@color/text_secondary"
         app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+
+    <!-- Card backgrounds + text colors set in Kotlin via ThemeHelper / renderSelection() -->
 
     <!-- Gentle -->
     <LinearLayout
@@ -75,8 +80,7 @@
                 android:layout_height="wrap_content"
                 android:text="Gentle"
                 android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="#2D1B33" />
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvGentleDesc"
@@ -84,15 +88,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:text="Walks, stretching, low-key days"
-                android:textSize="11sp"
-                android:textColor="#8A7A8F" />
+                android:textSize="11sp" />
         </LinearLayout>
 
         <FrameLayout
             android:id="@+id/checkGentle"
             android:layout_width="24dp"
             android:layout_height="24dp">
-
             <ImageView
                 android:id="@+id/ivCheckGentle"
                 android:layout_width="14dp"
@@ -133,8 +135,7 @@
                 android:layout_height="wrap_content"
                 android:text="Balanced"
                 android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="#FFFFFF" />
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvBalancedDesc"
@@ -142,15 +143,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:text="Regular movement, some workouts"
-                android:textSize="11sp"
-                android:textColor="#F5E6F0" />
+                android:textSize="11sp" />
         </LinearLayout>
 
         <FrameLayout
             android:id="@+id/checkBalanced"
             android:layout_width="24dp"
             android:layout_height="24dp">
-
             <ImageView
                 android:id="@+id/ivCheckBalanced"
                 android:layout_width="14dp"
@@ -191,8 +190,7 @@
                 android:layout_height="wrap_content"
                 android:text="Very active"
                 android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="#2D1B33" />
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvActiveDesc"
@@ -200,15 +198,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:text="Training most days, love to sweat"
-                android:textSize="11sp"
-                android:textColor="#8A7A8F" />
+                android:textSize="11sp" />
         </LinearLayout>
 
         <FrameLayout
             android:id="@+id/checkActive"
             android:layout_width="24dp"
             android:layout_height="24dp">
-
             <ImageView
                 android:id="@+id/ivCheckActive"
                 android:layout_width="14dp"
@@ -219,6 +215,7 @@
         </FrameLayout>
     </LinearLayout>
 
+    <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
     <TextView
         android:id="@+id/tvFooterNote"
         android:layout_width="match_parent"
@@ -227,7 +224,7 @@
         android:gravity="center"
         android:text="🔒 Kept confidential and securely stored on-device"
         android:textSize="11sp"
-        android:textColor="#8A7A8F"
+        android:textColor="@color/text_secondary"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

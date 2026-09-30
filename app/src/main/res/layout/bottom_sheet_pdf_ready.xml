@@ -45,7 +45,7 @@
         android:text="PDF Report Ready"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:textColor="#2D1B33"
+        android:textColor="@color/text_primary"
         android:layout_marginBottom="6dp" />
 
     <!-- Message -->
@@ -55,7 +55,7 @@
         android:layout_height="wrap_content"
         android:text="Saved to Downloads/PeriodTracker_Report.pdf"
         android:textSize="13sp"
-        android:textColor="#8A7A8F"
+        android:textColor="@color/text_secondary"
         android:gravity="center"
         android:layout_marginBottom="24dp" />
 
@@ -80,6 +80,6 @@
         android:gravity="center"
         android:text="Close"
         android:textSize="14sp"
-        android:textColor="#8A7A8F" />
+        android:textColor="@color/text_secondary" />
 
 </LinearLayout>

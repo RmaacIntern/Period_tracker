@@ -284,7 +284,7 @@ class NumberPickerAdapter(
         val isSelected = value == selected
         holder.tv.text      = "$value days"
         holder.tv.setTextColor(
-            if (isSelected) Color.parseColor("#EC4899") else Color.parseColor("#2D1B33")
+            if (isSelected) Color.parseColor("#EC4899") else holder.tv.context.getColor(R.color.text_primary)
         )
         holder.tv.textSize  = if (isSelected) 18f else 15f
         holder.tv.alpha     = if (isSelected) 1f else 0.55f

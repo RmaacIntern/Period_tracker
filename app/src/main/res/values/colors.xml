@@ -1,16 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- ── Legacy (keep for any remaining references) ─────────── -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-
     <color name="textcolor">#2A2A2A</color>
     <color name="btncolor">#E4A850</color>
     <color name="card_bg">#FFFFFFFF</color>
     <color name="card_text">#4C4C4C</color>
-
     <color name="hintTextColor">#4C4C4C</color>
     <color name="blue">#197AEF</color>
     <color name="gray">#808080</color>
     <color name="colorGrayNew">#6E6E6E</color>
 
+    <!-- ── Brand (never change between modes) ─────────────────── -->
+    <color name="brand_pink">#EC4899</color>
+    <color name="brand_purple">#A855F7</color>
+    <color name="brand_purple_deep">#7C3AED</color>
+
+    <!-- ── Semantic — LIGHT MODE ──────────────────────────────── -->
+
+    <!-- Page / screen background -->
+    <color name="surface_bg">#FBF5F8</color>
+
+    <!-- Card background (white cards) -->
+    <color name="surface_card">#FFFFFF</color>
+
+    <!-- Inner card / sub-row background -->
+    <color name="surface_card_inner">#FCF9FD</color>
+
+    <!-- Onboarding screen gradient start / mid / end -->
+    <color name="onboarding_grad_start">#FDF2F5</color>
+    <color name="onboarding_grad_mid">#FBF5F8</color>
+    <color name="onboarding_grad_end">#FFFFFF</color>
+
+    <!-- Primary text (dark purple) -->
+    <color name="text_primary">#2D1B33</color>
+
+    <!-- Secondary / muted text (grey-purple) -->
+    <color name="text_secondary">#8A7A8F</color>
+
+    <!-- Card stroke / divider -->
+    <color name="stroke_card">#F2EAF5</color>
+
+    <!-- Badge / chip background (light purple tint) -->
+    <color name="badge_bg">#F3EEFF</color>
+
+    <!-- Input card (name input, date card) -->
+    <color name="input_card_bg">#FFFFFF</color>
+
+    <!-- Privacy banner background -->
+    <color name="privacy_banner_bg">#F0FDF4</color>
+
+    <!-- Cycle banner (Log Symptoms, Home) uses brand gradient — no override needed -->
+
+    <!-- Insight banner -->
+    <color name="insight_banner_bg">#F3EEFF</color>
+
+    <!-- Basal temp card -->
+    <color name="basal_card_bg">#FDF0F5</color>
+
+    <!-- Splash screen diagonal gradient -->
+    <color name="splash_grad_start">#F0E6FA</color>
+    <color name="splash_grad_mid">#FDE8F3</color>
+
+    <!-- Icon soft backgrounds -->
+    <color name="icon_bg_pink">#FDE2E9</color>
+    <color name="icon_bg_purple">#EDE8F8</color>
+    <color name="icon_bg_green">#E6F5EC</color>
+    <color name="icon_bg_teal">#DFF3F0</color>
+
+    <!-- ── Dark-mode tokens (added 2026-09-30) ─────────────────
+         Light values below are identical to the old hardcoded hex,
+         so light mode looks exactly the same. Dark values live in
+         values-night/colors.xml. -->
+    <!-- Main activity root / status-bar area -->
+    <color name="app_bg">#FDF2F5</color>
+    <!-- EditText hint -->
+    <color name="text_hint">#C5B8CC</color>
+    <!-- Home greeting subtitle -->
+    <color name="text_plum">#8B5E8B</color>
+    <!-- Green confirmation text (onboarding date) -->
+    <color name="text_success">#2D8A5F</color>
+    <!-- Dividers, progress tracks, muted fills -->
+    <color name="surface_muted">#F5EEF8</color>
+    <!-- Unselected option card (Activity sheet) -->
+    <color name="option_card_bg">#F7F0F5</color>
+    <!-- ic_uncheck ring -->
+    <color name="stroke_checkbox">#E7DFEB</color>
+    <!-- Pink outline strokes, switch ON track -->
+    <color name="stroke_pink">#FBCFE8</color>
+    <!-- Privacy banner stroke -->
+    <color name="stroke_green">#DCFCE7</color>
+    <!-- Bottom-sheet drag handle -->
+    <color name="sheet_handle">#E0D8E8</color>
+    <!-- Home stat dividers, switch OFF track -->
+    <color name="divider">#EDE6F0</color>
+    <!-- Home section divider -->
+    <color name="divider_soft">#F0E8F3</color>
+    <!-- Profile switch OFF thumb -->
+    <color name="switch_off_thumb">#D0C8D5</color>
+    <!-- Soft purple badges / icon bg -->
+    <color name="tint_purple_soft">#F3ECFF</color>
+    <!-- Soft pink icon bg -->
+    <color name="tint_pink_soft">#FFF0F6</color>
+    <!-- Condition chips (Profile) -->
+    <color name="tint_pink_chip">#FCE4EC</color>
+    <!-- Period-confirm dialog outer ring -->
+    <color name="period_confirm_outer">#FDE8F0</color>
+    <!-- Progress bar background -->
+    <color name="progress_track">#F5D6E0</color>
+    <!-- Progress bar secondary -->
+    <color name="progress_track_secondary">#F0B8CA</color>
+    <!-- Slider inactive track / input stroke -->
+    <color name="slider_track_inactive">#F0DDE3</color>
+    <!-- Slider inactive track (onboarding 8) -->
+    <color name="slider_track_inactive_alt">#F6D9E4</color>
+    <!-- Unchecked chip background -->
+    <color name="chip_bg">#F9F3FB</color>
+    <!-- Unselected nav item -->
+    <color name="nav_inactive">#A99AAC</color>
+    <!-- Fertile green (dots, text) -->
+    <color name="cycle_fertile">#3B7A57</color>
+    <!-- Fertile day circle in calendar -->
+    <color name="cycle_fertile_bg">#E8F5E9</color>
+    <!-- Predicted period circle / legend -->
+    <color name="cycle_predicted">#FBCFE8</color>
+    <!-- Text on predicted period circle -->
+    <color name="cycle_predicted_text">#EC4899</color>
+    <!-- Current in-progress bar (Insights chart) -->
+    <color name="bar_current">#EDE8FC</color>
+    <!-- Past-log history card -->
+    <color name="history_card_bg">#FDF9FE</color>
+    <!-- Past-log history card stroke -->
+    <color name="history_card_stroke">#F0E9F7</color>
+    <!-- Banner ad placeholder -->
+    <color name="ad_placeholder_bg">#ADC3D1</color>
 </resources>

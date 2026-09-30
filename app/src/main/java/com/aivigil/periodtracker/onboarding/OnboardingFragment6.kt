@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import com.aivigil.periodtracker.R
 import com.aivigil.periodtracker.ads.NativeAdHelper
 import com.aivigil.periodtracker.databinding.FragmentOnboarding6Binding
+import com.aivigil.periodtracker.util.ThemeHelper
 
 class OnboardingFragment6 : Fragment() {
 
@@ -17,7 +18,6 @@ class OnboardingFragment6 : Fragment() {
     private val binding get() = _binding!!
     private var nativeAdHelper: NativeAdHelper? = null
 
-    // Single goal — both features are always included
     enum class Goal { TRACK_CYCLE }
 
     override fun onCreateView(
@@ -31,41 +31,28 @@ class OnboardingFragment6 : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.onboarding6Root.background = GradientDrawable(
-            GradientDrawable.Orientation.TOP_BOTTOM,
-            intArrayOf(
-                Color.parseColor("#FDF2F5"),
-                Color.parseColor("#FBF5F8"),
-                Color.parseColor("#FFFFFF")
-            )
-        )
+        // ✅ FIX — replaced hardcoded gradient and icon circle with ThemeHelper
+        binding.onboarding6Root.background = ThemeHelper.onboardingGradient(requireContext())
+        binding.goalIconCircle.background  = ThemeHelper.iconCirclePink(requireContext())
 
-        nativeAdHelper = NativeAdHelper(requireContext())       // in Fragment
-
+        nativeAdHelper = NativeAdHelper(requireContext())
         nativeAdHelper?.loadInto(binding.nativeAdContainer)
 
-        binding.goalIconCircle.background = filledCircle("#FDE2E9")
+        // Card is always selected — brand gradient + white tick. Fine in both modes.
+        binding.cardGoal.background = GradientDrawable(
+            GradientDrawable.Orientation.LEFT_RIGHT,
+            intArrayOf(Color.parseColor("#E63A5E"), Color.parseColor("#A855F7"))
+        ).apply { cornerRadius = 18f * resources.displayMetrics.density }
 
-        // Card is always selected — apply gradient and tick once
-        binding.cardGoal.background = gradientBg()
-        binding.checkGoal.background = filledCircle("#FFFFFF")
+        binding.checkGoal.background = GradientDrawable().apply {
+            shape = GradientDrawable.OVAL
+            setColor(Color.WHITE)
+        }
         binding.ivCheckGoal.setImageResource(R.drawable.ic_check)
         binding.ivCheckGoal.setColorFilter(Color.parseColor("#E63A5E"))
     }
 
     fun getSelectedGoal(): Goal = Goal.TRACK_CYCLE
-
-    private fun gradientBg() = GradientDrawable(
-        GradientDrawable.Orientation.LEFT_RIGHT,
-        intArrayOf(Color.parseColor("#E63A5E"), Color.parseColor("#A855F7"))
-    ).apply {
-        cornerRadius = 18f * resources.displayMetrics.density
-    }
-
-    private fun filledCircle(colorHex: String) = GradientDrawable().apply {
-        shape = GradientDrawable.OVAL
-        setColor(Color.parseColor(colorHex))
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()

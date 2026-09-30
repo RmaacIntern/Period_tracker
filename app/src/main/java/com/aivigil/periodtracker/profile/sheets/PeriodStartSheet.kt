@@ -1,5 +1,7 @@
 ﻿package com.aivigil.periodtracker.profile.sheets
 
+import com.aivigil.periodtracker.R
+
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
@@ -115,7 +117,7 @@ class PeriodStartSheet(
                 val end   = entry.endDate?.let { " → ${LocalDate.parse(it).format(shortFmt)}" } ?: " (ongoing)"
                 text      = "🩸 $start$end"
                 textSize  = 13f
-                setTextColor(Color.parseColor("#2D1B33"))
+                setTextColor(requireContext().getColor(R.color.text_primary))
                 layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
             }
 
@@ -158,7 +160,7 @@ class PeriodStartSheet(
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, 1
                 ).also { it.setMargins(0, 0, 0, 0) }
-                setBackgroundColor(Color.parseColor("#F5EEF8"))
+                setBackgroundColor(requireContext().getColor(R.color.surface_muted))
             }
 
             b.recentPeriodsList.addView(rowLayout)
@@ -194,7 +196,7 @@ class PeriodStartSheet(
         b.tvPeriodStartMonth.text = displayMonth.format(monthFmt)
     }
 
-//    private fun styleEditButton() {
+    //    private fun styleEditButton() {
 //        b.btnPeriodStartEdit.background = GradientDrawable(
 //            GradientDrawable.Orientation.LEFT_RIGHT,
 //            intArrayOf(Color.parseColor("#EC4899"), Color.parseColor("#A855F7"))

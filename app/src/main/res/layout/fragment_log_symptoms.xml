@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="#FBF5F8">
+    android:background="@color/surface_bg">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,11 +14,12 @@
         android:paddingBottom="32dp">
 
         <!-- TOP BAR -->
+        <!-- ✅ FIX — #FFFFFF → @color/surface_card so top bar adapts in dark mode -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:paddingHorizontal="16dp"
-            android:background="#FFFFFF">
+            android:background="@color/surface_card">
 
             <ImageView
                 android:id="@+id/btnBack"
@@ -31,6 +32,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
+            <!-- ✅ FIX — #2D1B33 → @color/text_primary -->
             <TextView
                 android:id="@+id/tvScreenTitle"
                 android:layout_width="wrap_content"
@@ -38,12 +40,13 @@
                 android:text="Log Symptoms"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="#2D1B33"
+                android:textColor="@color/text_primary"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
+            <!-- brand pink — kept hardcoded -->
             <TextView
                 android:id="@+id/btnSave"
                 android:layout_width="wrap_content"
@@ -56,10 +59,9 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- CYCLE INFO BANNER -->
+        <!-- CYCLE INFO BANNER — brand gradient, set in Kotlin -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cycleBanner"
             android:layout_width="match_parent"
@@ -69,6 +71,7 @@
             android:layout_marginTop="4dp"
             android:padding="14dp">
 
+            <!-- White text on gradient — correct in both modes -->
             <TextView
                 android:id="@+id/tvBannerCycleDay"
                 android:layout_width="wrap_content"
@@ -116,7 +119,6 @@
                 android:alpha="0.85"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvBannerPhase" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- ─── MENSTRUAL FLOW ─── -->
@@ -131,7 +133,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
+                <!-- ✅ FIX — #2D1B33 → @color/text_primary -->
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -139,21 +141,20 @@
                     android:textSize="10sp"
                     android:textStyle="bold"
                     android:letterSpacing="0.08"
-                    android:textColor="#2D1B33"
+                    android:textColor="@color/text_primary"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/tvFlowCount" />
-
+                <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
                 <TextView
                     android:id="@+id/tvFlowCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0 selected"
                     android:textSize="10sp"
-                    android:textColor="#8A7A8F"
+                    android:textColor="@color/text_secondary"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.chip.ChipGroup
@@ -163,7 +164,6 @@
                 android:layout_marginTop="10dp"
                 app:singleSelection="true"
                 app:selectionRequired="false">
-
                 <com.google.android.material.chip.Chip android:id="@+id/chipFlowNone"
                     android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:text="None" style="@style/CycleChip" />
@@ -179,13 +179,11 @@
                 <com.google.android.material.chip.Chip android:id="@+id/chipFlowHeavy"
                     android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:text="Heavy" style="@style/CycleChip" />
-
             </com.google.android.material.chip.ChipGroup>
-
         </LinearLayout>
 
         <View android:layout_width="match_parent" android:layout_height="1dp"
-            android:background="#F5EEF8" android:layout_marginTop="16dp"
+            android:background="@color/stroke_card" android:layout_marginTop="16dp"
             android:layout_marginStart="16dp" android:layout_marginEnd="16dp" />
 
         <!-- ─── MOOD ─── -->
@@ -200,7 +198,6 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -208,21 +205,19 @@
                     android:textSize="10sp"
                     android:textStyle="bold"
                     android:letterSpacing="0.08"
-                    android:textColor="#2D1B33"
+                    android:textColor="@color/text_primary"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/tvMoodCount" />
-
                 <TextView
                     android:id="@+id/tvMoodCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0 selected"
                     android:textSize="10sp"
-                    android:textColor="#8A7A8F"
+                    android:textColor="@color/text_secondary"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.chip.ChipGroup
@@ -231,7 +226,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 app:singleSelection="true">
-
                 <com.google.android.material.chip.Chip android:id="@+id/chipMoodHappy"
                     android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:text="😊 Happy" style="@style/CycleChip" />
@@ -253,13 +247,11 @@
                 <com.google.android.material.chip.Chip android:id="@+id/chipMoodMixed"
                     android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:text="Mixed feelings" style="@style/CycleChip" />
-
             </com.google.android.material.chip.ChipGroup>
-
         </LinearLayout>
 
         <View android:layout_width="match_parent" android:layout_height="1dp"
-            android:background="#F5EEF8" android:layout_marginTop="16dp"
+            android:background="@color/stroke_card" android:layout_marginTop="16dp"
             android:layout_marginStart="16dp" android:layout_marginEnd="16dp" />
 
         <!-- ─── PHYSICAL SYMPTOMS ─── -->
@@ -274,7 +266,6 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -282,21 +273,19 @@
                     android:textSize="10sp"
                     android:textStyle="bold"
                     android:letterSpacing="0.08"
-                    android:textColor="#2D1B33"
+                    android:textColor="@color/text_primary"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/tvSymptomsCount" />
-
                 <TextView
                     android:id="@+id/tvSymptomsCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0 selected"
                     android:textSize="10sp"
-                    android:textColor="#8A7A8F"
+                    android:textColor="@color/text_secondary"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.chip.ChipGroup
@@ -305,7 +294,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 app:singleSelection="false">
-
                 <com.google.android.material.chip.Chip android:id="@+id/chipSympCramps"
                     android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:text="Cramps" style="@style/CycleChip" />
@@ -333,13 +321,11 @@
                 <com.google.android.material.chip.Chip android:id="@+id/chipSympNausea"
                     android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:text="Nausea" style="@style/CycleChip" />
-
             </com.google.android.material.chip.ChipGroup>
-
         </LinearLayout>
 
         <View android:layout_width="match_parent" android:layout_height="1dp"
-            android:background="#F5EEF8" android:layout_marginTop="16dp"
+            android:background="@color/stroke_card" android:layout_marginTop="16dp"
             android:layout_marginStart="16dp" android:layout_marginEnd="16dp" />
 
         <!-- ─── CERVICAL FLOW ─── -->
@@ -354,7 +340,6 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -362,21 +347,19 @@
                     android:textSize="10sp"
                     android:textStyle="bold"
                     android:letterSpacing="0.08"
-                    android:textColor="#2D1B33"
+                    android:textColor="@color/text_primary"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/tvCervicalHint" />
-
                 <TextView
                     android:id="@+id/tvCervicalHint"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="fertility indicator"
                     android:textSize="10sp"
-                    android:textColor="#8A7A8F"
+                    android:textColor="@color/text_secondary"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.chip.ChipGroup
@@ -386,7 +369,6 @@
                 android:layout_marginTop="10dp"
                 app:singleSelection="true"
                 app:selectionRequired="false">
-
                 <com.google.android.material.chip.Chip android:id="@+id/chipCervDry"
                     android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:text="Dry" style="@style/CycleChip" />
@@ -402,13 +384,11 @@
                 <com.google.android.material.chip.Chip android:id="@+id/chipCervEggWhite"
                     android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:text="Egg White Fertile" style="@style/CycleChip" />
-
             </com.google.android.material.chip.ChipGroup>
-
         </LinearLayout>
 
         <View android:layout_width="match_parent" android:layout_height="1dp"
-            android:background="#F5EEF8" android:layout_marginTop="16dp"
+            android:background="@color/stroke_card" android:layout_marginTop="16dp"
             android:layout_marginStart="16dp" android:layout_marginEnd="16dp" />
 
         <!-- ─── OVULATION TEST (LH) ─── -->
@@ -423,7 +403,6 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -431,21 +410,19 @@
                     android:textSize="10sp"
                     android:textStyle="bold"
                     android:letterSpacing="0.08"
-                    android:textColor="#2D1B33"
+                    android:textColor="@color/text_primary"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/tvLhHint" />
-
                 <TextView
                     android:id="@+id/tvLhHint"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="optional"
                     android:textSize="10sp"
-                    android:textColor="#8A7A8F"
+                    android:textColor="@color/text_secondary"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.chip.ChipGroup
@@ -455,35 +432,20 @@
                 android:layout_marginTop="10dp"
                 app:singleSelection="true"
                 app:selectionRequired="true">
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipLhNotTested"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Not Tested"
-                    android:checked="true"
-                    style="@style/CycleChip" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipLhNegative"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Negative"
-                    style="@style/CycleChip" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipLhPositive"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Positive ⚡"
-                    style="@style/CycleChip" />
-
+                <com.google.android.material.chip.Chip android:id="@+id/chipLhNotTested"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Not Tested" android:checked="true" style="@style/CycleChip" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipLhNegative"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Negative" style="@style/CycleChip" />
+                <com.google.android.material.chip.Chip android:id="@+id/chipLhPositive"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Positive ⚡" style="@style/CycleChip" />
             </com.google.android.material.chip.ChipGroup>
-
         </LinearLayout>
 
         <View android:layout_width="match_parent" android:layout_height="1dp"
-            android:background="#F5EEF8" android:layout_marginTop="16dp"
+            android:background="@color/stroke_card" android:layout_marginTop="16dp"
             android:layout_marginStart="16dp" android:layout_marginEnd="16dp" />
 
         <!-- ─── BASAL BODY TEMP ─── -->
@@ -498,7 +460,6 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -506,23 +467,22 @@
                     android:textSize="10sp"
                     android:textStyle="bold"
                     android:letterSpacing="0.08"
-                    android:textColor="#2D1B33"
+                    android:textColor="@color/text_primary"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/tvBasalHint" />
-
                 <TextView
                     android:id="@+id/tvBasalHint"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="morning reading"
                     android:textSize="10sp"
-                    android:textColor="#8A7A8F"
+                    android:textColor="@color/text_secondary"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <!-- basalTempCard background set in Kotlin via ThemeHelper.basalCardBg() -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/basalTempCard"
                 android:layout_width="match_parent"
@@ -530,6 +490,7 @@
                 android:layout_marginTop="10dp"
                 android:padding="14dp">
 
+                <!-- brand pink — kept hardcoded -->
                 <TextView
                     android:id="@+id/btnTempDown"
                     android:layout_width="40dp"
@@ -543,6 +504,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
 
+                <!-- ✅ FIX — #2D1B33 → @color/text_primary -->
                 <TextView
                     android:id="@+id/tvBasalTemp"
                     android:layout_width="0dp"
@@ -550,7 +512,7 @@
                     android:text="97.8°"
                     android:textSize="36sp"
                     android:textStyle="bold"
-                    android:textColor="#2D1B33"
+                    android:textColor="@color/text_primary"
                     android:gravity="center"
                     app:layout_constraintStart_toEndOf="@id/btnTempDown"
                     app:layout_constraintEnd_toStartOf="@id/btnTempUp"
@@ -569,13 +531,11 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
-
             </androidx.constraintlayout.widget.ConstraintLayout>
-
         </LinearLayout>
 
         <View android:layout_width="match_parent" android:layout_height="1dp"
-            android:background="#F5EEF8" android:layout_marginTop="16dp"
+            android:background="@color/stroke_card" android:layout_marginTop="16dp"
             android:layout_marginStart="16dp" android:layout_marginEnd="16dp" />
 
         <!-- ─── DAILY NOTES ─── -->
@@ -594,8 +554,9 @@
                 android:textSize="10sp"
                 android:textStyle="bold"
                 android:letterSpacing="0.08"
-                android:textColor="#2D1B33" />
+                android:textColor="@color/text_primary" />
 
+            <!-- ✅ FIX — #2D1B33 → @color/text_primary; hint color kept muted -->
             <EditText
                 android:id="@+id/etNotes"
                 android:layout_width="match_parent"
@@ -603,16 +564,15 @@
                 android:layout_marginTop="10dp"
                 android:hint="Add any notes here, sleep quality, stress levels..."
                 android:textSize="13sp"
-                android:textColor="#2D1B33"
-                android:textColorHint="#C5B8CC"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_hint"
                 android:background="@null"
                 android:gravity="top"
                 android:inputType="textMultiLine"
                 android:padding="0dp" />
-
         </LinearLayout>
 
-        <!-- INFO BANNER -->
+        <!-- INFO BANNER — background set in Kotlin via ThemeHelper.insightBannerBg() -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/infoBanner"
             android:layout_width="match_parent"
@@ -632,6 +592,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <!-- brand purple — kept hardcoded -->
             <TextView
                 android:id="@+id/tvInfoText"
                 android:layout_width="0dp"
@@ -639,15 +600,13 @@
                 android:layout_marginStart="8dp"
                 android:text="Consistent daily logging for at least the next 3 cycles will significantly improve your cycle predictions."
                 android:textSize="11sp"
-                android:textColor="#7C3AED"
+                android:textColor="@color/brand_purple_deep"
                 android:lineSpacingExtra="2dp"
                 app:layout_constraintStart_toEndOf="@id/ivInfoIcon"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- SAVE BUTTON -->
         <com.aivigil.periodtracker.widgets.GradientButton
             android:id="@+id/btnSaveDailyLog"
             android:layout_width="match_parent"

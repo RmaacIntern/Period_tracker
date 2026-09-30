@@ -19,7 +19,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Spacer: push logo to ~30% from top -->
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -50,13 +49,14 @@
                         android:layout_height="match_parent"
                         android:src="@drawable/period_logo"
                         android:scaleType="centerCrop"
-                        android:contentDescription="LunaCycle logo" />
+                        android:contentDescription="Period Tracker logo" />
 
                 </FrameLayout>
             </FrameLayout>
         </FrameLayout>
 
         <!-- App name -->
+        <!-- ✅ FIX — replaced hardcoded #2D1B33 with @color/text_primary -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -64,24 +64,24 @@
             android:text="Period Tracker"
             android:textSize="32sp"
             android:textStyle="bold"
-            android:textColor="#2D1B33"
+            android:textColor="@color/text_primary"
             android:letterSpacing="0.01"
             android:gravity="center"
             android:layout_gravity="center_horizontal" />
 
         <!-- Tagline -->
+        <!-- ✅ FIX — replaced hardcoded #8A7A8F with @color/text_secondary -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="Understand your cycle.\nUnderstand yourself."
             android:textSize="15sp"
-            android:textColor="#8A7A8F"
+            android:textColor="@color/text_secondary"
             android:gravity="center"
             android:lineSpacingExtra="4dp"
             android:layout_gravity="center_horizontal" />
 
-        <!-- Flexible spacer -->
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -109,28 +109,30 @@
                     android:src="@drawable/ic_lock"
                     android:contentDescription="Privacy" />
 
+                <!-- ✅ FIX — replaced hardcoded #6B5B6E with @color/text_secondary -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Private by design · Local device only"
                     android:textSize="12sp"
-                    android:textColor="#6B5B6E" />
+                    android:textColor="@color/text_secondary" />
 
             </LinearLayout>
 
+            <!-- ✅ FIX — replaced hardcoded #A99AAC with @color/text_secondary -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Zero tracking · Zero cloud · 100% Yours"
                 android:textSize="11sp"
-                android:textColor="#A99AAC"
+                android:textColor="@color/text_secondary"
                 android:gravity="center" />
 
         </LinearLayout>
 
     </LinearLayout>
 
-    <!-- Loading section pinned to bottom -->
+    <!-- Loading section -->
     <LinearLayout
         android:id="@+id/loadingSection"
         android:layout_width="match_parent"
@@ -142,7 +144,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Loading text above progress bar -->
+        <!-- ✅ FIX — replaced hardcoded #8A7A8F with @color/text_secondary -->
         <TextView
             android:id="@+id/tvLoading"
             android:layout_width="wrap_content"
@@ -150,9 +152,8 @@
             android:layout_marginBottom="10dp"
             android:text="Loading..."
             android:textSize="12sp"
-            android:textColor="#8A7A8F" />
+            android:textColor="@color/text_secondary" />
 
-        <!-- Progress bar -->
         <ProgressBar
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyleHorizontal"
@@ -166,8 +167,7 @@
 
     </LinearLayout>
 
-    <!-- Banner ad pinned to very bottom -->
-    <!-- Banner ad pinned to very bottom -->
+    <!-- Banner ad -->
     <include
         android:id="@+id/smallAd"
         layout="@layout/small_banner"

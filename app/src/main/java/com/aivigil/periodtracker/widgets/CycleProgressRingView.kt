@@ -13,6 +13,7 @@ import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.roundToInt
 import kotlin.math.sin
+import com.aivigil.periodtracker.R
 
 class CycleProgressRingView @JvmOverloads constructor(
     context: Context,
@@ -36,8 +37,8 @@ class CycleProgressRingView @JvmOverloads constructor(
     private val colorOvulation    = Color.parseColor("#E66A28")
     private val colorLowFertility = Color.parseColor("#64B5F6")
     private val colorLuteal       = Color.parseColor("#BA68C8")
-    private val colorDarkText     = Color.parseColor("#2D1B33")
-    private val colorMutedText    = Color.parseColor("#8A7A8F")
+    private val colorDarkText     get() = context.getColor(R.color.text_primary)
+    private val colorMutedText    get() = context.getColor(R.color.text_secondary)
 
     // ── Paints ────────────────────────────────────────────────────
     private val ringPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -267,8 +268,8 @@ class CycleProgressRingView @JvmOverloads constructor(
             cx + badgeWidth / 2f, badgeTop + badgeHeight
         )
 
-        badgeBgPaint.color    = Color.parseColor("#F7F4FA")
-        badgeBorderPaint.color = Color.parseColor("#E4DFEA")
+        badgeBgPaint.color    = context.getColor(R.color.surface_card)
+        badgeBorderPaint.color = context.getColor(R.color.stroke_card)
         badgeBorderPaint.strokeWidth = w * 0.003f
 
         canvas.drawRoundRect(badgeRect, badgeHeight / 2f, badgeHeight / 2f, badgeBgPaint)

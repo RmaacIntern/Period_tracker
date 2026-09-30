@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="#FFFFFF"
+    android:background="@drawable/bottom_sheet_bg"
     android:paddingTop="8dp"
     android:paddingBottom="32dp"
     android:paddingHorizontal="24dp">
@@ -25,7 +25,7 @@
         android:text="Update Weight"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:textColor="#3D1B2E"
+        android:textColor="@color/text_primary"
         android:layout_marginBottom="4dp"/>
 
     <TextView
@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:text="No judgment here, ever. This helps personalize your health insights."
         android:textSize="12sp"
-        android:textColor="#8A7A8F"
+        android:textColor="@color/text_secondary"
         android:layout_marginBottom="20dp"/>
 
     <!-- Weight card -->
@@ -58,7 +58,7 @@
                 android:text="⚖️ Weight"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:textColor="#2D1B33"/>
+                android:textColor="@color/text_primary"/>
 
             <TextView
                 android:id="@+id/tvWeightValue"
@@ -85,7 +85,7 @@
             android:value="60"
             app:thumbColor="#E63A5E"
             app:trackColorActive="#E63A5E"
-            app:trackColorInactive="#F0DDE3"
+            app:trackColorInactive="@color/slider_track_inactive"
             app:labelBehavior="gone"/>
 
         <!-- Min / max labels -->
@@ -100,7 +100,7 @@
                 android:layout_weight="1"
                 android:text="35 kg"
                 android:textSize="11sp"
-                android:textColor="#8A7A8F"/>
+                android:textColor="@color/text_secondary"/>
 
             <TextView
                 android:layout_width="0dp"
@@ -109,7 +109,7 @@
                 android:gravity="end"
                 android:text="140 kg"
                 android:textSize="11sp"
-                android:textColor="#8A7A8F"/>
+                android:textColor="@color/text_secondary"/>
 
         </LinearLayout>
 
@@ -131,7 +131,7 @@
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
             android:text="Cancel"
-            android:textColor="#6B7280"
+            android:textColor="@color/text_secondary"
             app:cornerRadius="14dp"/>
 
         <Button
@@ -155,6 +155,6 @@
         android:gravity="center"
         android:text="🔒 Stored securely on-device"
         android:textSize="11sp"
-        android:textColor="#8A7A8F"/>
+        android:textColor="@color/text_secondary"/>
 
 </LinearLayout>

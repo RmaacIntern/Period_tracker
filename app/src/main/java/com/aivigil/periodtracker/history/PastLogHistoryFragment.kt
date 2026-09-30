@@ -230,10 +230,10 @@ class PastLogHistoryFragment : Fragment() {
                 cardEntries.background = GradientDrawable().apply {
                     shape        = GradientDrawable.RECTANGLE
                     cornerRadius = 12f * itemView.resources.displayMetrics.density
-                    setColor(Color.parseColor("#FDF9FE"))
+                    setColor(itemView.context.getColor(R.color.history_card_bg))
                     setStroke(
                         (1f * itemView.resources.displayMetrics.density).toInt(),
-                        Color.parseColor("#F0E9F7")
+                        itemView.context.getColor(R.color.history_card_stroke)
                     )
                 }
 

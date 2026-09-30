@@ -1,11 +1,11 @@
 ﻿package com.aivigil.periodtracker.widgets
 
 import android.content.Context
-import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.aivigil.periodtracker.R
 import com.aivigil.periodtracker.databinding.ViewStepHeaderBinding
 
 class StepProgressHeaderView @JvmOverloads constructor(
@@ -17,28 +17,27 @@ class StepProgressHeaderView @JvmOverloads constructor(
         ViewStepHeaderBinding.inflate(LayoutInflater.from(context), this, true)
 
     init {
-        // Track (background pill) — built in code, no drawable file
+        // ✅ FIX — replaced hardcoded hex with color resources so track
+        // adapts to dark mode (light pink track → dark surface in dark mode)
         binding.progressTrack.background = GradientDrawable().apply {
-            shape = GradientDrawable.RECTANGLE
+            shape        = GradientDrawable.RECTANGLE
             cornerRadius = 20f
-            setColor(Color.parseColor("#F0E8ED"))
+            setColor(context.getColor(R.color.surface_card_inner))
         }
 
-        // Fill (pink pill) — built in code, no drawable file
+        // Fill stays brand pink — correct in both modes
         binding.progressFill.background = GradientDrawable().apply {
-            shape = GradientDrawable.RECTANGLE
+            shape        = GradientDrawable.RECTANGLE
             cornerRadius = 20f
-            setColor(Color.parseColor("#F28B9D"))
+            setColor(context.getColor(R.color.brand_pink))
         }
     }
 
-    /** Call this on every onboarding screen with its step number. */
     fun setStep(current: Int, total: Int) {
         binding.tvStepLabel.text = "STEP $current OF $total"
-
         binding.progressTrack.post {
             val trackWidth = binding.progressTrack.width
-            val fillWidth = (trackWidth * (current.toFloat() / total.toFloat())).toInt()
+            val fillWidth  = (trackWidth * (current.toFloat() / total.toFloat())).toInt()
             binding.progressFill.layoutParams = binding.progressFill.layoutParams.apply {
                 width = fillWidth
             }

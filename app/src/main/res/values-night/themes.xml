@@ -1,7 +1,9 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.LunaCycle" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
-    </style>
-</resources>
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Intentionally empty.
+    The app theme (values/themes.xml) extends Theme.Material3.DayNight and every
+    colour it uses is a @color / @bool token with a night override in
+    values-night/colors.xml and values-night/bools.xml. Nothing to redefine here.
+    (Old stub referenced the wrong name Base.Theme.LunaCycle — removed.)
+-->
+<resources />

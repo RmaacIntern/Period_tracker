@@ -1,13 +1,12 @@
 ﻿package com.aivigil.periodtracker.profile.sheets
 
-import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.aivigil.periodtracker.R
+import com.aivigil.periodtracker.util.ThemeHelper
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.slider.Slider
 
@@ -34,11 +33,7 @@ class WeightSheet(
 
         // Card background
         view.findViewById<View>(R.id.weightCard).background =
-            GradientDrawable().apply {
-                shape = GradientDrawable.RECTANGLE
-                cornerRadius = 16f * resources.displayMetrics.density
-                setColor(Color.parseColor("#FDF0F5"))
-            }
+            ThemeHelper.innerCardBg(requireContext(), 16f)
 
         val initial = currentWeightKg.coerceIn(35f, 140f)
         slider.value = initial

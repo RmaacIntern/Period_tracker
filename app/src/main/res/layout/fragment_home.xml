@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="#FBF5F8">
+    android:background="@color/surface_bg">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="#FDF0F5"
+            android:background="@color/basal_card_bg"
             android:paddingHorizontal="20dp"
             android:paddingTop="16dp"
             android:paddingBottom="24dp">
@@ -27,7 +27,6 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="44dp">
-
                 <LinearLayout
                     android:id="@+id/topBarLeft"
                     android:layout_width="0dp"
@@ -36,10 +35,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                   app:layout_constraintEnd_toEndOf="parent">
-
-
-
+                    app:layout_constraintEnd_toEndOf="parent">
                     <TextView
                         android:id="@+id/tvAppLabel"
                         android:layout_width="wrap_content"
@@ -47,16 +43,10 @@
                         android:text="Period Tracker"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        android:textColor="#2D1B33" />
+                        android:textColor="@color/text_primary" />
                 </LinearLayout>
-
-
-
-
-
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Cycle Day heading -->
             <TextView
                 android:id="@+id/tvGreeting"
                 android:layout_width="wrap_content"
@@ -64,9 +54,8 @@
                 android:layout_marginTop="8dp"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:textColor="#8B5E8B"
+                android:textColor="@color/text_plum"
                 android:text="Hi there 👋" />
-
 
             <TextView
                 android:id="@+id/tvPhaseSubheading"
@@ -75,26 +64,21 @@
                 android:layout_marginTop="2dp"
                 android:text="Follicular Phase Reduces chances of conception"
                 android:textSize="12sp"
-                android:textColor="#8A7A8F" />
+                android:textColor="@color/text_secondary" />
 
-
-            <!-- Ring centered -->
+            <!-- Ring -->
             <FrameLayout
                 android:layout_width="280dp"
                 android:layout_height="280dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp">
-
                 <com.aivigil.periodtracker.widgets.CycleProgressRingView
                     android:id="@+id/cycleRing"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
-
             </FrameLayout>
 
-
-
-            <!-- Predicted period -->
+            <!-- Legend -->
             <LinearLayout
                 android:id="@+id/legendContainer"
                 android:layout_width="match_parent"
@@ -106,14 +90,12 @@
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp">
 
-                <!-- Row 1: Period + Fertile Window -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:weightSum="2">
 
-                    <!-- Period -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="36dp"
@@ -122,24 +104,18 @@
                         android:orientation="horizontal"
                         android:gravity="center"
                         android:background="@drawable/bg_legend_card">
-
-                        <View
-                            android:layout_width="8dp"
-                            android:layout_height="8dp"
+                        <View android:layout_width="8dp" android:layout_height="8dp"
                             android:background="@drawable/bg_dot_period" />
-
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="6dp"
                             android:text="Period"
-                            android:textColor="#555555"
+                            android:textColor="@color/text_secondary"
                             android:textSize="11sp"
                             android:maxLines="1" />
-
                     </LinearLayout>
 
-                    <!-- Fertile Window -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="36dp"
@@ -148,26 +124,19 @@
                         android:orientation="horizontal"
                         android:gravity="center"
                         android:background="@drawable/bg_legend_card">
-
-                        <View
-                            android:layout_width="8dp"
-                            android:layout_height="8dp"
+                        <View android:layout_width="8dp" android:layout_height="8dp"
                             android:background="@drawable/bg_dot_fertile" />
-
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="6dp"
                             android:text="Fertile Window"
-                            android:textColor="#555555"
+                            android:textColor="@color/text_secondary"
                             android:textSize="11sp"
                             android:maxLines="1" />
-
                     </LinearLayout>
-
                 </LinearLayout>
 
-                <!-- Row 2: Ovulation Day + Low Fertility -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -175,7 +144,6 @@
                     android:layout_marginTop="8dp"
                     android:weightSum="2">
 
-                    <!-- Ovulation Day -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="36dp"
@@ -184,24 +152,18 @@
                         android:orientation="horizontal"
                         android:gravity="center"
                         android:background="@drawable/bg_legend_card">
-
-                        <View
-                            android:layout_width="8dp"
-                            android:layout_height="8dp"
+                        <View android:layout_width="8dp" android:layout_height="8dp"
                             android:background="@drawable/bg_dot_ovulation" />
-
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="6dp"
                             android:text="Ovulation Day"
-                            android:textColor="#555555"
+                            android:textColor="@color/text_secondary"
                             android:textSize="11sp"
                             android:maxLines="1" />
-
                     </LinearLayout>
 
-                    <!-- Low Fertility -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="36dp"
@@ -210,26 +172,19 @@
                         android:orientation="horizontal"
                         android:gravity="center"
                         android:background="@drawable/bg_legend_card">
-
-                        <View
-                            android:layout_width="8dp"
-                            android:layout_height="8dp"
+                        <View android:layout_width="8dp" android:layout_height="8dp"
                             android:background="@drawable/bg_dot_low_fertility" />
-
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="6dp"
                             android:text="Low Fertility"
-                            android:textColor="#555555"
+                            android:textColor="@color/text_secondary"
                             android:textSize="11sp"
                             android:maxLines="1" />
-
                     </LinearLayout>
-
                 </LinearLayout>
 
-                <!-- Row 3: Upcoming / Safe Days — full width centered -->
                 <LinearLayout
                     android:id="@+id/upcomingSafeDays"
                     android:layout_width="match_parent"
@@ -238,26 +193,20 @@
                     android:orientation="horizontal"
                     android:gravity="center"
                     android:background="@drawable/bg_legend_card">
-
-                    <View
-                        android:layout_width="8dp"
-                        android:layout_height="8dp"
+                    <View android:layout_width="8dp" android:layout_height="8dp"
                         android:background="@drawable/bg_dot_safe" />
-
                     <TextView
                         android:id="@+id/btnTestNotifications"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
                         android:text="Upcoming / Safe Days"
-                        android:textColor="#555555"
+                        android:textColor="@color/text_secondary"
                         android:textSize="11sp" />
-
                 </LinearLayout>
-
             </LinearLayout>
 
-            <!-- 3 stat mini cards (white pill) -->
+            <!-- Stat mini cards -->
             <LinearLayout
                 android:id="@+id/statCardsRow"
                 android:layout_width="match_parent"
@@ -266,101 +215,91 @@
                 android:orientation="horizontal"
                 android:baselineAligned="false">
 
-                <LinearLayout
-                    android:id="@+id/cardPeriod"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:paddingVertical="12dp"
+                <LinearLayout android:id="@+id/cardPeriod"
+                    android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:orientation="vertical"
+                    android:gravity="center" android:paddingVertical="12dp"
                     android:paddingHorizontal="4dp">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                         android:text="PERIOD" android:textSize="8sp" android:textStyle="bold"
-                        android:letterSpacing="0.08" android:textColor="#8A7A8F" />
-                    <TextView android:id="@+id/tvPeriodCardValue" android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:layout_marginTop="4dp"
-                        android:text="Oct 30" android:textSize="13sp" android:textStyle="bold"
-                        android:textColor="#2D1B33" android:maxLines="1" android:ellipsize="end" />
-                    <TextView android:id="@+id/tvPeriodCardSub" android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:layout_marginTop="2dp"
-                        android:text="in 16 days" android:textSize="9sp" android:textStyle="bold"
+                        android:letterSpacing="0.08" android:textColor="@color/text_secondary" />
+                    <TextView android:id="@+id/tvPeriodCardValue"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp" android:text="Oct 30"
+                        android:textSize="13sp" android:textStyle="bold"
+                        android:textColor="@color/text_primary" android:maxLines="1" android:ellipsize="end" />
+                    <TextView android:id="@+id/tvPeriodCardSub"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp" android:text="in 16 days"
+                        android:textSize="9sp" android:textStyle="bold"
                         android:textColor="#EC4899" android:maxLines="1" />
                 </LinearLayout>
 
                 <View android:layout_width="1dp" android:layout_height="40dp"
-                    android:layout_gravity="center_vertical" android:background="#EDE6F0" />
+                    android:layout_gravity="center_vertical" android:background="@color/divider" />
 
-                <LinearLayout
-                    android:id="@+id/cardFertile"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:paddingVertical="12dp"
+                <LinearLayout android:id="@+id/cardFertile"
+                    android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:orientation="vertical"
+                    android:gravity="center" android:paddingVertical="12dp"
                     android:paddingHorizontal="4dp">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                         android:text="FERTILE" android:textSize="8sp" android:textStyle="bold"
-                        android:letterSpacing="0.08" android:textColor="#8A7A8F" />
-                    <TextView android:id="@+id/tvFertileCardValue" android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:layout_marginTop="4dp"
-                        android:text="Oct 15" android:textSize="13sp" android:textStyle="bold"
-                        android:textColor="#2D1B33" android:maxLines="1" android:ellipsize="end" />
-                    <TextView android:id="@+id/tvFertileCardSub" android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:layout_marginTop="2dp"
-                        android:text="Starts soon" android:textSize="9sp" android:textStyle="bold"
+                        android:letterSpacing="0.08" android:textColor="@color/text_secondary" />
+                    <TextView android:id="@+id/tvFertileCardValue"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp" android:text="Oct 15"
+                        android:textSize="13sp" android:textStyle="bold"
+                        android:textColor="@color/text_primary" android:maxLines="1" android:ellipsize="end" />
+                    <TextView android:id="@+id/tvFertileCardSub"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp" android:text="Starts soon"
+                        android:textSize="9sp" android:textStyle="bold"
                         android:textColor="#A855F7" android:maxLines="1" />
                 </LinearLayout>
 
                 <View android:layout_width="1dp" android:layout_height="40dp"
-                    android:layout_gravity="center_vertical" android:background="#EDE6F0" />
+                    android:layout_gravity="center_vertical" android:background="@color/divider" />
 
-                <LinearLayout
-                    android:id="@+id/cardOvulation"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:paddingVertical="12dp"
+                <LinearLayout android:id="@+id/cardOvulation"
+                    android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:orientation="vertical"
+                    android:gravity="center" android:paddingVertical="12dp"
                     android:paddingHorizontal="4dp">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                         android:text="OVULATION" android:textSize="8sp" android:textStyle="bold"
-                        android:letterSpacing="0.08" android:textColor="#8A7A8F" />
-                    <TextView android:id="@+id/tvOvulationCardValue" android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:layout_marginTop="4dp"
-                        android:text="Oct 16" android:textSize="13sp" android:textStyle="bold"
-                        android:textColor="#2D1B33" android:maxLines="1" android:ellipsize="end" />
-                    <TextView android:id="@+id/tvOvulationCardSub" android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:layout_marginTop="2dp"
-                        android:text="in 2 days" android:textSize="9sp" android:textStyle="bold"
-                        android:textColor="#7C3AED" android:maxLines="1" />
+                        android:letterSpacing="0.08" android:textColor="@color/text_secondary" />
+                    <TextView android:id="@+id/tvOvulationCardValue"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp" android:text="Oct 16"
+                        android:textSize="13sp" android:textStyle="bold"
+                        android:textColor="@color/text_primary" android:maxLines="1" android:ellipsize="end" />
+                    <TextView android:id="@+id/tvOvulationCardSub"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp" android:text="in 2 days"
+                        android:textSize="9sp" android:textStyle="bold"
+                        android:textColor="@color/brand_purple_deep" android:maxLines="1" />
                 </LinearLayout>
-
             </LinearLayout>
 
-            <!-- Log button -->
             <com.aivigil.periodtracker.widgets.GradientButton
                 android:id="@+id/btnLogPeriod"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="💧  Log Today's Symptoms" />
-
         </LinearLayout>
 
-        <!-- WHITE SECTION -->
+        <!-- WHITE / SURFACE SECTION -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="#FFFFFF"
+            android:background="@color/surface_card"
             android:paddingHorizontal="20dp"
             android:paddingTop="20dp"
             android:paddingBottom="24dp">
 
-            <!-- Today's Summary header -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -373,13 +312,11 @@
                     android:textSize="10sp"
                     android:textStyle="bold"
                     android:letterSpacing="0.08"
-                    android:textColor="#8A7A8F"
+                    android:textColor="@color/text_secondary"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"  />
-
+                    app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Summary card -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/todayTrackingCard"
                 android:layout_width="match_parent"
@@ -394,13 +331,9 @@
                     app:layout_constraintGuide_percent="0.5" />
 
                 <TextView android:id="@+id/lblFlow"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="FLOW"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:letterSpacing="0.06"
-                    android:textColor="#8A7A8F"
+                    android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:text="FLOW" android:textSize="12sp" android:textStyle="bold"
+                    android:letterSpacing="0.06" android:textColor="@color/text_secondary"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/guideline"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -408,7 +341,7 @@
                 <TextView android:id="@+id/lblMood"
                     android:layout_width="0dp" android:layout_height="wrap_content"
                     android:text="MOOD" android:textSize="9sp" android:textStyle="bold"
-                    android:letterSpacing="0.06" android:textColor="#8A7A8F"
+                    android:letterSpacing="0.06" android:textColor="@color/text_secondary"
                     android:layout_marginStart="8dp"
                     app:layout_constraintStart_toEndOf="@id/guideline"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -417,7 +350,7 @@
                 <TextView android:id="@+id/tvFlowValue"
                     android:layout_width="0dp" android:layout_height="wrap_content"
                     android:layout_marginTop="4dp" android:text="Light"
-                    android:textSize="16sp" android:textStyle="bold" android:textColor="#2D1B33"
+                    android:textSize="16sp" android:textStyle="bold" android:textColor="@color/text_primary"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/guideline"
                     app:layout_constraintTop_toBottomOf="@id/lblFlow" />
@@ -426,14 +359,14 @@
                     android:layout_width="0dp" android:layout_height="wrap_content"
                     android:layout_marginTop="4dp" android:layout_marginStart="8dp"
                     android:text="Energetic" android:textSize="16sp" android:textStyle="bold"
-                    android:textColor="#2D1B33"
+                    android:textColor="@color/text_primary"
                     app:layout_constraintStart_toEndOf="@id/guideline"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/lblMood" />
 
                 <View android:id="@+id/summaryDivider"
                     android:layout_width="0dp" android:layout_height="1dp"
-                    android:background="#F0E8F3" android:layout_marginTop="14dp"
+                    android:background="@color/divider_soft" android:layout_marginTop="14dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tvFlowValue" />
@@ -441,96 +374,90 @@
                 <TextView android:id="@+id/lblBasal"
                     android:layout_width="0dp" android:layout_height="wrap_content"
                     android:text="BASAL TEMP" android:textSize="9sp" android:textStyle="bold"
-                    android:letterSpacing="0.06" android:textColor="#8A7A8F"
+                    android:letterSpacing="0.06" android:textColor="@color/text_secondary"
                     android:layout_marginTop="14dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/guideline"
                     app:layout_constraintTop_toBottomOf="@id/summaryDivider" />
 
                 <TextView android:id="@+id/lblSymptoms"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="SYMPTOMS"
-                    android:textSize="9sp"
-                    android:textStyle="bold"
-                    android:letterSpacing="0.06"
-                    android:textColor="#8A7A8F"
-                    android:layout_marginTop="14dp"
-                    android:layout_marginStart="8dp"
+                    android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:text="SYMPTOMS" android:textSize="9sp" android:textStyle="bold"
+                    android:letterSpacing="0.06" android:textColor="@color/text_secondary"
+                    android:layout_marginTop="14dp" android:layout_marginStart="8dp"
                     app:layout_constraintStart_toEndOf="@id/guideline"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/summaryDivider" />
 
                 <TextView android:id="@+id/tvBasalValue"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="97.8°"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="#2D1B33"
+                    android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp" android:text="97.8°"
+                    android:textSize="16sp" android:textStyle="bold" android:textColor="@color/text_primary"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/guideline"
                     app:layout_constraintTop_toBottomOf="@id/lblBasal" />
 
-                <TextView
-                    android:id="@+id/tvSymptomsValue"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="4dp"
-                    android:text="None noted"
-                    android:textColor="#2D1B33"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
+                <TextView android:id="@+id/tvSymptomsValue"
+                    android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp" android:layout_marginTop="4dp"
+                    android:text="None noted" android:textColor="@color/text_primary"
+                    android:textSize="16sp" android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="@+id/tvBasalValue"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/guideline"
                     app:layout_constraintTop_toBottomOf="@id/lblSymptoms" />
-
-<!--                <TextView android:id="@+id/btnTrackToday"-->
-<!--                    android:layout_width="wrap_content" android:layout_height="wrap_content"-->
-<!--                    android:layout_marginTop="14dp" android:text="+ Log Today's Entry"-->
-<!--                    android:textSize="12sp" android:textStyle="bold" android:textColor="#EC4899"-->
-<!--                    android:padding="2dp"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toBottomOf="@id/tvBasalValue" />-->
-
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Quick Actions -->
-            <TextView
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:layout_marginTop="24dp" android:text="Quick Actions"
-                android:textSize="14sp" android:textStyle="bold" android:textColor="#2D1B33" />
+                android:textSize="14sp" android:textStyle="bold" android:textColor="@color/text_primary" />
 
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:layout_marginTop="10dp" android:orientation="horizontal">
-                <include android:id="@+id/statFlow" layout="@layout/item_home_quick_stat"
-                    android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" />
-                <include android:id="@+id/statMood" layout="@layout/item_home_quick_stat"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+                <include android:id="@+id/statFlow"
+                    layout="@layout/item_home_quick_stat"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+                <include android:id="@+id/statMood"
+                    layout="@layout/item_home_quick_stat"
                     android:layout_width="0dp" android:layout_height="wrap_content"
                     android:layout_weight="1" android:layout_marginStart="10dp" />
             </LinearLayout>
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:layout_marginTop="10dp" android:orientation="horizontal">
-                <include android:id="@+id/statSymptoms" layout="@layout/item_home_quick_stat"
-                    android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" />
-                <include android:id="@+id/statNotes" layout="@layout/item_home_quick_stat"
-                    android:layout_width="0dp" android:layout_height="wrap_content"
-                    android:layout_weight="1" android:layout_marginStart="10dp" />
+                <include android:id="@+id/statSymptoms"
+                    layout="@layout/item_home_quick_stat"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+                <include android:id="@+id/statNotes"
+                    layout="@layout/item_home_quick_stat"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp" />
             </LinearLayout>
 
-            <!-- Predictions -->
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:layout_marginTop="28dp" android:text="Predictions"
-                android:textSize="14sp" android:textStyle="bold" android:textColor="#2D1B33" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:layout_marginTop="2dp" android:text="Based on your last 3 cycles"
-                android:textSize="11sp" android:textColor="#8A7A8F" />
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:text="Predictions"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary" />
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Based on your last 3 cycles"
+                android:textSize="11sp"
+                android:textColor="@color/text_secondary" />
 
-            <!-- Next period card (pink tint) -->
+            <!-- Next period card -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/lastPeriodCard"
                 android:layout_width="match_parent"
@@ -548,7 +475,7 @@
                 <TextView android:id="@+id/tvLastPeriodLabel"
                     android:layout_width="0dp" android:layout_height="wrap_content"
                     android:text="Next period estimated" android:textSize="11sp"
-                    android:textStyle="bold" android:textColor="#2D1B33"
+                    android:textStyle="bold" android:textColor="@color/text_primary"
                     android:layout_marginStart="12dp"
                     app:layout_constraintStart_toEndOf="@id/iconPeriodPred"
                     app:layout_constraintEnd_toStartOf="@id/tagLoggedPeriod"
@@ -567,7 +494,7 @@
                     android:layout_width="0dp" android:layout_height="wrap_content"
                     android:layout_marginTop="2dp" android:layout_marginStart="12dp"
                     android:text="Normal flow · 28-day cycle" android:textSize="10sp"
-                    android:textColor="#8A7A8F"
+                    android:textColor="@color/text_secondary"
                     app:layout_constraintStart_toEndOf="@id/iconPeriodPred"
                     app:layout_constraintEnd_toStartOf="@id/tagLoggedPeriod"
                     app:layout_constraintTop_toBottomOf="@id/tvLastPeriodDates" />
@@ -582,7 +509,7 @@
                     app:layout_constraintBottom_toBottomOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Fertile window card (purple tint) -->
+            <!-- Fertile window card -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/nextPeriodCard"
                 android:layout_width="match_parent"
@@ -600,7 +527,7 @@
                 <TextView android:id="@+id/tvNextPeriodLabel"
                     android:layout_width="0dp" android:layout_height="wrap_content"
                     android:text="Next fertile window" android:textSize="11sp"
-                    android:textStyle="bold" android:textColor="#2D1B33"
+                    android:textStyle="bold" android:textColor="@color/text_primary"
                     android:layout_marginStart="12dp"
                     app:layout_constraintStart_toEndOf="@id/iconFertilePred"
                     app:layout_constraintEnd_toStartOf="@id/tagEstimatedPeriod"
@@ -619,7 +546,7 @@
                     android:layout_width="0dp" android:layout_height="wrap_content"
                     android:layout_marginTop="2dp" android:layout_marginStart="12dp"
                     android:text="Calculated from your 28-day avg" android:textSize="10sp"
-                    android:textColor="#8A7A8F"
+                    android:textColor="@color/text_secondary"
                     app:layout_constraintStart_toEndOf="@id/iconFertilePred"
                     app:layout_constraintEnd_toStartOf="@id/tagEstimatedPeriod"
                     app:layout_constraintTop_toBottomOf="@id/tvNextPeriodDate" />
@@ -627,7 +554,7 @@
                 <TextView android:id="@+id/tagEstimatedPeriod"
                     android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:text="Estimated" android:textSize="9sp" android:textStyle="bold"
-                    android:textColor="#7C3AED" android:paddingHorizontal="10dp"
+                    android:textColor="@color/brand_purple_deep" android:paddingHorizontal="10dp"
                     android:paddingVertical="4dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"

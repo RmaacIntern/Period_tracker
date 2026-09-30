@@ -25,7 +25,7 @@
         android:text="Edit Profile"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="#2D1B33" />
+        android:textColor="@color/text_primary" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -34,12 +34,12 @@
         android:layout_marginTop="4dp"
         android:text="Update your personal details"
         android:textSize="12sp"
-        android:textColor="#8A7A8F" />
+        android:textColor="@color/text_secondary" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#F5EEF8"
+        android:background="@color/surface_muted"
         android:layout_marginTop="16dp" />
 
     <!-- Fields -->
@@ -58,7 +58,7 @@
             android:textSize="10sp"
             android:textStyle="bold"
             android:letterSpacing="0.08"
-            android:textColor="#8A7A8F" />
+            android:textColor="@color/text_secondary" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -71,8 +71,8 @@
                 android:layout_height="match_parent"
                 android:hint="Your name"
                 android:textSize="15sp"
-                android:textColor="#2D1B33"
-                android:textColorHint="#C5B8CC"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_hint"
                 android:background="@null"
                 android:inputType="textPersonName"
                 android:imeOptions="actionNext"
@@ -100,7 +100,7 @@
             android:textSize="10sp"
             android:textStyle="bold"
             android:letterSpacing="0.08"
-            android:textColor="#8A7A8F" />
+            android:textColor="@color/text_secondary" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -113,8 +113,8 @@
                 android:layout_height="match_parent"
                 android:hint="Your age"
                 android:textSize="15sp"
-                android:textColor="#2D1B33"
-                android:textColorHint="#C5B8CC"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_hint"
                 android:background="@null"
                 android:inputType="number"
                 android:imeOptions="actionNext"
@@ -155,7 +155,7 @@
                     android:textSize="10sp"
                     android:textStyle="bold"
                     android:letterSpacing="0.08"
-                    android:textColor="#8A7A8F" />
+                    android:textColor="@color/text_secondary" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -168,8 +168,8 @@
                         android:layout_height="match_parent"
                         android:hint="162"
                         android:textSize="15sp"
-                        android:textColor="#2D1B33"
-                        android:textColorHint="#C5B8CC"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_hint"
                         android:background="@null"
                         android:inputType="number"
                         android:imeOptions="actionNext"
@@ -203,7 +203,7 @@
                     android:textSize="10sp"
                     android:textStyle="bold"
                     android:letterSpacing="0.08"
-                    android:textColor="#8A7A8F" />
+                    android:textColor="@color/text_secondary" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -216,8 +216,8 @@
                         android:layout_height="match_parent"
                         android:hint="60"
                         android:textSize="15sp"
-                        android:textColor="#2D1B33"
-                        android:textColorHint="#C5B8CC"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_hint"
                         android:background="@null"
                         android:inputType="numberDecimal"
                         android:imeOptions="actionDone"

@@ -15,7 +15,7 @@
         android:text="9:05 AM"
         android:textSize="13sp"
         android:textStyle="bold"
-        android:textColor="#2D1B33"
+        android:textColor="@color/text_primary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -26,7 +26,7 @@
         android:layout_marginStart="8dp"
         android:text="Morning Log"
         android:textSize="12sp"
-        android:textColor="#8A7A8F"
+        android:textColor="@color/text_secondary"
         app:layout_constraintStart_toEndOf="@id/tvEntryTime"
         app:layout_constraintEnd_toStartOf="@id/btnDeleteEntry"
         app:layout_constraintTop_toTopOf="@id/tvEntryTime"
@@ -52,7 +52,7 @@
         android:layout_marginTop="6dp"
         android:text="Medium flow · Cramps · Fatigue"
         android:textSize="12sp"
-        android:textColor="#5C4A6E"
+        android:textColor="@color/text_secondary"
         android:lineSpacingExtra="2dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -83,7 +83,7 @@
             android:text="97.8°F"
             android:textSize="12sp"
             android:textStyle="bold"
-            android:textColor="#2D1B33" />
+            android:textColor="@color/text_primary" />
 
     </LinearLayout>
 
@@ -95,7 +95,7 @@
         android:layout_marginTop="4dp"
         android:text=""
         android:textSize="12sp"
-        android:textColor="#8A7A8F"
+        android:textColor="@color/text_secondary"
         android:textStyle="italic"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
@@ -108,7 +108,7 @@
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:layout_marginTop="10dp"
-        android:background="#F5EEF8"
+        android:background="@color/stroke_card"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

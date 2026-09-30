@@ -2,8 +2,6 @@
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -21,6 +19,7 @@ import com.aivigil.periodtracker.databinding.ItemHomeQuickStatBinding
 import com.aivigil.periodtracker.domain.CycleEngine
 import com.aivigil.periodtracker.logsymptoms.LogSymptomsFragment
 import com.aivigil.periodtracker.notification.NotificationHelper
+import com.aivigil.periodtracker.util.ThemeHelper
 import com.aivigil.periodtracker.viewmodel.CycleViewModel
 import com.aivigil.periodtracker.viewmodel.CycleViewModelFactory
 import kotlinx.coroutines.launch
@@ -34,7 +33,6 @@ class HomeFragment : Fragment() {
     private val TAG = "HomeFragment"
 
     private var _binding: FragmentHomeBinding? = null
-    // Add at top of class
     private var bindJob: kotlinx.coroutines.Job? = null
     private val binding get() = _binding!!
 
@@ -42,9 +40,7 @@ class HomeFragment : Fragment() {
         CycleViewModelFactory(requireActivity().application)
     }
 
-    private val fmt   = DateTimeFormatter.ofPattern("MMM d", Locale.getDefault())
-
-
+    private val fmt = DateTimeFormatter.ofPattern("MMM d", Locale.getDefault())
 
     private val requestNotifPermission = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -78,40 +74,11 @@ class HomeFragment : Fragment() {
         applyBackgrounds()
         observeData()
         bindClickListeners()
-
-        // ✅ TEST — fires all 3 notifications immediately
-// Add flag at top of class
-
-// Test alarm fires in 30 seconds — remove after testing
-//        binding.btnTestNotifications.setOnClickListener {
-//            val am = requireContext().getSystemService(android.content.Context.ALARM_SERVICE)
-//                    as android.app.AlarmManager
-//
-//            val pi = android.app.PendingIntent.getBroadcast(
-//                requireContext(), 999,
-//                android.content.Intent(requireContext(),
-//                    com.aivigil.periodtracker.notification.AlarmReceiver::class.java).apply {
-//                    action = com.aivigil.periodtracker.notification.AlarmReceiver.ACTION_PERIOD_DAY
-//                },
-//                android.app.PendingIntent.FLAG_UPDATE_CURRENT or
-//                        android.app.PendingIntent.FLAG_IMMUTABLE
-//            )
-//            am.setExactAndAllowWhileIdle(
-//                android.app.AlarmManager.RTC_WAKEUP,
-//                System.currentTimeMillis() + 30_000, // ← fires in 30 seconds
-//                pi
-//            )
-//            android.widget.Toast.makeText(requireContext(),
-//                "Alarm set — lock your phone and wait 30 seconds",
-//                android.widget.Toast.LENGTH_LONG).show()
-//            android.util.Log.i("TEST", "Test alarm scheduled for 30 seconds from now")
-//        }
     }
 
     // ── Observe ───────────────────────────────────────────────────
 
     private fun observeData() {
-        // ✅ Both observers call tryBind() — whichever arrives last triggers full render
         vm.prediction.observe(viewLifecycleOwner) { pred ->
             Log.d(TAG, "prediction updated: ${pred?.lastPeriodStart} cycleLen=${pred?.cycleLength}")
             tryBind()
@@ -191,12 +158,12 @@ class HomeFragment : Fragment() {
         }
     }
 
-    // ── tryBind — only runs when BOTH prediction + settings are ready ──
+    // ── tryBind ───────────────────────────────────────────────────
 
     private fun tryBind() {
         bindJob?.cancel()
         bindJob = viewLifecycleOwner.lifecycleScope.launch {
-            kotlinx.coroutines.delay(50) // ✅ wait 50ms — collapses all rapid fires into 1
+            kotlinx.coroutines.delay(50)
             val pred = vm.prediction.value ?: run {
                 Log.w(TAG, "tryBind: prediction not ready yet")
                 return@launch
@@ -221,36 +188,15 @@ class HomeFragment : Fragment() {
 
             Log.d(TAG, "tryBind: day=$day phase=${CycleEngine.phaseName(phase)} " +
                     "nextPeriod=$nextP daysToP=$daysToP ovulation=$ovDate daysToOv=$daysToOv")
-            Log.d(TAG, "tryBind: fertileWindow=$fertStart→$fertEnd isFertile=$isFertile " +
-                    "isLate=$isLate daysLate=$daysLate")
-
-            if (day < 1)
-                Log.e(TAG, "EDGE CASE: cycleDay=$day — should never be < 1")
-            if (day > pred.cycleLength)
-                Log.e(TAG, "EDGE CASE: cycleDay=$day > cycleLength=${pred.cycleLength} — period may be late")
-            if (daysToP < 0 && !isLate)
-                Log.e(TAG, "EDGE CASE: daysToP=$daysToP but isLate=false — mismatch")
-            if (isLate && daysLate == 0)
-                Log.e(TAG, "EDGE CASE: isLate=true but daysLate=0 — mismatch")
-            if (pred.cycleLength !in 18..60)
-                Log.e(TAG, "EDGE CASE: cycleLength=${pred.cycleLength} — outside valid range 18–60")
-            if (isFertile)
-                Log.i(TAG, "NOTE: today is in fertile window ($fertStart → $fertEnd)")
-            if (daysToOv == 0)
-                Log.i(TAG, "NOTE: today is estimated ovulation day")
-            if (daysToP == 0)
-                Log.i(TAG, "NOTE: period is due today")
 
             binding.cycleRing.setProgress(
                 day            = day,
                 totalCycleDays = pred.cycleLength,
                 periodDays     = s.periodDuration
             )
-            Log.d(TAG, "tryBind: ring set day=$day totalCycleDays=${pred.cycleLength} periodDays=${s.periodDuration}")
 
             val name = s.userName?.takeIf { it.isNotBlank() } ?: "there"
             binding.tvGreeting.text = "Hi $name 👋"
-            //binding.tvPhaseSubtitle.text = "${CycleEngine.phaseName(phase)} · ${CycleEngine.phaseDescription(phase)}"
 
             binding.tvPeriodCardValue.text = nextP.format(fmt)
             binding.tvPeriodCardSub.text = when {
@@ -282,17 +228,20 @@ class HomeFragment : Fragment() {
             Log.d(TAG, "tryBind: UI render complete ✓")
         }
     }
+
     // ── Backgrounds ───────────────────────────────────────────────
 
     private fun applyBackgrounds() {
-        binding.statCardsRow.background       = roundedBg("#FFFFFF", 16f)
-        binding.todayTrackingCard.background  = roundedBg("#FDF0F5", 16f)
-        binding.lastPeriodCard.background     = roundedBg("#FFF5F7", 14f)
-        binding.nextPeriodCard.background     = roundedBg("#F8F0FF", 14f)
-        binding.tagLoggedPeriod.background    = roundedBg("#FDE2E9", 20f)
-        binding.tagEstimatedPeriod.background = roundedBg("#F1E7FB", 20f)
+        // ✅ FIX — replaced hardcoded Color.parseColor hex with ThemeHelper
+        binding.statCardsRow.background       = ThemeHelper.cardBg(requireContext(), 16f)
+        binding.todayTrackingCard.background  = ThemeHelper.basalCardBg(requireContext(), 16f)
+        binding.lastPeriodCard.background     = ThemeHelper.insightBannerBg(requireContext(), 14f)
+        binding.nextPeriodCard.background     = ThemeHelper.cardBg(requireContext(), 14f)
+        binding.tagLoggedPeriod.background    = ThemeHelper.iconCirclePink(requireContext())
+            .apply { shape = android.graphics.drawable.GradientDrawable.RECTANGLE; cornerRadius = 20f * resources.displayMetrics.density }
+        binding.tagEstimatedPeriod.background = ThemeHelper.cardBg(requireContext(), 20f)
         listOf(binding.statFlow, binding.statMood, binding.statSymptoms, binding.statNotes)
-            .forEach { it.root.background = roundedBg("#FDF0F5", 14f) }
+            .forEach { it.root.background = ThemeHelper.basalCardBg(requireContext(), 14f) }
     }
 
     // ── Helpers ───────────────────────────────────────────────────
@@ -331,18 +280,9 @@ class HomeFragment : Fragment() {
             .commit()
     }
 
-    private fun roundedBg(colorHex: String, radiusDp: Float) = GradientDrawable().apply {
-        shape = GradientDrawable.RECTANGLE
-        cornerRadius = radiusDp * resources.displayMetrics.density
-        setColor(Color.parseColor(colorHex))
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
         Log.d(TAG, "onDestroyView")
     }
-
-
-
 }

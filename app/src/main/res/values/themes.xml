@@ -5,6 +5,13 @@
         <!-- ← Fix translucent flags HERE, not in CycleChip -->
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowTranslucentNavigation">false</item>
+
+        <!-- Dark mode: window + system bars follow the day/night tokens -->
+        <item name="android:windowBackground">@color/surface_bg</item>
+        <item name="android:statusBarColor">@color/app_bg</item>
+        <item name="android:navigationBarColor">@color/surface_card</item>
+        <item name="android:windowLightStatusBar">@bool/light_system_bars</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">@bool/light_system_bars</item>
     </style>
 
     <style name="Theme.PeriodTracker" parent="Base.Theme.PeriodTracker" />
@@ -15,12 +22,12 @@
         <item name="android:layout_weight">1</item>
         <item name="android:gravity">center</item>
         <item name="android:textSize">11sp</item>
-        <item name="android:textColor">#8A7A8F</item>
+        <item name="android:textColor">@color/text_secondary</item>
     </style>
 
     <style name="ConditionChip" parent="Widget.MaterialComponents.Chip.Choice">
         <item name="android:textSize">13sp</item>
-        <item name="android:textColor">#2D1B33</item>
+        <item name="android:textColor">@color/text_primary</item>
         <item name="chipBackgroundColor">@color/chip_background_selector</item>
         <item name="chipStrokeColor">@color/chip_stroke_selector</item>
         <item name="chipStrokeWidth">1dp</item>
@@ -31,7 +38,7 @@
     <style name="CycleChip" parent="Widget.MaterialComponents.Chip.Choice">
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/chip_text_selector</item>
-        <item name="chipBackgroundColor">#F9F3FB</item>
+        <item name="chipBackgroundColor">@color/chip_bg</item>
         <item name="chipStrokeWidth">2dp</item>
         <item name="chipStrokeColor">@color/chip_stroke_selector</item>
         <item name="chipCornerRadius">100dp</item>
