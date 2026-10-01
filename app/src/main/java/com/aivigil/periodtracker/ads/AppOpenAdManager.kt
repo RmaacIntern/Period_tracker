@@ -35,26 +35,11 @@ class AppOpenAdManager(
     companion object {
         private const val TAG = "AppOpenAdManager"
 
-        /**
-         * Minimum gap between two App Open ads.
-         *
-         * FIX: was 10 seconds. A user who switched away to read a message and
-         * came back 15 seconds later was shown a second full-screen ad. Google's
-         * own guidance for app-open ads is to show them on genuine cold/warm
-         * starts, not on every brief task switch. 4 minutes keeps the format
-         * meaningful without punishing normal multitasking.
-         */
-        private const val MIN_INTERVAL_MS = 4 * 60 * 1000L
+
+        private const val MIN_INTERVAL_MS =30 * 1000L
     }
 
-    /**
-     * Screens where App Open must never appear.
-     *
-     * FIX: OnboardingActivity was missing. A full-screen ad on return to a
-     * half-finished 8-step setup flow is the worst possible moment for one — it
-     * lands squarely in the first-run funnel, and this app already shows an
-     * interstitial at the end of onboarding.
-     */
+
     private val excludedActivities: Set<Class<out Activity>> = setOf(
         SplashActivity::class.java,
         com.aivigil.periodtracker.onboarding.OnboardingActivity::class.java

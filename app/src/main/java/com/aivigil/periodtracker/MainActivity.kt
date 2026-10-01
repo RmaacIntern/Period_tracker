@@ -39,10 +39,13 @@ class MainActivity : AppCompatActivity() {
         const val TAG_CALENDAR = "tab_calendar"
         const val TAG_INSIGHTS = "tab_insights"
         const val TAG_PROFILE  = "tab_profile"
+
         val TAB_TAGS = listOf(TAG_HOME, TAG_CALENDAR, TAG_INSIGHTS, TAG_PROFILE)
     }
 
     private lateinit var binding: ActivityMainBinding
+
+    private var systemBarBottom = 0
     private lateinit var navBinding: CustomBottomNavBinding
     private var bannerAdHelper: BannerAdHelper? = null
     private var exitDialogShowing = false
@@ -119,11 +122,22 @@ class MainActivity : AppCompatActivity() {
     private fun onTabClicked(tabId: Int) {
         if (clickInProgress) return
 
-        // Pop any detail screens (like PastLogHistoryFragment) before switching tabs
         val fm = supportFragmentManager
+
+        // Synchronous pop — removes LogSymptoms, PastLogHistory etc.
         if (fm.backStackEntryCount > 0) {
-            fm.popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE)
+            fm.popBackStackImmediate(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE)
         }
+
+        // After popping, whatever fragment replace() restored is now visible.
+        // Force hide ALL fragments immediately so nothing bleeds through.
+        val hideTx = fm.beginTransaction()
+        fm.fragments.forEach { fragment ->
+            if (fragment.isAdded && !fragment.isHidden) {
+                hideTx.hide(fragment)
+            }
+        }
+        hideTx.commitNow()
 
         if (tabId == selectedTabId) {
             selectTab(tabId)
@@ -162,9 +176,17 @@ class MainActivity : AppCompatActivity() {
         if (fm.isStateSaved || isFinishing || isDestroyed) return
 
         val tx = fm.beginTransaction()
+
+        // Hide only the 4 known tab fragments — never touch backstack fragments
+        // like LogSymptomsFragment or PastLogHistoryFragment
         TAB_TAGS.forEach { existingTag ->
-            fm.findFragmentByTag(existingTag)?.let { if (it.isAdded) tx.hide(it) }
+            fm.findFragmentByTag(existingTag)?.let { fragment ->
+                if (fragment.isAdded && !fragment.isHidden) {
+                    tx.hide(fragment)
+                }
+            }
         }
+
         val existing = fm.findFragmentByTag(tag)
         if (existing == null) {
             tx.add(R.id.mainFragmentContainer, newFragmentFor(tabId), tag)
@@ -233,14 +255,38 @@ class MainActivity : AppCompatActivity() {
     // WINDOW INSETS
     // ─────────────────────────────────────────────────────────────
 
+
+
     private fun setupWindowInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.mainRoot) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            systemBarBottom = systemBars.bottom
             view.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
-            binding.smallAd.root.setPadding(0, 0, 0, systemBars.bottom)
+            applyBottomInset()
             insets
         }
     }
+
+    private fun applyBottomInset() {
+        val navPaddingStart  = 8.dpToPx()
+        val navPaddingTop    = 10.dpToPx()
+        val navPaddingEnd    = 8.dpToPx()
+        val navPaddingBottom = 10.dpToPx()
+
+        val bannerVisible = binding.smallAd.root.visibility == View.VISIBLE
+        if (bannerVisible) {
+            // Banner handles system bar gap
+            binding.customBottomNav.root.setPadding(navPaddingStart, navPaddingTop, navPaddingEnd, navPaddingBottom)
+            binding.smallAd.root.setPadding(0, 0, 0, systemBarBottom)
+        } else {
+            // No banner — nav bar handles system bar gap
+            binding.customBottomNav.root.setPadding(navPaddingStart, navPaddingTop, navPaddingEnd, navPaddingBottom + systemBarBottom)
+            binding.smallAd.root.setPadding(0, 0, 0, 0)
+        }
+    }
+
+    private fun Int.dpToPx(): Int =
+        (this * resources.displayMetrics.density).toInt()
 
     // ─────────────────────────────────────────────────────────────
     // BANNER AD
@@ -270,14 +316,9 @@ class MainActivity : AppCompatActivity() {
         clickInProgress = false
         exitDialogShowing = false
         updateTabColors(selectedTabId)
-
-        // FIX (midnight staleness): tells the shared ViewModel to re-read the
-        // calendar date. Without this, an app left open overnight kept reporting
-        // yesterday's cycle day, phase and fertility status until something
-        // happened to touch the database.
         vm.onAppForegrounded()
-
         preloadMainAd()
+        applyBottomInset() // ← add this line
     }
 
     // ─────────────────────────────────────────────────────────────

@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -316,8 +317,7 @@ class PastLogHistoryFragment : Fragment() {
                     row.setOnClickListener { onEdit(log.date, log.entryId) }
 
                     // Delete entry
-                    row.findViewById<TextView>(R.id.btnDeleteEntry).setOnClickListener { onDelete(log) }
-
+                    row.findViewById<ImageView>(R.id.btnDeleteEntry).setOnClickListener { onDelete(log) }
                     cardEntries.addView(row)
                 }
             }

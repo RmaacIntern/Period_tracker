@@ -7,14 +7,7 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
 
-/**
- * Draws a simple bar chart of cycle lengths.
- * Bars are pink→purple gradient fill. Current month bar is lighter.
- * Labels show day count above each bar, month name below.
- *
- * Data is set by InsightsFragment via [bars] property.
- * The view starts empty — no hardcoded placeholder data.
- */
+
 class CycleBarChartView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -28,8 +21,7 @@ class CycleBarChartView @JvmOverloads constructor(
         val currentDay: Int? = null
     )
 
-    // ✅ FIX 6 — starts empty; InsightsFragment sets real data via vm.getBarChartData()
-    // Old: hardcoded listOf(CycleBar("May", 28), ...) that always showed regardless of real data
+
     var bars: List<CycleBar> = emptyList()
         set(value) { field = value; invalidate() }
 
@@ -57,7 +49,6 @@ class CycleBarChartView @JvmOverloads constructor(
     private val rectF = RectF()
 
     override fun onDraw(canvas: Canvas) {
-        // ✅ Show a friendly empty state instead of crashing or showing nothing
         if (bars.isEmpty()) {
             emptyPaint.textSize = 13f * resources.displayMetrics.density * 0.7f
             canvas.drawText(
@@ -99,12 +90,10 @@ class CycleBarChartView @JvmOverloads constructor(
             rectF.set(left, top, right, bottom)
 
             if (bar.isCurrent) {
-                // Light purple tint for current in-progress bar
                 barPaint.shader = null
                 barPaint.color  = context.getColor(R.color.bar_current)
                 canvas.drawRoundRect(rectF, cornerR, cornerR, barPaint)
 
-                // Show "D{n}" badge on top
                 val badgePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                     color = Color.parseColor("#EC4899"); style = Paint.Style.FILL
                 }

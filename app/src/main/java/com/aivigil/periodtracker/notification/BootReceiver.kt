@@ -49,8 +49,7 @@ class BootReceiver : BroadcastReceiver() {
                     return@launch
                 }
 
-                // FIX: scheduling now goes through NotificationPrefs, so a reboot no
-                // longer re-arms reminders the user had switched off.
+
                 NotificationPrefs.rescheduleFromPrediction(
                     context    = appContext,
                     nextPeriod = prediction.nextPeriodDate,

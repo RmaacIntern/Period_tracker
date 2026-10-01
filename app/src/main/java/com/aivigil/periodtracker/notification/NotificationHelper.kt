@@ -95,10 +95,7 @@ object NotificationHelper {
         val today = java.time.LocalDate.now().toString()
         val openIntent = openAppIntent(context, DEST_LOG)
 
-        // FIX: the action buttons carry the date the notification was posted for.
-        // PeriodConfirmReceiver previously recorded LocalDate.now() whenever the
-        // button was tapped, so answering "Yes, started" the next morning logged
-        // the period a day late and shifted every later prediction.
+
         val yesIntent = PendingIntent.getBroadcast(
             context, 1,
             Intent(context, PeriodConfirmReceiver::class.java).apply {

@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/mainAdsView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center"
     android:background="#ADC3D1">
@@ -42,14 +42,12 @@
                 <View
                     android:layout_width="252dp"
                     android:layout_height="14dp"
-                    android:layout_marginLeft="8dp"
                     android:layout_marginStart="8dp"
                     android:background="@color/colorGrayNew" />
 
                 <View
                     android:layout_width="222dp"
                     android:layout_height="14dp"
-                    android:layout_marginLeft="8dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="4dp"
                     android:background="@color/colorGrayNew" />

@@ -67,28 +67,35 @@
                 android:layout_height="36dp"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:paddingHorizontal="4dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent">
-                <TextView
+
+                <ImageView
                     android:id="@+id/btnPrevMonth"
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:gravity="center"
-                    android:text="‹"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/text_primary" />
-                <TextView
+                    android:padding="2dp"
+                    android:src="@drawable/ic_back"
+                    android:background="@drawable/bg_arrow_shadow"
+                    android:scaleType="centerInside"
+                    android:contentDescription="Previous month" />
+
+                <View
+                    android:layout_width="4dp"
+                    android:layout_height="match_parent" />
+
+                <ImageView
                     android:id="@+id/btnNextMonth"
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:gravity="center"
-                    android:text="›"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/text_primary" />
+                    android:padding="2dp"
+                    android:src="@drawable/ic_next"
+                    android:background="@drawable/bg_arrow_shadow"
+
+                    android:scaleType="centerInside"
+                    android:contentDescription="Next month" />
+
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 

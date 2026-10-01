@@ -20,6 +20,7 @@ import com.aivigil.periodtracker.util.ThemeHelper
 import com.aivigil.periodtracker.viewmodel.CycleViewModel
 import com.aivigil.periodtracker.viewmodel.CycleViewModelFactory
 import android.util.Log
+import com.aivigil.periodtracker.ads.NativeAdHelper
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -39,6 +40,7 @@ class LogSymptomsFragment : Fragment() {
     private val vm: CycleViewModel by activityViewModels {
         CycleViewModelFactory(requireActivity().application)
     }
+    private var nativeAdHelper: NativeAdHelper? = null
 
     private val TAG = "LogSymptomsFragment"
 
@@ -91,26 +93,23 @@ class LogSymptomsFragment : Fragment() {
         bindBasalTemp()
         bindClickListeners()
         loadExistingLogOnce()
-        // Must be registered on every view creation so a rotation mid-dialog still
-        // receives the user's answer.
+
+        nativeAdHelper = NativeAdHelper(requireContext())
+        nativeAdHelper?.loadInto(binding.nativeAdContainer)
+
         listenForPeriodConfirmation()
     }
 
-    // ── Backgrounds ───────────────────────────────────────────────
-
     private fun applyBackgrounds() {
-        // Brand gradient banner — correct in both modes
         binding.cycleBanner.background = GradientDrawable(
             GradientDrawable.Orientation.LEFT_RIGHT,
             intArrayOf(Color.parseColor("#EC4899"), Color.parseColor("#A855F7"))
         ).apply { cornerRadius = 16f * resources.displayMetrics.density }
 
-        // ✅ FIX — replaced hardcoded #FDF0F5 and #F3EEFF with ThemeHelper
         binding.basalTempCard.background = ThemeHelper.basalCardBg(requireContext(), 14f)
         binding.infoBanner.background    = ThemeHelper.insightBannerBg(requireContext(), 12f)
     }
 
-    // ── Top bar ───────────────────────────────────────────────────
 
     private fun bindTopBar() {
         val dateFmt = DateTimeFormatter.ofPattern("MMM d", Locale.getDefault())
@@ -121,7 +120,6 @@ class LogSymptomsFragment : Fragment() {
         }
     }
 
-    // ── Cycle banner ──────────────────────────────────────────────
 
     private fun bindCycleBanner() {
         vm.prediction.observe(viewLifecycleOwner) { pred ->
@@ -144,7 +142,6 @@ class LogSymptomsFragment : Fragment() {
         }
     }
 
-    // ── One-shot load ─────────────────────────────────────────────
 
     private fun loadExistingLogOnce() {
         viewLifecycleOwner.lifecycleScope.launch {
@@ -220,7 +217,6 @@ class LogSymptomsFragment : Fragment() {
         }
     }
 
-    // ── Chip listeners ────────────────────────────────────────────
 
     private fun bindChipListeners() {
         binding.chipGroupFlow.setOnCheckedStateChangeListener { group, _ ->
@@ -318,7 +314,6 @@ class LogSymptomsFragment : Fragment() {
         }
     }
 
-    /** What initiateSave() collected, held while the confirmation dialog is open. */
     private data class PendingSave(
         val flow: String,
         val moods: List<String>,
@@ -331,16 +326,7 @@ class LogSymptomsFragment : Fragment() {
 
     private var pendingSave: PendingSave? = null
 
-    /**
-     * FIX (P0 — silent data loss): the confirmation dialog used to deliver its
-     * answer only through a lambda captured at show() time. Rotating the device
-     * while it was open recreated the dialog with a null callback, so tapping
-     * "Yes, period started" dismissed it and saved NOTHING — no entry, no period,
-     * no error. The Fragment Result API survives recreation.
-     *
-     * Registered against childFragmentManager because that is where the dialog is
-     * shown.
-     */
+
     private fun listenForPeriodConfirmation() {
         childFragmentManager.setFragmentResultListener(
             PeriodStartConfirmationDialog.REQUEST_KEY, viewLifecycleOwner
@@ -348,8 +334,7 @@ class LogSymptomsFragment : Fragment() {
             val raw = bundle.getString(PeriodStartConfirmationDialog.RESULT_KEY)
             val pending = pendingSave
             if (pending == null) {
-                // Nothing staged (e.g. process death lost it) — re-enable the form
-                // rather than leaving Save disabled forever.
+
                 resetSaveButtons()
                 return@setFragmentResultListener
             }
@@ -374,20 +359,6 @@ class LogSymptomsFragment : Fragment() {
     ) {
         val existingId = editingEntryId
 
-        // FIX 1 (P0 — crash + permanently dead Save button):
-        // Neither branch had a try/catch. Any exception from Room (disk full,
-        // constraint violation, corrupted row) propagated out of the coroutine and
-        // crashed the process, losing the entry the user had just filled in. And
-        // on every early `return@launch`, isSaving stayed true and both buttons
-        // stayed disabled at alpha 0.5 — Save was dead until the user navigated
-        // away and back, with no error shown.
-        //
-        // FIX 2: the write is awaited. `vm.logPeriodStart(...)` and
-        // `vm.saveDailyLog(...)` launch in viewModelScope and return immediately,
-        // so popBackStack() used to race the database write.
-        //
-        // FIX 3: interstitials are suppressed across the save so an ad cannot
-        // appear between the user tapping Save and her data being written.
         viewLifecycleOwner.lifecycleScope.launch {
             ShowAds.suppressInterstitials = true
             try {
@@ -453,10 +424,7 @@ class LogSymptomsFragment : Fragment() {
         }
     }
 
-    /**
-     * Surfaces a save failure instead of leaving the user staring at a disabled
-     * button wondering whether her entry was recorded.
-     */
+
     private fun showSaveError(message: String) {
         val root = _binding?.root ?: return
         com.google.android.material.snackbar.Snackbar
@@ -526,6 +494,8 @@ class LogSymptomsFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        nativeAdHelper?.destroy()
+        nativeAdHelper = null
         _binding = null
     }
 }

@@ -140,7 +140,7 @@ class CalendarFragment : Fragment() {
             daysToNext == 0 -> "Cycle Day $dayNum · Period due today"
             else            -> "Cycle Day $dayNum · $daysToNext days until next period"
         }
-        binding.tvPhaseBadge.text = "☀ ${CycleEngine.phaseName(phase)}"
+        binding.tvPhaseBadge.text = " ${CycleEngine.phaseName(phase)}"
 
         // FIX: this accepted ANY tapped date, including one in a future month, and
         // the "Log Period Start" sheet then confirmed it — writing a future
@@ -271,9 +271,10 @@ class CalendarFragment : Fragment() {
     // ── Backgrounds ───────────────────────────────────────────────
 
     private fun applyBackgrounds() {
-        // ✅ FIX — replaced all hardcoded Color.parseColor with ThemeHelper
-        binding.navRow.background          = ThemeHelper.cardBg(requireContext(), 20f)
-        binding.tabMonth.background        = GradientDrawable(    // brand gradient — stays
+        // Remove this line ↓
+        // binding.navRow.background = ThemeHelper.cardBg(requireContext(), 20f)
+
+        binding.tabMonth.background        = GradientDrawable(
             GradientDrawable.Orientation.LEFT_RIGHT,
             intArrayOf(Color.parseColor("#EC4899"), Color.parseColor("#A855F7"))
         ).apply { cornerRadius = 100f * resources.displayMetrics.density }
@@ -288,7 +289,6 @@ class CalendarFragment : Fragment() {
             .forEach { it.background = ThemeHelper.basalCardBg(requireContext(), 12f) }
         binding.cervicalRow.background     = ThemeHelper.basalCardBg(requireContext(), 12f)
 
-        // Legend dots — semantic medical colors, kept hardcoded
         binding.tvMonthDot.background         = filledCircle("#EC4899")
         binding.legendPeriodDot.background    = filledCircle("#C2185B")
         binding.legendOvulationDot.background = filledCircle("#E66A28")

@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.aivigil.periodtracker.ads.NativeAdHelper
 import com.aivigil.periodtracker.databinding.FragmentProfileBinding
 import com.aivigil.periodtracker.notification.AlarmScheduler
 import com.aivigil.periodtracker.notification.NotificationPrefs
@@ -34,6 +35,7 @@ class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
+    private var nativeAdHelper: NativeAdHelper? = null
 
     private val vm: CycleViewModel by activityViewModels {
         CycleViewModelFactory(requireActivity().application)
@@ -53,6 +55,8 @@ class ProfileFragment : Fragment() {
         setupSwitches()
         observeData()
         bindClickListeners()
+        nativeAdHelper = NativeAdHelper(requireContext())
+        nativeAdHelper?.loadInto(binding.nativeAdContainer)
     }
 
     // ============================================================
@@ -363,6 +367,8 @@ class ProfileFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        nativeAdHelper?.destroy()
+        nativeAdHelper = null
         _binding = null
     }
 }

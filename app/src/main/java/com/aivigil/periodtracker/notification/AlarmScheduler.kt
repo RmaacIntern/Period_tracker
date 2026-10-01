@@ -15,7 +15,6 @@ object AlarmScheduler {
     private const val REQ_PERIOD_DAY       = 101
     private const val REQ_OVULATION_ALERT  = 102
 
-    // Call this whenever prediction updates in CycleViewModel
     fun schedulePeriodAlarms(context: Context, nextPeriodDate: LocalDate) {
         val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
@@ -28,7 +27,7 @@ object AlarmScheduler {
             REQ_PERIOD_REMINDER
         )
 
-        // D-0 at 9am
+
         scheduleExact(
             context, am,
             dateToMillis(nextPeriodDate, 9),
@@ -39,8 +38,7 @@ object AlarmScheduler {
 
     fun scheduleOvulationAlarm(context: Context, ovulationDate: LocalDate) {
         val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        // Fire at the start of the fertile window (ovulation - 5 days) at 9am
-        // so the notification says "Your fertile window starts today"
+
         val alertDate = ovulationDate.minusDays(5)
         scheduleExact(
             context, am,
@@ -66,19 +64,19 @@ object AlarmScheduler {
         }
     }
 
-    // FIX — add to scheduleExact()
+
     private fun scheduleExact(
         context: Context, am: AlarmManager,
         triggerMillis: Long, action: String, requestCode: Int
     ) {
-        // ✅ Skip past alarms — no point scheduling something already missed
+
         if (triggerMillis < System.currentTimeMillis()) {
             Log.w("AlarmScheduler", "scheduleExact: skipping past alarm — action=$action " +
                     "time=${java.util.Date(triggerMillis)}")
             return
         }
 
-        // ✅ Android 12+ requires SCHEDULE_EXACT_ALARM permission
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (!am.canScheduleExactAlarms()) {
                 Log.w("AlarmScheduler", "scheduleExact: canScheduleExactAlarms=false — skipping")

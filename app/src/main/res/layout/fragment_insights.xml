@@ -264,18 +264,19 @@
                 app:layout_constraintEnd_toStartOf="@id/tvHistoryArrow" />
 
             <!-- Arrow chip -->
-            <TextView
+            <ImageView
                 android:id="@+id/tvHistoryArrow"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:gravity="center"
-                android:text="›"
-                android:textColor="#EC4899"
-                android:textSize="20sp"
+                android:src="@drawable/ic_next"
+                android:background="@drawable/bg_arrow_shadow"
+                android:elevation="4dp"
+                android:layout_marginEnd="2dp"
+                android:padding="2dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/tvCycleHistoryIcon"
                 app:layout_constraintBottom_toBottomOf="@id/tvCycleHistoryIcon" />
-
             <!-- Bottom status row -->
             <TextView
                 android:id="@+id/tvDailyTrackingLabel"
@@ -309,8 +310,11 @@
             android:padding="16dp">
 
             <TextView android:id="@+id/iconPhaseGuide"
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="✦" android:textSize="16sp" android:textColor="#A855F7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:textSize="16sp"
+                android:textColor="#A855F7"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
 
             <TextView android:id="@+id/tvPhaseGuideTitle"

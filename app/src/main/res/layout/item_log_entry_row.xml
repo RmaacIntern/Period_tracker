@@ -2,47 +2,72 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp">
+    android:minHeight="64dp"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="4dp"
+    android:clipToPadding="false"
+    android:clipChildren="false">
 
-    <!-- Top row: time + type label + delete icon -->
+    <!-- Delete button: anchored to parent top so its shadow/edge never gets clipped -->
+    <ImageView
+        android:id="@+id/btnDeleteEntry"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="2dp"
+        android:padding="2dp"
+        android:src="@drawable/ic_delete"
+        android:background="@drawable/bg_arrow_shadow"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:elevation="2dp"
+        android:scaleType="centerInside"
+        android:clickable="true"
+        android:focusable="true"
+        android:contentDescription="Delete entry"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Time: vertically centered on the delete button -->
     <TextView
         android:id="@+id/tvEntryTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="9:05 AM"
-        android:textSize="13sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         android:textColor="@color/text_primary"
+        android:maxLines="1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@id/btnDeleteEntry"
+        app:layout_constraintBottom_toBottomOf="@id/btnDeleteEntry" />
 
+    <!-- Type label: baseline-aligned with time, ellipsizes on small screens -->
     <TextView
         android:id="@+id/tvEntryType"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:text="Morning Log"
         android:textSize="12sp"
         android:textColor="@color/text_secondary"
+        android:maxLines="1"
+        android:ellipsize="end"
         app:layout_constraintStart_toEndOf="@id/tvEntryTime"
         app:layout_constraintEnd_toStartOf="@id/btnDeleteEntry"
-        app:layout_constraintTop_toTopOf="@id/tvEntryTime"
-        app:layout_constraintBottom_toBottomOf="@id/tvEntryTime" />
+        app:layout_constraintBaseline_toBaselineOf="@id/tvEntryTime" />
 
-    <TextView
-        android:id="@+id/btnDeleteEntry"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:gravity="center"
-        android:text="🗑"
-        android:textSize="14sp"
-        android:padding="4dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tvEntryTime"
-        app:layout_constraintBottom_toBottomOf="@id/tvEntryTime" />
+    <!-- Header bottom = whichever is taller (handles large font scaling) -->
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/headerBarrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="tvEntryTime,btnDeleteEntry" />
 
     <!-- Summary: flow · moods · symptoms -->
     <TextView
@@ -51,29 +76,31 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
         android:text="Medium flow · Cramps · Fatigue"
-        android:textSize="12sp"
+        android:textSize="13sp"
         android:textColor="@color/text_secondary"
-        android:lineSpacingExtra="2dp"
+        android:lineSpacingMultiplier="1.15"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvEntryTime" />
+        app:layout_constraintTop_toBottomOf="@id/headerBarrier" />
 
     <!-- BBT row (hidden unless basalTemp logged) -->
     <LinearLayout
         android:id="@+id/bbtRow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="6dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:visibility="gone"
+        tools:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvEntrySummary">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="🌡 "
+            android:layout_marginEnd="4dp"
+            android:text="🌡"
             android:textSize="12sp" />
 
         <TextView
@@ -92,26 +119,38 @@
         android:id="@+id/tvNotes"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="6dp"
         android:text=""
         android:textSize="12sp"
         android:textColor="@color/text_secondary"
         android:textStyle="italic"
+        android:lineSpacingMultiplier="1.15"
         android:visibility="gone"
+        tools:text="Felt better after a walk"
+        tools:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bbtRow" />
+
+    <!-- Bottom spacer so last line never touches the divider/card edge -->
+    <Space
+        android:id="@+id/bottomSpace"
+        android:layout_width="0dp"
+        android:layout_height="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvNotes" />
 
     <!-- Divider between entries in same day (hidden on last entry) -->
     <View
         android:id="@+id/dividerEntry"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="4dp"
         android:background="@color/stroke_card"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvNotes" />
+        app:layout_constraintTop_toBottomOf="@id/bottomSpace" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,6 +14,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.aivigil.periodtracker.R
+import com.aivigil.periodtracker.ads.NativeAdHelper
+import com.aivigil.periodtracker.ads.ShowAds
 import com.aivigil.periodtracker.databinding.FragmentHomeBinding
 import com.aivigil.periodtracker.databinding.ItemHomeQuickStatBinding
 import com.aivigil.periodtracker.domain.CycleEngine
@@ -32,13 +34,14 @@ class HomeFragment : Fragment() {
 
     private val TAG = "HomeFragment"
 
+
     private companion object {
-        /** Set once we have shown the POST_NOTIFICATIONS prompt, so we never nag. */
         const val KEY_NOTIF_ASKED = "notif_permission_asked"
     }
 
     private var _binding: FragmentHomeBinding? = null
     private var bindJob: kotlinx.coroutines.Job? = null
+    private var nativeAdHelper: NativeAdHelper? = null
     private val binding get() = _binding!!
 
     private val vm: CycleViewModel by activityViewModels {
@@ -53,14 +56,10 @@ class HomeFragment : Fragment() {
         Log.d(TAG, "notificationPermission: granted=$granted")
         val ctx = context ?: return@registerForActivityResult
         if (granted) {
-            // Alarms are only armed when the OS will actually deliver them, so a
-            // fresh grant has to trigger a reschedule — otherwise the user gets no
-            // reminders until something else happens to touch the database.
+
             vm.onAppForegrounded()
         } else {
-            // FIX: a denial used to be logged and otherwise ignored, while the
-            // reminder switches in Profile stayed ON — so the app promised
-            // reminders it could never deliver. Reflect reality instead.
+
             NotificationPrefs.setPeriodEnabled(ctx, false)
             NotificationPrefs.setOvulationEnabled(ctx, false)
             NotificationPrefs.setDailyEnabled(ctx, false)
@@ -75,20 +74,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    /**
-     * Asks for POST_NOTIFICATIONS at most once per install, and only with context.
-     *
-     * FIX: this used to fire `requestNotifPermission.launch(...)` unconditionally
-     * from onViewCreated — so the system permission dialog appeared the instant
-     * Home first rendered, immediately after the onboarding interstitial ad, before
-     * the user had seen a single thing the app does or knew what she would be
-     * notified about. That is the classic way to earn a permanent denial. It also
-     * re-ran on every tab return, because tab switching recreated the fragment.
-     *
-     * The ask is now deferred to the first time the user has data worth being
-     * reminded about, and a denial is recorded so she is never re-prompted
-     * automatically (Android auto-denies after two refusals anyway).
-     */
+
     private fun maybeAskForNotificationPermission() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
         val ctx = context ?: return
@@ -130,6 +116,9 @@ class HomeFragment : Fragment() {
         maybeAskForNotificationPermission()
         applyBackgrounds()
         observeData()
+        // native ads load
+        nativeAdHelper = NativeAdHelper(requireContext())
+        nativeAdHelper?.loadInto(binding.nativeAdContainer)
         bindClickListeners()
     }
 
@@ -139,11 +128,10 @@ class HomeFragment : Fragment() {
         vm.prediction.observe(viewLifecycleOwner) { pred ->
             Log.d(TAG, "prediction updated: ${pred?.lastPeriodStart} cycleLen=${pred?.cycleLength}")
             tryBind()
-            // Now that there is a cycle to remind her about, it is a reasonable
-            // moment to ask about notifications (see maybeAskForNotificationPermission).
+
             maybeAskForNotificationPermission()
         }
-        // Recompute date-derived text when the day rolls over.
+
         vm.today.observe(viewLifecycleOwner) { tryBind() }
         vm.settings.observe(viewLifecycleOwner) { s ->
             Log.d(TAG, "settings updated: user=${s?.userName} cycleLen=${s?.cycleLength}")
@@ -294,7 +282,6 @@ class HomeFragment : Fragment() {
     // ── Backgrounds ───────────────────────────────────────────────
 
     private fun applyBackgrounds() {
-        // ✅ FIX — replaced hardcoded Color.parseColor hex with ThemeHelper
         binding.statCardsRow.background       = ThemeHelper.cardBg(requireContext(), 16f)
         binding.todayTrackingCard.background  = ThemeHelper.basalCardBg(requireContext(), 16f)
         binding.lastPeriodCard.background     = ThemeHelper.insightBannerBg(requireContext(), 14f)
@@ -306,7 +293,6 @@ class HomeFragment : Fragment() {
             .forEach { it.root.background = ThemeHelper.basalCardBg(requireContext(), 14f) }
     }
 
-    // ── Helpers ───────────────────────────────────────────────────
 
     private fun bindQuickStat(b: ItemHomeQuickStatBinding, iconRes: Int, label: String, value: String) {
         b.statIcon.setImageResource(iconRes)
@@ -317,12 +303,30 @@ class HomeFragment : Fragment() {
     private fun bindClickListeners() {
         binding.btnLogPeriod.setOnClickListener {
             Log.i(TAG, "btnLogPeriod clicked — opening quick log (flow section)")
-            openQuickLog("flow")
+            ShowAds.showMainOnUserAction(requireActivity()) {
+                openQuickLog("flow")
+            }
         }
-        binding.statFlow.root.setOnClickListener     { openQuickLog("flow") }
-        binding.statMood.root.setOnClickListener     { openQuickLog("mood") }
-        binding.statSymptoms.root.setOnClickListener { openQuickLog("symptoms") }
-        binding.statNotes.root.setOnClickListener    { openQuickLog("notes") }
+        binding.statFlow.root.setOnClickListener {
+            ShowAds.showMainOnUserAction(requireActivity()) {
+                openQuickLog("flow")
+            }
+        }
+        binding.statMood.root.setOnClickListener {
+            ShowAds.showMainOnUserAction(requireActivity()) {
+                openQuickLog("mood")
+            }
+        }
+        binding.statSymptoms.root.setOnClickListener {
+            ShowAds.showMainOnUserAction(requireActivity()) {
+                openQuickLog("symptoms")
+            }
+        }
+        binding.statNotes.root.setOnClickListener {
+            ShowAds.showMainOnUserAction(requireActivity()) {
+                openQuickLog("notes")
+            }
+        }
     }
 
     private fun openQuickLog(scrollTo: String = "top") {
@@ -342,8 +346,15 @@ class HomeFragment : Fragment() {
             .commit()
     }
 
+    override fun onResume() {
+        super.onResume()
+
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
+        nativeAdHelper?.destroy()
+        nativeAdHelper = null
         _binding = null
         Log.d(TAG, "onDestroyView")
     }
