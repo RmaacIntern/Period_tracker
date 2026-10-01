@@ -18,7 +18,7 @@ import com.aivigil.periodtracker.databinding.FragmentHomeBinding
 import com.aivigil.periodtracker.databinding.ItemHomeQuickStatBinding
 import com.aivigil.periodtracker.domain.CycleEngine
 import com.aivigil.periodtracker.logsymptoms.LogSymptomsFragment
-import com.aivigil.periodtracker.notification.NotificationHelper
+import com.aivigil.periodtracker.notification.NotificationPrefs
 import com.aivigil.periodtracker.util.ThemeHelper
 import com.aivigil.periodtracker.viewmodel.CycleViewModel
 import com.aivigil.periodtracker.viewmodel.CycleViewModelFactory
@@ -31,6 +31,11 @@ import java.util.Locale
 class HomeFragment : Fragment() {
 
     private val TAG = "HomeFragment"
+
+    private companion object {
+        /** Set once we have shown the POST_NOTIFICATIONS prompt, so we never nag. */
+        const val KEY_NOTIF_ASKED = "notif_permission_asked"
+    }
 
     private var _binding: FragmentHomeBinding? = null
     private var bindJob: kotlinx.coroutines.Job? = null
@@ -46,6 +51,67 @@ class HomeFragment : Fragment() {
         ActivityResultContracts.RequestPermission()
     ) { granted ->
         Log.d(TAG, "notificationPermission: granted=$granted")
+        val ctx = context ?: return@registerForActivityResult
+        if (granted) {
+            // Alarms are only armed when the OS will actually deliver them, so a
+            // fresh grant has to trigger a reschedule — otherwise the user gets no
+            // reminders until something else happens to touch the database.
+            vm.onAppForegrounded()
+        } else {
+            // FIX: a denial used to be logged and otherwise ignored, while the
+            // reminder switches in Profile stayed ON — so the app promised
+            // reminders it could never deliver. Reflect reality instead.
+            NotificationPrefs.setPeriodEnabled(ctx, false)
+            NotificationPrefs.setOvulationEnabled(ctx, false)
+            NotificationPrefs.setDailyEnabled(ctx, false)
+            NotificationPrefs.syncDailyReminder(ctx)
+            _binding?.root?.let { root ->
+                com.google.android.material.snackbar.Snackbar.make(
+                    root,
+                    "Reminders are off. You can turn them on any time in Profile.",
+                    com.google.android.material.snackbar.Snackbar.LENGTH_LONG
+                ).show()
+            }
+        }
+    }
+
+    /**
+     * Asks for POST_NOTIFICATIONS at most once per install, and only with context.
+     *
+     * FIX: this used to fire `requestNotifPermission.launch(...)` unconditionally
+     * from onViewCreated — so the system permission dialog appeared the instant
+     * Home first rendered, immediately after the onboarding interstitial ad, before
+     * the user had seen a single thing the app does or knew what she would be
+     * notified about. That is the classic way to earn a permanent denial. It also
+     * re-ran on every tab return, because tab switching recreated the fragment.
+     *
+     * The ask is now deferred to the first time the user has data worth being
+     * reminded about, and a denial is recorded so she is never re-prompted
+     * automatically (Android auto-denies after two refusals anyway).
+     */
+    private fun maybeAskForNotificationPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+        val ctx = context ?: return
+
+        if (ContextCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS)
+            == PackageManager.PERMISSION_GRANTED
+        ) return
+
+        val prefs = ctx.getSharedPreferences("reminder_prefs", android.content.Context.MODE_PRIVATE)
+        if (prefs.getBoolean(KEY_NOTIF_ASKED, false)) {
+            Log.d(TAG, "notificationPermission: already asked once — not re-prompting")
+            return
+        }
+
+        // Only ask once there is a cycle to remind her about.
+        if (vm.prediction.value == null) {
+            Log.d(TAG, "notificationPermission: deferring — no prediction yet")
+            return
+        }
+
+        prefs.edit().putBoolean(KEY_NOTIF_ASKED, true).apply()
+        Log.d(TAG, "requesting POST_NOTIFICATIONS permission")
+        requestNotifPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
     }
 
     override fun onCreateView(
@@ -61,16 +127,7 @@ class HomeFragment : Fragment() {
         Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         Log.d(TAG, "onViewCreated")
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(
-                    requireContext(), Manifest.permission.POST_NOTIFICATIONS
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                Log.d(TAG, "requesting POST_NOTIFICATIONS permission")
-                requestNotifPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
-            }
-        }
-
+        maybeAskForNotificationPermission()
         applyBackgrounds()
         observeData()
         bindClickListeners()
@@ -82,7 +139,12 @@ class HomeFragment : Fragment() {
         vm.prediction.observe(viewLifecycleOwner) { pred ->
             Log.d(TAG, "prediction updated: ${pred?.lastPeriodStart} cycleLen=${pred?.cycleLength}")
             tryBind()
+            // Now that there is a cycle to remind her about, it is a reasonable
+            // moment to ask about notifications (see maybeAskForNotificationPermission).
+            maybeAskForNotificationPermission()
         }
+        // Recompute date-derived text when the day rolls over.
+        vm.today.observe(viewLifecycleOwner) { tryBind() }
         vm.settings.observe(viewLifecycleOwner) { s ->
             Log.d(TAG, "settings updated: user=${s?.userName} cycleLen=${s?.cycleLength}")
             tryBind()

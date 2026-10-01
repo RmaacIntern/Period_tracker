@@ -58,26 +58,52 @@ class CalendarFragment : Fragment() {
     private fun observeData() {
         vm.prediction.observe(viewLifecycleOwner) { _ -> tryBind() }
         vm.settings.observe(viewLifecycleOwner)   { _ -> tryBind() }
+        // FIX: the calendar used to draw only the CURRENT cycle, recomputed in the
+        // fragment. These two feeds come from the ViewModel and cover all history
+        // plus the full 3-month prediction window.
+        vm.loggedPeriodDays.observe(viewLifecycleOwner)    { _ -> tryBind() }
+        vm.predictedPeriodDays.observe(viewLifecycleOwner) { _ -> tryBind() }
+        // Re-bind when the calendar date advances past midnight.
+        vm.today.observe(viewLifecycleOwner) { _ -> tryBind() }
     }
 
     private fun tryBind() {
+        if (_binding == null) return
         val pred = vm.prediction.value ?: return
         val s    = vm.settings.value   ?: return
 
-        val today             = LocalDate.now()
-        val periodDays        = CycleEngine.periodDays(pred.lastPeriodStart, s.periodDuration)
-        val fertileWindowDays = CycleEngine.fertileWindowDays(pred.fertileStart, pred.fertileEnd)
-        val predictedDays     = CycleEngine.futurePeriodDays(
-            pred.lastPeriodStart, pred.cycleLength, s.periodDuration, monthsAhead = 3
-        ).values.flatten().toSet()
-        val currentDay        = CycleEngine.cycleDay(pred.lastPeriodStart, pred.cycleLength)
+        // Named `todayDate` rather than `today`: CycleCalendarView also has a
+        // private `today` field, and this value is read inside an apply{} block on
+        // that view, where a bare `today` is a needless resolution hazard.
+        val todayDate = LocalDate.now()
 
-        android.util.Log.i("CalendarFragment", "tryBind: today=$today lastPeriod=${pred.lastPeriodStart}")
+        // FIX: was CycleEngine.periodDays(pred.lastPeriodStart, …), which returns
+        // exactly periodDuration days from ONE start date — so a user with six
+        // months of logged periods saw pink days only in her current cycle and a
+        // completely blank calendar when she scrolled back. vm.loggedPeriodDays is
+        // built from every period_entries row.
+        val allLoggedDays = vm.loggedPeriodDays.value ?: emptySet()
+        // Days actually confirmed by a recorded entry (start dates), so the view
+        // can distinguish them from days filled in from the expected duration.
+        val confirmedStarts = vm.periodEntries.value
+            ?.mapNotNull { runCatching { LocalDate.parse(it.startDate) }.getOrNull() }
+            ?.toSet()
+            ?: emptySet()
+
+        val fertileWindowDays = CycleEngine.fertileWindowDays(pred.fertileStart, pred.fertileEnd)
+        val predictedDays     = (vm.predictedPeriodDays.value ?: emptySet()) - allLoggedDays
 
         binding.cycleCalendarView.apply {
             displayMonth         = this@CalendarFragment.displayMonth
             selectedDate         = this@CalendarFragment.selectedDate
-            this.periodDays      = periodDays
+            this.periodDays      = allLoggedDays
+            this.confirmedPeriodDays = allLoggedDays.intersect(
+                // A recorded day is one inside a logged entry's real span; start
+                // dates are always recorded.
+                confirmedStarts + allLoggedDays.filter { d ->
+                    confirmedStarts.any { s0 -> !d.isBefore(s0) && d <= todayDate }
+                }
+            )
             this.fertileWindowDays = fertileWindowDays
             ovulationDay         = pred.ovulationDate
             this.predictedPeriodDays = predictedDays
@@ -116,12 +142,29 @@ class CalendarFragment : Fragment() {
         }
         binding.tvPhaseBadge.text = "☀ ${CycleEngine.phaseName(phase)}"
 
-        chosenPeriodStart = date
+        // FIX: this accepted ANY tapped date, including one in a future month, and
+        // the "Log Period Start" sheet then confirmed it — writing a future
+        // lastPeriodStart that broke every downstream calculation (cycleDay
+        // coerced to 1, isPeriodLate permanently false, daysUntilNextPeriod about
+        // two cycles out). A period cannot start in the future.
+        val isFuture = date.isAfter(LocalDate.now())
+        chosenPeriodStart = if (isFuture) null else date
+
         val isAlreadyPeriodStart = date == pred.lastPeriodStart
-        binding.tvPeriodStartStatus.text = if (isAlreadyPeriodStart) "✓ Already set" else "Not set"
+        binding.tvPeriodStartStatus.text = when {
+            isAlreadyPeriodStart -> "✓ Already set"
+            isFuture             -> "Future date"
+            else                 -> "Not set"
+        }
         binding.tvPeriodStartStatus.setTextColor(
-            requireContext().getColor(if (isAlreadyPeriodStart) R.color.cycle_fertile else R.color.text_secondary)
+            requireContext().getColor(
+                if (isAlreadyPeriodStart) R.color.cycle_fertile else R.color.text_secondary
+            )
         )
+        // Disable the action outright for a future date rather than letting the
+        // user tap it and silently doing the wrong thing.
+        binding.btnLogPeriodStart.isEnabled = !isFuture
+        binding.btnLogPeriodStart.alpha     = if (isFuture) 0.45f else 1f
 
         viewLifecycleOwner.lifecycleScope.launch {
             val logs = vm.getLogsForDate(date)
@@ -193,8 +236,9 @@ class CalendarFragment : Fragment() {
     }
 
     private fun bindDailyTip(day: Int, cycleLength: Int, periodDuration: Int) {
-        val ovDay        = (cycleLength - 14).coerceAtLeast(periodDuration + 2)
-        val fertileStart = (ovDay - 5).coerceAtLeast(periodDuration + 1)
+        // Delegate rather than re-deriving — see CycleEngine.ovulationDay().
+        val ovDay        = CycleEngine.ovulationDay(cycleLength, periodDuration)
+        val fertileStart = CycleEngine.fertileStartDay(cycleLength, periodDuration)
         val lutealEnd    = ovDay + 3
         val pmsStart     = lutealEnd + 1
 
@@ -274,7 +318,10 @@ class CalendarFragment : Fragment() {
             binding.btnLogPeriodStart.isEnabled = false
             binding.btnLogPeriodStart.alpha = 0.5f
 
-            val initial = chosenPeriodStart ?: selectedDate
+            // Never seed the sheet with a future date — the sheet clamped only its
+            // date picker's maxDate, not the initial value it confirms with.
+            val initial = (chosenPeriodStart ?: selectedDate)
+                .coerceAtMost(LocalDate.now())
             val periods = vm.periodEntries.value ?: emptyList()
             val fmt     = DateTimeFormatter.ofPattern("MMM d", Locale.getDefault())
 
@@ -282,6 +329,14 @@ class CalendarFragment : Fragment() {
                 initialDate     = initial,
                 existingPeriods = periods,
                 onConfirm = { date ->
+                    // Second guard: the repository clamps too, but rejecting here
+                    // lets the user know instead of silently changing her input.
+                    if (date.isAfter(LocalDate.now())) {
+                        android.widget.Toast.makeText(requireContext(),
+                            "A period can't start in the future",
+                            android.widget.Toast.LENGTH_SHORT).show()
+                        return@PeriodStartSheet
+                    }
                     vm.logPeriodStart(date)
                     android.widget.Toast.makeText(requireContext(),
                         "Period start logged for ${date.format(fmt)} ✓",
@@ -295,8 +350,12 @@ class CalendarFragment : Fragment() {
                         android.widget.Toast.LENGTH_SHORT).show()
                 },
                 onDismiss = {
-                    binding.btnLogPeriodStart.isEnabled = true
-                    binding.btnLogPeriodStart.alpha = 1.0f
+                    // Guard against the view being gone — the sheet can be
+                    // dismissed after this fragment's view is destroyed.
+                    _binding?.btnLogPeriodStart?.let {
+                        it.isEnabled = true
+                        it.alpha = 1.0f
+                    }
                 }
             )
             sheet.show(parentFragmentManager,

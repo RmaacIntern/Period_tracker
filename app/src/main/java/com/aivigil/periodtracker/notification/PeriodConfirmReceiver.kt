@@ -18,6 +18,9 @@ class PeriodConfirmReceiver : BroadcastReceiver() {
     companion object {
         const val ACTION_PERIOD_YES     = "com.aivigil.periodtracker.PERIOD_YES"
         const val ACTION_PERIOD_NOT_YET = "com.aivigil.periodtracker.PERIOD_NOT_YET"
+
+        /** ISO date the notification was posted for. See the FIX note below. */
+        const val EXTRA_FOR_DATE = "for_date"
     }
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -29,20 +32,30 @@ class PeriodConfirmReceiver : BroadcastReceiver() {
             // permission denied. Second branch had the check but never ran.
             ACTION_PERIOD_YES -> {
                 val result = goAsync()
+                val appContext = context.applicationContext
+                // FIX: this always logged LocalDate.now(). The notification fires at
+                // 9am; a user who taps "Yes, started" the next morning had her period
+                // recorded a day late, shifting every subsequent prediction. The
+                // notification now carries the date it was posted for, and that is
+                // what gets recorded.
+                val forDate = intent.getStringExtra(EXTRA_FOR_DATE)
+                    ?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
+                    ?: LocalDate.now()
+
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
-                        CycleRepository.getInstance(context)
-                            .logPeriodStart(LocalDate.now())
+                        CycleRepository.getInstance(appContext)
+                            .logPeriodStart(forDate)
 
-                        NotificationManagerCompat.from(context)
+                        NotificationManagerCompat.from(appContext)
                             .cancel(NotificationHelper.NOTIF_ID_PERIOD)
 
                         // ✅ Permission check before showing confirmation
                         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
-                            context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
+                            appContext.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
                             == PackageManager.PERMISSION_GRANTED
                         ) {
-                            NotificationHelper.showPeriodLoggedConfirmation(context)
+                            NotificationHelper.showPeriodLoggedConfirmation(appContext)
                         }
                     } finally {
                         result.finish()

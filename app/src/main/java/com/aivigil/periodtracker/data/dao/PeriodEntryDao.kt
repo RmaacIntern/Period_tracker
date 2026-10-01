@@ -24,7 +24,18 @@ interface PeriodEntryDao {
     @Query("SELECT * FROM period_entries WHERE startDate = :date LIMIT 1")
     suspend fun getByDate(date: String): PeriodEntry?
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    /**
+     * FIX (silent data loss): this was OnConflictStrategy.REPLACE. With the UNIQUE
+     * index on startDate, REPLACE means DELETE-then-INSERT — so re-logging a start
+     * date that already existed silently destroyed that row's endDate and
+     * cycleLength and gave it a new id. Worse, CycleRepository.logPeriodStart()
+     * wraps this in a try/catch that expects a constraint violation to signal a
+     * duplicate; REPLACE never throws, so that guard could never fire.
+     *
+     * ABORT throws SQLiteConstraintException on a duplicate, which is what the
+     * caller already handles by returning the existing entry.
+     */
+    @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(entry: PeriodEntry): Long
 
     @Update

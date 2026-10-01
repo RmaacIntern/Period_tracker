@@ -34,12 +34,25 @@ android {
 
     buildFeatures {
         viewBinding = true
+        // AGP 8+ no longer generates BuildConfig unless asked. Needed so
+        // AdsRemoteConfig can use a 1-second Remote Config fetch interval in
+        // debug builds and the correct 1-hour interval in release.
+        buildConfig = true
     }
 
     testOptions {
         unitTests.isReturnDefaultValues = true
-        unitTests.isIncludeAndroidResources = true  // ✅ ADD
+        unitTests.isIncludeAndroidResources = true
     }
+
+    // Room schema export — required by MigrationTestHelper so migrations can be
+    // validated in an instrumented test instead of being discovered in production.
+    // Commit the generated schemas/ directory.
+    sourceSets["androidTest"].assets.srcDir("$projectDir/schemas")
+}
+
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 kotlin {
@@ -95,6 +108,6 @@ dependencies {
     // ✅ ADD inside dependencies { }
     androidTestImplementation("androidx.test:runner:1.6.1")
     androidTestImplementation("androidx.test:core:1.6.1")
-    androidTestImplementation("androidx.room:room-testing:2.6.1")
+    androidTestImplementation(libs.androidx.room.testing)
     androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
 }

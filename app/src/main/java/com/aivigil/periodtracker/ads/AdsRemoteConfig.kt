@@ -2,6 +2,7 @@
 
 
 import android.util.Log
+import com.aivigil.periodtracker.BuildConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.remoteConfigSettings
 
@@ -31,10 +32,29 @@ object AdsRemoteConfig {
     // "time" OR "onclick"
     var interstitial_trigger = "time"
 
-    var timer_interval_seconds: Long = 10L
-    var max_splash_time_ms: Long = 8000L  // <-- ADDED
+    /**
+     * Minimum seconds between two interstitials.
+     *
+     * FIX: the default was 10 seconds. In "time" mode an interstitial fires on
+     * bottom-nav tab taps, so a user moving between Home / Calendar / Insights
+     * could be shown a full-screen ad every 10 seconds of ordinary navigation.
+     * That is well past the point of harming retention and is the kind of
+     * placement density that attracts AdMob policy enforcement for interrupting
+     * normal app use.
+     *
+     * 90 seconds is still commercially aggressive but leaves room to actually use
+     * the app between ads. The value stays remotely tunable — it is now clamped
+     * to MIN_INTERSTITIAL_GAP_SECONDS so a bad console value cannot reintroduce
+     * the 10-second behaviour.
+     */
+    var timer_interval_seconds: Long = 90L
+    var max_splash_time_ms: Long = 8000L
 
-    var ad_click_interval: Int = 3
+    /** Interstitials are never shown closer together than this, whatever Remote Config says. */
+    const val MIN_INTERSTITIAL_GAP_SECONDS = 45L
+
+    /** In "onclick" mode, show an ad every Nth qualifying interaction. */
+    var ad_click_interval: Int = 4
 
     var show_ad_on_first_click: Boolean = false
 
@@ -45,13 +65,49 @@ object AdsRemoteConfig {
     private val remoteConfig: FirebaseRemoteConfig
         get() = FirebaseRemoteConfig.getInstance()
 
+    /**
+     * Longest the splash screen will wait for Remote Config before giving up and
+     * continuing with the built-in defaults.
+     *
+     * FIX (P0 — app could hang on the splash screen forever): load() only called
+     * onComplete() from inside the fetchAndActivate() completion listener. If
+     * that listener never fired — captive-portal Wi-Fi, a network that accepts
+     * the connection then stalls, Play Services mid-update — the splash screen
+     * waited indefinitely with no timer and no fallback, and the app was simply
+     * unusable until force-stopped. A watchdog now guarantees onComplete()
+     * always runs exactly once.
+     */
+    private const val CONFIG_TIMEOUT_MS = 5_000L
+
     fun load(onComplete: () -> Unit) {
+
+        // Guarantee onComplete() runs exactly once, from whichever path arrives
+        // first: the Firebase callback, the catch block, or the watchdog.
+        val completed = java.util.concurrent.atomic.AtomicBoolean(false)
+        val handler = android.os.Handler(android.os.Looper.getMainLooper())
+
+        fun finishOnce(reason: String) {
+            if (!completed.compareAndSet(false, true)) return
+            handler.removeCallbacksAndMessages(null)
+            Log.d(TAG, "load: completing ($reason)")
+            logSettings()
+            onComplete()
+        }
+
+        handler.postDelayed({
+            finishOnce("timeout after ${CONFIG_TIMEOUT_MS}ms — using defaults")
+        }, CONFIG_TIMEOUT_MS)
 
         try {
 
             remoteConfig.setConfigSettingsAsync(
                 remoteConfigSettings {
-                    minimumFetchIntervalInSeconds = 1
+                    // FIX: was 1 second. A 1-second minimum fetch interval is a
+                    // debug-only setting — in production it makes the app hit
+                    // Firebase on essentially every launch, which gets throttled
+                    // server-side anyway and wastes the user's data and battery.
+                    minimumFetchIntervalInSeconds =
+                        if (BuildConfig.DEBUG) 1 else 3600
                 }
             )
 
@@ -106,6 +162,9 @@ object AdsRemoteConfig {
             remoteConfig.fetchAndActivate()
                 .addOnCompleteListener { task ->
 
+                    // The watchdog may already have released the splash screen.
+                    // Still apply the fetched values so they are correct for the
+                    // rest of this session, but do not call onComplete() twice.
                     if (task.isSuccessful) {
 
                         // ------------------------------------------------
@@ -203,9 +262,8 @@ object AdsRemoteConfig {
                         )
                     }
 
-                    logSettings()
-
-                    onComplete()
+                    sanitise()
+                    finishOnce("firebase callback")
                 }
 
         } catch (e: Exception) {
@@ -216,10 +274,29 @@ object AdsRemoteConfig {
                 e
             )
 
-            logSettings()
-
-            onComplete()
+            sanitise()
+            finishOnce("exception: ${e.javaClass.simpleName}")
         }
+    }
+
+    /**
+     * Clamps remotely-supplied values into a sane range.
+     *
+     * Remote Config is an operational control, not a trust boundary — a typo or a
+     * bad rollout could set timer_interval_seconds to 0 and show an interstitial
+     * on every single tap. It could also arrive as 0 simply because the key is
+     * missing from the console, since getLong() returns 0 rather than the default.
+     */
+    private fun sanitise() {
+        if (interstitial_trigger !in listOf("time", "onclick")) {
+            Log.w(TAG, "sanitise: unknown interstitial_trigger " +
+                    "'$interstitial_trigger' → 'time'")
+            interstitial_trigger = "time"
+        }
+        timer_interval_seconds = timer_interval_seconds
+            .coerceIn(MIN_INTERSTITIAL_GAP_SECONDS, 3600L)
+        max_splash_time_ms = max_splash_time_ms.coerceIn(2_000L, 15_000L)
+        ad_click_interval = ad_click_interval.coerceIn(1, 50)
     }
 
     // ------------------------------------------------------------

@@ -1,15 +1,12 @@
 ﻿package com.aivigil.periodtracker.insights
 
-import android.content.ContentValues
 import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.drawable.GradientDrawable
-import android.os.Build
 import android.os.Bundle
-import android.os.Environment
-import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,6 +35,8 @@ import java.util.Locale
 
 class InsightsFragment : Fragment() {
 
+    private companion object { const val TAG = "InsightsFragment" }
+
     private var _binding: FragmentInsightsBinding? = null
     private val binding get() = _binding!!
 
@@ -65,40 +64,66 @@ class InsightsFragment : Fragment() {
     // OBSERVE DATA
     // ─────────────────────────────────────────────
 
+    /**
+     * Renders the cycle stat cards and phase guide, or an explicit empty state.
+     *
+     * Order-independent: safe to call from any observer, before or after the
+     * others have emitted. Never leaves the layout's placeholder text on screen.
+     */
+    private fun bindStats() {
+        if (_binding == null) return
+        val pred = vm.prediction.value
+        val s    = vm.settings.value
+
+        if (pred == null || s == null) {
+            // Empty state — em dashes, never fabricated numbers.
+            binding.tvAvgCycleValue.text     = "—"
+            binding.tvAvgPeriodValue.text    = "—"
+            binding.tvLutealValue.text       = "—"
+            binding.tvSymptomPeakValue.text  = "—"
+            binding.tvPhaseGuideTitle.text   = "Log your first period"
+            binding.tvPhaseDaysBadge.text    = "—"
+            binding.tvPhaseGuideBody.text    =
+                "Once you log a period, your cycle phases and insights will appear here."
+            return
+        }
+
+        val day = CycleEngine.cycleDay(
+            pred.lastPeriodStart, pred.cycleLength, vm.today.value ?: LocalDate.now()
+        )
+
+        binding.tvAvgCycleValue.text  = "${pred.cycleLength} Days"
+        binding.tvAvgPeriodValue.text = "${s.periodDuration} Days"
+
+        // FIX 2 — this formula was written out by hand in three separate places in
+        // this file (here, bindPhaseGuide(), and the PDF export), and two of them
+        // disagreed about their input: one used pred.cycleLength (adaptive) and the
+        // PDF used settings.cycleLength (user-entered). For any user whose observed
+        // cycle differed from her setting, the luteal figure on screen contradicted
+        // the one in her exported report. All three now call CycleEngine.
+        binding.tvLutealValue.text =
+            "${CycleEngine.lutealPhaseLength(pred.cycleLength, s.periodDuration)} Days"
+
+        bindPhaseGuide(
+            day            = day,
+            cycleLength    = pred.cycleLength,
+            periodDuration = s.periodDuration
+        )
+    }
+
     private fun observeData() {
 
-        // ✅ Use vm.prediction as single source of truth — not raw settings
-        vm.prediction.observe(viewLifecycleOwner) { pred ->
-            pred ?: return@observe
-            val s = vm.settings.value ?: return@observe
-
-            val day = CycleEngine.cycleDay(pred.lastPeriodStart, pred.cycleLength)
-
-            binding.tvAvgCycleValue.text  = "${pred.cycleLength} Days"
-            binding.tvAvgPeriodValue.text = "${s.periodDuration} Days"
-
-            // ✅ Correct luteal formula matching CycleEngine.bestPrediction()
-            val ovulationDay = (pred.cycleLength - 14).coerceAtLeast(s.periodDuration + 2)
-            val lutealDays   = pred.cycleLength - ovulationDay
-            binding.tvLutealValue.text = "$lutealDays Days"
-
-            // Symptom peak is set by allLogs observer below
-            binding.tvSymptomPeakValue.text = "Calculating…"
-
-            bindPhaseGuide(
-                day            = day,
-                cycleLength    = pred.cycleLength,
-                periodDuration = s.periodDuration
-            )
-        }
-
-        // Re-trigger phase guide when settings arrive after prediction
-        vm.settings.observe(viewLifecycleOwner) { s ->
-            s ?: return@observe
-            val pred = vm.prediction.value ?: return@observe
-            val day  = CycleEngine.cycleDay(pred.lastPeriodStart, pred.cycleLength)
-            bindPhaseGuide(day, pred.cycleLength, s.periodDuration)
-        }
+        // FIX 1 — the two observers below used to each return early if the OTHER
+        // one's value had not arrived yet, and neither re-set the stat cards on
+        // recovery. If `prediction` emitted before `settings`, tvAvgCycleValue /
+        // tvAvgPeriodValue / tvLutealValue were never written at all and kept the
+        // placeholder text hardcoded in fragment_insights.xml ("14 Days",
+        // "Day 27") — showing a brand-new user invented numbers as her own cycle
+        // data. Both observers now call one bind function that handles any arrival
+        // order and renders an explicit empty state.
+        vm.prediction.observe(viewLifecycleOwner) { bindStats() }
+        vm.settings.observe(viewLifecycleOwner)   { bindStats() }
+        vm.today.observe(viewLifecycleOwner)      { bindStats() }
 
         vm.allLogs.observe(viewLifecycleOwner) { logs ->
 
@@ -155,9 +180,21 @@ class InsightsFragment : Fragment() {
                 val pmsDay = CycleEngine.detectPmsOnsetDay(logTriples)
                 binding.tvSymptomPeakValue.text =
                     if (pmsDay != null) "Day $pmsDay" else "Not enough data"
+            } else {
+                binding.tvSymptomPeakValue.text = "—"
             }
         }
     }
+
+    /**
+     * FIX: tvSymptomPeakValue used to be reset to "Calculating…" by the
+     * `prediction` observer on every emission, while the real value was written
+     * only by the `allLogs` observer. Because `prediction` is derived from
+     * `periodEntries`, logging any period re-fired it and overwrote the computed
+     * value — and `allLogs` did not re-emit, so the label stayed on "Calculating…"
+     * permanently. bindStats() no longer touches this field; only the allLogs
+     * observer above owns it.
+     */
 
     // ─────────────────────────────────────────────
     // PHASE GUIDE
@@ -168,8 +205,9 @@ class InsightsFragment : Fragment() {
 
         // ✅ Derive day range labels from CycleEngine boundaries
         // so they are correct for all cycle lengths, not just 28-day cycles
-        val ovDay        = (cycleLength - 14).coerceAtLeast(periodDuration + 2)
-        val fertileStart = (ovDay - 5).coerceAtLeast(periodDuration + 1)
+        // Single source of truth — see CycleEngine.ovulationDay()
+        val ovDay        = CycleEngine.ovulationDay(cycleLength, periodDuration)
+        val fertileStart = CycleEngine.fertileStartDay(cycleLength, periodDuration)
 
         val result = when (phase) {
             CycleEngine.Phase.MENSTRUAL -> Triple(
@@ -219,11 +257,15 @@ class InsightsFragment : Fragment() {
         binding.btnDownloadReport.setOnClickListener {
             binding.btnDownloadReport.isEnabled = false
             binding.btnDownloadReport.alpha = 0.5f
+            // FIX (P0 crash): the button used to be re-enabled from a
+            // postDelayed(…, 2000) lambda that dereferenced `binding`. Detaching a
+            // view does not drain messages already queued on it, so navigating
+            // back or rotating within 2 seconds of tapping Download ran the lambda
+            // after onDestroyView and threw NPE on the `binding` getter.
+            // The button is now re-enabled in exportPdf()'s finally block, guarded
+            // by `_binding?.`, which is also correct timing — it tracks the actual
+            // export rather than an arbitrary 2-second delay.
             exportPdf()
-            binding.btnDownloadReport.postDelayed({
-                binding.btnDownloadReport.isEnabled = true
-                binding.btnDownloadReport.alpha = 1.0f
-            }, 2000)
         }
     }
 
@@ -242,9 +284,14 @@ class InsightsFragment : Fragment() {
 
         Toast.makeText(requireContext(), "Generating PDF report...", Toast.LENGTH_SHORT).show()
 
-        lifecycleScope.launch(Dispatchers.IO) {
+        // FIX: was lifecycleScope (the FRAGMENT's scope, which outlives the view).
+        // viewLifecycleOwner.lifecycleScope is cancelled with the view, so the
+        // completion handler can never touch a destroyed binding or commit a
+        // FragmentTransaction into a dead view hierarchy.
+        // `pdf` is hoisted out of the try so the finally block can always close it.
+        val pdf = android.graphics.pdf.PdfDocument()
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             try {
-                val pdf = android.graphics.pdf.PdfDocument()
                 var pageNum  = 1
                 var pageInfo = android.graphics.pdf.PdfDocument.PageInfo.Builder(595, 842, pageNum).create()
                 var page     = pdf.startPage(pageInfo)
@@ -298,10 +345,14 @@ class InsightsFragment : Fragment() {
                 canvas.drawLine(24f, y, 571f, y, linePaint); y += 10f
 
                 // ✅ Correct luteal formula in PDF too
-                val ovulationDay = (settings.cycleLength - 14).coerceAtLeast(settings.periodDuration + 2)
-                val lutealDays   = settings.cycleLength - ovulationDay
+                // FIX: this used settings.cycleLength while the on-screen card used
+                // pred.cycleLength, so the exported report could contradict the app.
+                val predCycleLength = vm.prediction.value?.cycleLength ?: settings.cycleLength
+                val lutealDays = CycleEngine.lutealPhaseLength(
+                    predCycleLength, settings.periodDuration
+                )
 
-                canvas.drawText("Cycle length:    ${settings.cycleLength} days", 24f, y, bodyPaint); y += 14f
+                canvas.drawText("Cycle length:    $predCycleLength days", 24f, y, bodyPaint); y += 14f
                 canvas.drawText("Period duration: ${settings.periodDuration} days", 24f, y, bodyPaint); y += 14f
                 canvas.drawText("Est. luteal phase:       $lutealDays days", 24f, y, bodyPaint); y += 14f
                 canvas.drawText("Last period start:       ${
@@ -405,7 +456,13 @@ class InsightsFragment : Fragment() {
                 }
                 canvas.drawLine(24f, y + 10f, 571f, y + 10f, linePaint)
                 canvas.drawText(
-                    "Period Tracker • Private & local • Data never leaves your device",
+                    // FIX: this line claimed the data never leaves the device while
+                    // the PDF was being written to shared Downloads, readable by any
+                    // app with storage access. The file now stays in app-private
+                    // storage, but this footer describes the REPORT the user is
+                    // holding — which she may well email or print — so it must not
+                    // promise confidentiality the app cannot enforce.
+                    "Period Tracker • Contains personal health information — share with care",
                     24f, y + 24f, subPaint
                 )
                 pdf.finishPage(page)
@@ -414,13 +471,29 @@ class InsightsFragment : Fragment() {
 
                 // ✅ openSheet defined once — used by both API branches
                 suspend fun openSheet(uri: android.net.Uri) = withContext(Dispatchers.Main) {
-                    if (!isAdded) return@withContext
+                    // FIX: `isAdded` stays true for a BACKGROUNDED fragment, so it
+                    // did not protect the show() below — backgrounding the app while
+                    // the PDF was being written committed a FragmentTransaction after
+                    // onSaveInstanceState and threw
+                    // "Can not perform this action after onSaveInstanceState".
+                    // Checking the view lifecycle state is the real guard.
+                    if (!viewLifecycleOwner.lifecycle.currentState
+                            .isAtLeast(androidx.lifecycle.Lifecycle.State.STARTED)
+                    ) return@withContext
+                    if (parentFragmentManager.isStateSaved) return@withContext
+
                     val openPdfAction: () -> Unit = {
                         val intent = Intent(Intent.ACTION_VIEW).apply {
                             setDataAndType(uri, "application/pdf")
                             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         }
+                        // FIX: opening the report sends the user to another app.
+                        // On return, AppOpenAdManager fired a full-screen ad on top
+                        // of her medical report. skipNextShow() existed for exactly
+                        // this and was never called anywhere in the codebase.
+                        (requireActivity().application as? com.aivigil.periodtracker.MainApplication)
+                            ?.appOpenAdManager?.skipNextShow()
                         try { startActivity(intent) }
                         catch (_: Exception) {
                             try { startActivity(Intent.createChooser(intent, "Open PDF with...")) }
@@ -435,32 +508,59 @@ class InsightsFragment : Fragment() {
                     ).show(parentFragmentManager, com.aivigil.periodtracker.profile.sheets.PdfReadySheet.TAG)
                 }
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    val values = ContentValues().apply {
-                        put(MediaStore.Downloads.DISPLAY_NAME, fileName)
-                        put(MediaStore.Downloads.MIME_TYPE, "application/pdf")
-                        put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
-                    }
-                    val uri = requireContext().contentResolver
-                        .insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)!!
-                    requireContext().contentResolver.openOutputStream(uri)!!.use { pdf.writeTo(it) }
-                    pdf.close()
-                    openSheet(uri)
-                } else {
-                    val dir  = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                    val file = File(dir, fileName)
-                    FileOutputStream(file).use { pdf.writeTo(it) }
-                    pdf.close()
-                    val uri = FileProvider.getUriForFile(
-                        requireContext(), "${requireContext().packageName}.provider", file
-                    )
-                    openSheet(uri)
-                }
+                // ── WHERE THE HEALTH REPORT IS WRITTEN ────────────
+                //
+                // FIX (P0 — privacy): this used to write to shared storage —
+                // MediaStore.Downloads on API 29+, and
+                // getExternalStoragePublicDirectory() below that. The PDF contains
+                // the user's name, age, weight, listed health conditions and her
+                // full flow / mood / symptom history. In shared Downloads it is
+                // readable by any app holding media or storage permission, is
+                // swept up by cloud-backup and file-manager apps, and persists
+                // forever with no way for the user to find or delete it from
+                // inside this app. The export screen itself printed
+                // "Private & local • Data never leaves your device", which was
+                // simply untrue.
+                //
+                // It now goes to the app's private cache directory and is shared
+                // only through the existing FileProvider, which grants read access
+                // to one URI, to one app, for as long as the user is viewing it.
+                // Nothing is left in shared storage, and the legacy branch no
+                // longer needs WRITE_EXTERNAL_STORAGE (which was declared with
+                // maxSdkVersion=28 but never requested at runtime, so the old
+                // API 26–28 path failed with EACCES on every attempt).
+                val exportDir = File(requireContext().cacheDir, "reports").apply { mkdirs() }
+                // Keep only the newest report so old copies of the user's health
+                // data do not accumulate on disk.
+                exportDir.listFiles()?.forEach { runCatching { it.delete() } }
+
+                val file = File(exportDir, fileName)
+                FileOutputStream(file).use { pdf.writeTo(it) }
+
+                val uri = FileProvider.getUriForFile(
+                    requireContext(), "${requireContext().packageName}.provider", file
+                )
+                openSheet(uri)
 
             } catch (e: Exception) {
+                Log.e(TAG, "PDF export failed", e)
                 withContext(Dispatchers.Main) {
-                    if (isAdded) Toast.makeText(requireContext(),
-                        "Export failed: ${e.message}", Toast.LENGTH_LONG).show()
+                    val root = _binding?.root ?: return@withContext
+                    com.google.android.material.snackbar.Snackbar.make(
+                        root,
+                        "Couldn't create the report. Please try again.",
+                        com.google.android.material.snackbar.Snackbar.LENGTH_LONG
+                    ).show()
+                }
+            } finally {
+                // FIX: pdf.close() was called on the success paths only, so any
+                // failure mid-write leaked the PdfDocument's native pages.
+                runCatching { pdf.close() }
+                withContext(Dispatchers.Main) {
+                    _binding?.btnDownloadReport?.let {
+                        it.isEnabled = true
+                        it.alpha = 1.0f
+                    }
                 }
             }
         }

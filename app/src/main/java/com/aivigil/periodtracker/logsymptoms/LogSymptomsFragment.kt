@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.chip.Chip
+import com.aivigil.periodtracker.ads.ShowAds
 import com.aivigil.periodtracker.databinding.FragmentLogSymptomsBinding
 import com.aivigil.periodtracker.domain.CycleEngine
 import com.aivigil.periodtracker.dialog.PeriodStartConfirmationDialog
@@ -41,9 +42,24 @@ class LogSymptomsFragment : Fragment() {
 
     private val TAG = "LogSymptomsFragment"
 
-    private val targetDate: LocalDate by lazy {
-        arguments?.getString(ARG_DATE)?.let { LocalDate.parse(it) } ?: LocalDate.now()
+    /**
+     * The date this log will be written to.
+     *
+     * FIX: when no explicit date argument was supplied this defaulted to a `by
+     * lazy` LocalDate.now(), while isToday / isPastDate compared against a LIVE
+     * LocalDate.now(). Opening the screen at 23:58 and saving at 00:01 flipped the
+     * header to "Editing · <yesterday>" and wrote the entry to yesterday's date.
+     *
+     * When the caller passes no date the screen means "today", so `today` is
+     * re-read at save time rather than frozen at construction. An explicitly
+     * passed date is honoured exactly and never drifts.
+     */
+    private val explicitDate: LocalDate? by lazy {
+        arguments?.getString(ARG_DATE)
+            ?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
     }
+    private val targetDate: LocalDate get() = explicitDate ?: LocalDate.now()
+
     private val targetEntryId: Int by lazy {
         arguments?.getInt(ARG_ENTRY_ID, -1) ?: -1
     }
@@ -75,6 +91,9 @@ class LogSymptomsFragment : Fragment() {
         bindBasalTemp()
         bindClickListeners()
         loadExistingLogOnce()
+        // Must be registered on every view creation so a rotation mid-dialog still
+        // receives the user's answer.
+        listenForPeriodConfirmation()
     }
 
     // ── Backgrounds ───────────────────────────────────────────────
@@ -285,20 +304,66 @@ class LogSymptomsFragment : Fragment() {
         val shouldAsk = CycleEngine.shouldStartNewCycle(flow)
 
         if (shouldAsk) {
+            // Stash what we are about to save so the answer can still be acted on
+            // after a rotation destroys and recreates this fragment.
+            pendingSave = PendingSave(flow, moods, symptoms, cervical, lh, bbt, notes)
             PeriodStartConfirmationDialog.show(
                 childFragmentManager,
-                onResult = { result ->
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        val confirmed = result == PeriodStartResult.PERIOD_STARTED
-                        doSave(flow, moods, symptoms, cervical, lh, bbt, notes,
-                            periodConfirmed = confirmed)
-                    }
-                },
-                onDismiss = { resetSaveButtons() }
+                onResult  = { /* handled by the fragment-result listener */ },
+                onDismiss = { /* handled by the fragment-result listener */ }
             )
         } else {
             doSave(flow, moods, symptoms, cervical, lh, bbt, notes,
                 periodConfirmed = false)
+        }
+    }
+
+    /** What initiateSave() collected, held while the confirmation dialog is open. */
+    private data class PendingSave(
+        val flow: String,
+        val moods: List<String>,
+        val symptoms: List<String>,
+        val cervical: String,
+        val lh: String,
+        val bbt: Float?,
+        val notes: String
+    )
+
+    private var pendingSave: PendingSave? = null
+
+    /**
+     * FIX (P0 — silent data loss): the confirmation dialog used to deliver its
+     * answer only through a lambda captured at show() time. Rotating the device
+     * while it was open recreated the dialog with a null callback, so tapping
+     * "Yes, period started" dismissed it and saved NOTHING — no entry, no period,
+     * no error. The Fragment Result API survives recreation.
+     *
+     * Registered against childFragmentManager because that is where the dialog is
+     * shown.
+     */
+    private fun listenForPeriodConfirmation() {
+        childFragmentManager.setFragmentResultListener(
+            PeriodStartConfirmationDialog.REQUEST_KEY, viewLifecycleOwner
+        ) { _, bundle ->
+            val raw = bundle.getString(PeriodStartConfirmationDialog.RESULT_KEY)
+            val pending = pendingSave
+            if (pending == null) {
+                // Nothing staged (e.g. process death lost it) — re-enable the form
+                // rather than leaving Save disabled forever.
+                resetSaveButtons()
+                return@setFragmentResultListener
+            }
+            if (raw == PeriodStartConfirmationDialog.RESULT_CANCELLED) {
+                pendingSave = null
+                resetSaveButtons()
+                return@setFragmentResultListener
+            }
+            pendingSave = null
+            doSave(
+                pending.flow, pending.moods, pending.symptoms, pending.cervical,
+                pending.lh, pending.bbt, pending.notes,
+                periodConfirmed = raw == PeriodStartResult.PERIOD_STARTED.name
+            )
         }
     }
 
@@ -308,52 +373,95 @@ class LogSymptomsFragment : Fragment() {
         periodConfirmed: Boolean
     ) {
         val existingId = editingEntryId
-        if (existingId != null) {
-            viewLifecycleOwner.lifecycleScope.launch {
-                val existing = vm.getLogsForDate(targetDate)
-                    .firstOrNull { it.entryId == existingId }
-                if (existing == null) { resetSaveButtons(); return@launch }
-                vm.updateDailyLog(existing.copy(
-                    flow          = flow,
-                    moods         = moods.joinToString(","),
-                    symptoms      = symptoms.joinToString(","),
-                    cervicalFluid = cervical,
-                    basalTemp     = bbt ?: existing.basalTemp,
-                    lhTestResult  = lh,
-                    notes         = notes,
-                    loggedAt      = System.currentTimeMillis()
-                ))
-                if (periodConfirmed) vm.logPeriodStart(targetDate)
-                if (!isAdded) return@launch
-                val ctx = context ?: return@launch
+
+        // FIX 1 (P0 — crash + permanently dead Save button):
+        // Neither branch had a try/catch. Any exception from Room (disk full,
+        // constraint violation, corrupted row) propagated out of the coroutine and
+        // crashed the process, losing the entry the user had just filled in. And
+        // on every early `return@launch`, isSaving stayed true and both buttons
+        // stayed disabled at alpha 0.5 — Save was dead until the user navigated
+        // away and back, with no error shown.
+        //
+        // FIX 2: the write is awaited. `vm.logPeriodStart(...)` and
+        // `vm.saveDailyLog(...)` launch in viewModelScope and return immediately,
+        // so popBackStack() used to race the database write.
+        //
+        // FIX 3: interstitials are suppressed across the save so an ad cannot
+        // appear between the user tapping Save and her data being written.
+        viewLifecycleOwner.lifecycleScope.launch {
+            ShowAds.suppressInterstitials = true
+            try {
+                if (existingId != null) {
+                    val existing = vm.getLogsForDate(targetDate)
+                        .firstOrNull { it.entryId == existingId }
+                    if (existing == null) {
+                        resetSaveButtons()
+                        showSaveError("That entry no longer exists.")
+                        return@launch
+                    }
+                    vm.updateDailyLogAwait(existing.copy(
+                        flow          = flow,
+                        moods         = moods.joinToString(","),
+                        symptoms      = symptoms.joinToString(","),
+                        cervicalFluid = cervical,
+                        basalTemp     = bbt ?: existing.basalTemp,
+                        lhTestResult  = lh,
+                        notes         = notes,
+                        loggedAt      = System.currentTimeMillis()
+                    ))
+                } else {
+                    vm.saveDailyLogAwait(
+                        date            = targetDate,
+                        flow            = flow,
+                        moods           = moods,
+                        symptoms        = symptoms,
+                        cervicalFluid   = cervical,
+                        basalTemp       = bbt,
+                        lhTestResult    = lh,
+                        notes           = notes,
+                        periodConfirmed = periodConfirmed
+                    )
+                }
+
+                if (periodConfirmed && existingId != null) {
+                    vm.logPeriodStartAwait(targetDate)
+                }
+
                 isSaving = false
-                Toast.makeText(ctx,
-                    if (periodConfirmed) "Period logged ✓" else "Log updated ✓",
-                    Toast.LENGTH_SHORT).show()
-                parentFragmentManager.popBackStack()
-            }
-        } else {
-            viewLifecycleOwner.lifecycleScope.launch {
-                vm.saveDailyLog(
-                    date            = targetDate,
-                    flow            = flow,
-                    moods           = moods,
-                    symptoms        = symptoms,
-                    cervicalFluid   = cervical,
-                    basalTemp       = bbt,
-                    lhTestResult    = lh,
-                    notes           = notes,
-                    periodConfirmed = periodConfirmed
-                )
                 if (!isAdded) return@launch
-                val ctx = context ?: return@launch
-                isSaving = false
-                Toast.makeText(ctx,
-                    if (periodConfirmed) "Period logged ✓" else "Log saved ✓",
-                    Toast.LENGTH_SHORT).show()
-                parentFragmentManager.popBackStack()
+                context?.let { ctx ->
+                    Toast.makeText(
+                        ctx,
+                        when {
+                            periodConfirmed     -> "Period logged ✓"
+                            existingId != null  -> "Log updated ✓"
+                            else                -> "Log saved ✓"
+                        },
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                if (!parentFragmentManager.isStateSaved) {
+                    parentFragmentManager.popBackStack()
+                }
+            } catch (e: Exception) {
+                android.util.Log.e(TAG, "doSave failed", e)
+                resetSaveButtons()
+                showSaveError("Couldn't save your log. Please try again.")
+            } finally {
+                ShowAds.suppressInterstitials = false
             }
         }
+    }
+
+    /**
+     * Surfaces a save failure instead of leaving the user staring at a disabled
+     * button wondering whether her entry was recorded.
+     */
+    private fun showSaveError(message: String) {
+        val root = _binding?.root ?: return
+        com.google.android.material.snackbar.Snackbar
+            .make(root, message, com.google.android.material.snackbar.Snackbar.LENGTH_LONG)
+            .show()
     }
 
     private fun resetSaveButtons() {

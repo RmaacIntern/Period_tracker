@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.setFragmentResult
 import com.aivigil.periodtracker.databinding.DialogPeriodStartConfirmationBinding
 
 enum class PeriodStartResult {
@@ -26,9 +27,18 @@ enum class PeriodStartResult {
  */
 class PeriodStartConfirmationDialog : DialogFragment() {
 
+    /**
+     * Kept for source compatibility with any caller still setting these directly,
+     * but the results below are ALSO delivered through the Fragment Result API.
+     *
+     * FIX (P0 — silent data loss on rotation): these lambdas were the only delivery
+     * channel. A lambda cannot survive Fragment recreation, so rotating the device
+     * while this dialog was open produced a restored dialog with `onResult == null`
+     * — tapping "Yes, period started" then dismissed the dialog and saved
+     * absolutely nothing, with no error and no indication anything had gone wrong.
+     * setFragmentResult survives recreation and process death.
+     */
     var onResult: ((PeriodStartResult) -> Unit)? = null
-
-    // ✅ NEW — called when user dismisses without tapping Yes or No
     var onDismiss: (() -> Unit)? = null
 
     // ✅ Guard against double-tap / rapid double-click
@@ -56,21 +66,26 @@ class PeriodStartConfirmationDialog : DialogFragment() {
 
         // Yes — period started
         binding.btnYesPeriodStarted.setOnClickListener {
-            if (isHandled) return@setOnClickListener
-            isHandled = true
-            val callback = onResult
-            dismiss()
-            callback?.invoke(PeriodStartResult.PERIOD_STARTED)
+            deliver(PeriodStartResult.PERIOD_STARTED)
         }
 
         // No — just bleeding
         binding.btnNoJustBleeding.setOnClickListener {
-            if (isHandled) return@setOnClickListener
-            isHandled = true
-            val callback = onResult
-            dismiss()
-            callback?.invoke(PeriodStartResult.NOT_PERIOD_STARTED)
+            deliver(PeriodStartResult.NOT_PERIOD_STARTED)
         }
+    }
+
+    private fun deliver(result: PeriodStartResult) {
+        if (isHandled) return
+        isHandled = true
+        val callback = onResult
+        // Survives rotation and process death, unlike the lambda.
+        setFragmentResult(
+            REQUEST_KEY,
+            androidx.core.os.bundleOf(RESULT_KEY to result.name)
+        )
+        dismiss()
+        callback?.invoke(result)
     }
 
     override fun onStart() {
@@ -92,6 +107,11 @@ class PeriodStartConfirmationDialog : DialogFragment() {
     override fun onCancel(dialog: DialogInterface) {
         super.onCancel(dialog)
         if (!isHandled) {
+            isHandled = true
+            setFragmentResult(
+                REQUEST_KEY,
+                androidx.core.os.bundleOf(RESULT_KEY to RESULT_CANCELLED)
+            )
             onDismiss?.invoke()
         }
     }
@@ -104,10 +124,13 @@ class PeriodStartConfirmationDialog : DialogFragment() {
     companion object {
         const val TAG = "PeriodStartConfirmationDialog"
 
+        const val REQUEST_KEY     = "period_start_confirmation"
+        const val RESULT_KEY      = "result"
+        const val RESULT_CANCELLED = "CANCELLED"
+
         fun show(
             fragmentManager: androidx.fragment.app.FragmentManager,
             onResult: (PeriodStartResult) -> Unit,
-            // ✅ NEW — optional, defaults to no-op so existing callers don't break
             onDismiss: () -> Unit = {}
         ) {
             // Prevent showing duplicate dialogs
@@ -115,8 +138,27 @@ class PeriodStartConfirmationDialog : DialogFragment() {
 
             PeriodStartConfirmationDialog().apply {
                 this.onResult  = onResult
-                this.onDismiss = onDismiss  // ✅ wire it in
+                this.onDismiss = onDismiss
             }.show(fragmentManager, TAG)
+        }
+
+        /**
+         * Registers a rotation-safe listener. Call this from the host fragment's
+         * onCreate/onViewCreated — it is re-delivered after recreation, so the
+         * user's answer is never dropped.
+         */
+        fun listen(
+            fragment: androidx.fragment.app.Fragment,
+            onResult: (PeriodStartResult?) -> Unit
+        ) {
+            fragment.parentFragmentManager.setFragmentResultListener(
+                REQUEST_KEY, fragment.viewLifecycleOwner
+            ) { _, bundle ->
+                val raw = bundle.getString(RESULT_KEY)
+                onResult(
+                    PeriodStartResult.entries.firstOrNull { it.name == raw }
+                )
+            }
         }
     }
 }

@@ -36,6 +36,11 @@ androidx-animation-core = { group = "androidx.compose.animation", name = "animat
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+# Pinned to the same version as the runtime. Was hardcoded to 2.6.1 in
+# app/build.gradle.kts against a 2.8.5 runtime, which Gradle resolves by upgrading
+# the transitive room artifacts and leaving room-testing behind — a mismatch that
+# only surfaces as odd migration-test failures.
+androidx-room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycle" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }

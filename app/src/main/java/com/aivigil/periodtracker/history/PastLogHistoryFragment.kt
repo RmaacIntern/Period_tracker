@@ -134,12 +134,30 @@ class PastLogHistoryFragment : Fragment() {
 
         AlertDialog.Builder(requireContext())
             .setTitle("Delete entry?")
-            .setMessage("Delete the log from $timeStr on ${log.date}? This cannot be undone.")
-            .setPositiveButton("Delete") { _, _ ->
-                vm.deleteDailyLogById(log.entryId)
-                Toast.makeText(requireContext(), "Entry deleted", Toast.LENGTH_SHORT).show()
-            }
+            .setMessage("Delete the log from $timeStr on ${log.date}?")
+            .setPositiveButton("Delete") { _, _ -> deleteWithUndo(log) }
             .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    /**
+     * Deletes the entry but gives the user a few seconds to take it back.
+     *
+     * FIX: deletion was an immediate hard Room delete confirmed only by a Toast, on
+     * health data the user cannot reconstruct from memory — one mistaken tap and
+     * months-old details were gone for good. The row is now re-insertable from the
+     * in-memory copy for the lifetime of the Snackbar.
+     */
+    private fun deleteWithUndo(log: DailyLog) {
+        vm.deleteDailyLogById(log.entryId)
+        val root = _binding?.root ?: return
+        com.google.android.material.snackbar.Snackbar
+            .make(root, "Entry deleted", com.google.android.material.snackbar.Snackbar.LENGTH_LONG)
+            .setAction("Undo") {
+                // entryId is autoGenerate, so the restored row gets a new id — the
+                // content, date and entryNumber are what matter to the user.
+                vm.restoreDailyLog(log)
+            }
             .show()
     }
 

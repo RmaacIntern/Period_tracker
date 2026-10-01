@@ -34,6 +34,9 @@ class CycleRepository(context: Context) {
     companion object {
         private val KEY_ONBOARDING_DONE = booleanPreferencesKey("onboarding_done")
 
+        /** Closed periods required before the app will adjust a user-set duration. */
+        private const val MIN_CYCLES_BEFORE_LEARNING = 3
+
         @Volatile private var INSTANCE: CycleRepository? = null
 
         fun getInstance(context: Context): CycleRepository =
@@ -49,6 +52,55 @@ class CycleRepository(context: Context) {
 
     suspend fun markOnboardingComplete() {
         ds.edit { it[KEY_ONBOARDING_DONE] = true }
+    }
+
+    /**
+     * Writes the complete onboarding result and only then marks onboarding done.
+     *
+     * Ordering matters and is the point of this function: `markOnboardingComplete()`
+     * is what stops SplashActivity sending the user back through the flow, so it
+     * must be the LAST thing that happens. If any earlier write throws, the flag
+     * is never set and the user is asked to complete onboarding again — annoying,
+     * but recoverable, unlike an app that opens with no settings at all.
+     *
+     * Callers should invoke this from a non-cancellable context; see
+     * OnboardingActivity.persistOnboarding().
+     */
+    suspend fun saveOnboarding(
+        userName: String,
+        age: Int,
+        heightCm: Int,
+        weightKg: Float,
+        activityLevel: String,
+        goal: String,
+        conditions: String,
+        cycleLength: Int,
+        periodDuration: Int,
+        lastPeriodStart: LocalDate
+    ) {
+        val safeStart = if (lastPeriodStart.isAfter(LocalDate.now())) LocalDate.now()
+        else lastPeriodStart
+
+        settingsDao.save(
+            UserSettings(
+                id              = 1,
+                userName        = userName,
+                age             = age.coerceIn(10, 70),
+                heightCm        = heightCm.coerceIn(100, 220),
+                weightKg        = weightKg.coerceIn(25f, 250f),
+                activityLevel   = activityLevel,
+                goal            = goal,
+                conditions      = conditions,
+                cycleLength     = cycleLength.coerceIn(18, 60),
+                periodDuration  = periodDuration.coerceIn(2, 10),
+                lastPeriodStart = safeStart.toString(),
+                memberSince     = LocalDate.now().toString()
+            )
+        )
+        logPeriodStart(safeStart)
+        markOnboardingComplete()
+        Log.i(TAG, "saveOnboarding: complete — lastPeriodStart=$safeStart " +
+                "cycleLength=$cycleLength periodDuration=$periodDuration")
     }
 
     // ── User settings ─────────────────────────────────────────────
@@ -119,7 +171,17 @@ class CycleRepository(context: Context) {
      * – Closes any open previous period entry.
      * – Syncs UserSettings.lastPeriodStart via private sync (no LiveData loop).
      */
-    suspend fun logPeriodStart(date: LocalDate = LocalDate.now()): PeriodEntry {
+    suspend fun logPeriodStart(requestedDate: LocalDate = LocalDate.now()): PeriodEntry {
+        // FIX: a future date corrupts every downstream calculation —
+        // CycleEngine.cycleDay() coerces to 1, isPeriodLate() can never become
+        // true, and daysUntilNextPeriod() reports roughly two cycles. The
+        // calendar's "Log Period Start" path allowed this. A period cannot start
+        // in the future, so clamp to today at the last line of defence.
+        val date = if (requestedDate.isAfter(LocalDate.now())) {
+            Log.w(TAG, "logPeriodStart: $requestedDate is in the future — clamping to today")
+            LocalDate.now()
+        } else requestedDate
+
         val dateStr = date.toString()
 
         // Guard: no duplicate for same date
@@ -188,20 +250,42 @@ class CycleRepository(context: Context) {
         periodDao.update(open.copy(endDate = date.toString()))
         Log.i(TAG, "logPeriodEnd: closed ${open.startDate} → $date")
 
-        // Recalculate average period duration from all closed periods
+        // Learn the average period duration from observed history.
+        //
+        // FIX: this used to overwrite settings.periodDuration from a SINGLE
+        // closed period. A user who set 5 days in onboarding and whose first
+        // logged period ran 3 days had her setting silently rewritten to 3,
+        // which shifted every ovulation and fertile-window date — with no way to
+        // discover what happened or get the original value back.
+        //
+        // Now it needs at least 3 observed periods before it will adjust a
+        // user-entered value, and it never moves by more than 1 day at a time.
         val allDurations = periodDao.getAll()
             .filter { it.endDate != null }
             .mapNotNull { entry ->
-                val s   = LocalDate.parse(entry.startDate)
-                val e   = LocalDate.parse(entry.endDate!!)
+                val s   = parseDateOrNull(entry.startDate) ?: return@mapNotNull null
+                val e   = parseDateOrNull(entry.endDate)   ?: return@mapNotNull null
+                if (e.isBefore(s)) return@mapNotNull null
                 val dur = ChronoUnit.DAYS.between(s, e).toInt() + 1
                 dur.takeIf { it in 2..10 }
             }
-        if (allDurations.isNotEmpty()) {
-            val avgDuration = allDurations.average().toInt().coerceIn(2, 10)
-            settingsDao.updatePeriodDuration(avgDuration)
-            Log.i(TAG, "logPeriodEnd: updated avgPeriodDuration=$avgDuration " +
-                    "from ${allDurations.size} cycles")
+
+        if (allDurations.size >= MIN_CYCLES_BEFORE_LEARNING) {
+            val observed = allDurations.takeLast(6).average()
+                .let { Math.round(it).toInt() }
+                .coerceIn(2, 10)
+            val current = settingsDao.get()?.periodDuration ?: observed
+            if (observed != current) {
+                // Move one day at a time so a single unusual period cannot swing
+                // the whole prediction model.
+                val next = (current + (observed - current).coerceIn(-1, 1)).coerceIn(2, 10)
+                settingsDao.updatePeriodDuration(next)
+                Log.i(TAG, "logPeriodEnd: periodDuration $current → $next " +
+                        "(observed avg $observed from ${allDurations.size} periods)")
+            }
+        } else {
+            Log.d(TAG, "logPeriodEnd: only ${allDurations.size} closed periods — " +
+                    "keeping the user's periodDuration setting untouched")
         }
         return true
     }
@@ -214,9 +298,24 @@ class CycleRepository(context: Context) {
 
     // ── Daily logs ────────────────────────────────────────────────
 
-    fun observeAllLogs(): LiveData<List<DailyLog>>   = logDao.observeAll()
-    fun observeTodayLog(): LiveData<DailyLog?>       = logDao.observeLatestByDate(LocalDate.now().toString())
-    fun observeTodayLogs(): LiveData<List<DailyLog>> = logDao.observeByDate(LocalDate.now().toString())
+    fun observeAllLogs(): LiveData<List<DailyLog>> = logDao.observeAll()
+
+    /**
+     * FIX (midnight staleness): these used to call LocalDate.now() at the moment
+     * the repository singleton wired them up — once per process. The resulting
+     * LiveData was permanently bound to that one date string, so an app left
+     * open past midnight kept showing YESTERDAY's log as "today", and a log
+     * saved after midnight never appeared on Home.
+     *
+     * The date is now a parameter. CycleViewModel re-binds these through a
+     * switchMap whenever its `today` trigger advances.
+     */
+    fun observeLogFor(date: LocalDate): LiveData<DailyLog?> =
+        logDao.observeLatestByDate(date.toString())
+
+    fun observeLogsFor(date: LocalDate): LiveData<List<DailyLog>> =
+        logDao.observeByDate(date.toString())
+
     suspend fun getLogForDate(date: LocalDate): List<DailyLog> = logDao.getByDate(date.toString())
 
     /**
@@ -295,16 +394,60 @@ class CycleRepository(context: Context) {
             syncSettingsLastPeriodStart(latestPeriodStart.toString())
         }
 
+        // ── Bio signals ───────────────────────────────────────────
+        // FIX: the BBT / LH / cervical engine in CycleEngine was fully built but
+        // never called from anywhere, so every prediction fell back to the
+        // formula and confidence was permanently pinned at 70 / "Formula".
+        // Only logs from the CURRENT cycle are considered — a positive LH test
+        // from two cycles ago must not move this cycle's ovulation date.
+        val cycleLogs = logDao.getLogsOnOrAfter(latestPeriodStart.toString())
+
+        // Dedupe by date, keeping the most recent entry per day, so a user who
+        // logs twice in one day cannot destabilise the BBT baseline window.
+        val latestPerDay = cycleLogs
+            .groupBy { it.date }
+            .mapNotNull { (_, sameDay) -> sameDay.maxByOrNull { it.loggedAt } }
+
+        val bbtLogs = latestPerDay.mapNotNull { log ->
+            val temp = log.basalTemp ?: return@mapNotNull null
+            parseDateOrNull(log.date)?.let { CycleEngine.BbtLog(it, temp) }
+        }
+        val lhLogs = latestPerDay.mapNotNull { log ->
+            if (log.lhTestResult.isBlank() || log.lhTestResult == "Not Tested") return@mapNotNull null
+            parseDateOrNull(log.date)?.let { CycleEngine.LhLog(it, log.lhTestResult) }
+        }
+        val cervicalLogs = latestPerDay.mapNotNull { log ->
+            if (log.cervicalFluid.isBlank()) return@mapNotNull null
+            parseDateOrNull(log.date)?.let { it to log.cervicalFluid }
+        }
+
+        val bbtOvulation   = CycleEngine.detectOvulationFromBBT(bbtLogs)
+        val lhSignal       = CycleEngine.lhEvidence(lhLogs)
+        val cervicalSignal = CycleEngine.cervicalFertilityScore(cervicalLogs)
+
         return CycleEngine.bestPrediction(
             lastPeriodStart = latestPeriodStart,
             avgCycleLength  = settings.cycleLength,
-            periodDuration  = settings.periodDuration
+            periodDuration  = settings.periodDuration,
+            bbtOvulation    = bbtOvulation,
+            lhSignal        = lhSignal,
+            cervicalSignal  = cervicalSignal
         ).also {
             Log.i(TAG, "getBestPrediction: lastPeriod=$latestPeriodStart " +
                     "cycleLen=${settings.cycleLength} nextPeriod=${it.nextPeriodDate} " +
-                    "ovulation=${it.ovulationDate} fertile=${it.fertileStart}→${it.fertileEnd}")
+                    "ovulation=${it.ovulationDate} fertile=${it.fertileStart}→${it.fertileEnd} " +
+                    "confidence=${it.confidence} source=${it.dataSource} " +
+                    "(bbt=${bbtLogs.size} lh=${lhLogs.size} cf=${cervicalLogs.size} logs)")
         }
     }
+
+    /**
+     * Never throws. UserSettings.lastPeriodStart and DailyLog.date are plain
+     * Strings with no DB-level format constraint, so a malformed value must not
+     * take down a prediction or crash a list bind.
+     */
+    private fun parseDateOrNull(raw: String?): LocalDate? =
+        raw?.takeIf { it.isNotBlank() }?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
 
     // ── Delete all ────────────────────────────────────────────────
 
@@ -319,4 +462,10 @@ class CycleRepository(context: Context) {
     suspend fun deleteDailyLog(log: DailyLog) = logDao.delete(log)
     suspend fun deleteDailyLogById(id: Int)   = logDao.deleteById(id)
     suspend fun updateDailyLog(log: DailyLog) = logDao.update(log)
+
+    /** Backs the Undo action after a log deletion in the history screen. */
+    suspend fun restoreDailyLog(log: DailyLog) {
+        logDao.insert(log)
+        Log.i(TAG, "restoreDailyLog: restored entry for ${log.date}")
+    }
 }

@@ -13,11 +13,19 @@ object ShowAds {
     private const val TAG = "ShowAds"
 
     // Unified state tracking for both MainActivity and Back Press
-    private var isFirstClickDone = false
     private var lastAdShownTimeMs: Long = 0L
-
-
     private var totalClickCount = 0
+
+    /**
+     * Blocks an interstitial while the user is in the middle of something they
+     * must not be interrupted during — saving a log, confirming a period start,
+     * or reading an exported medical report.
+     *
+     * Set this around those flows rather than relying on the time cooldown, which
+     * says nothing about what the user is currently doing.
+     */
+    @Volatile
+    var suppressInterstitials: Boolean = false
 
     fun interface OnAdClosedListener {
         fun onAdClosed()
@@ -112,6 +120,12 @@ object ShowAds {
      */
     fun showAdIfEligible(activity: Activity, onAdDismissed: () -> Unit) {
 
+        if (suppressInterstitials) {
+            Log.d(TAG, "Interstitial suppressed — user is mid-task")
+            onAdDismissed.invoke()
+            return
+        }
+
         totalClickCount++
 
         when (AdsRemoteConfig.interstitial_trigger) {
@@ -124,7 +138,12 @@ object ShowAds {
                 }
 
                 val currentTime = System.currentTimeMillis()
-                val timerIntervalMs = AdsRemoteConfig.timer_interval_seconds * 1000L
+                // Hard floor enforced here as well as in AdsRemoteConfig.sanitise():
+                // a missing Remote Config key makes getLong() return 0, which
+                // would otherwise mean an interstitial on every navigation.
+                val intervalSeconds = AdsRemoteConfig.timer_interval_seconds
+                    .coerceAtLeast(AdsRemoteConfig.MIN_INTERSTITIAL_GAP_SECONDS)
+                val timerIntervalMs = intervalSeconds * 1000L
                 val timePassed = currentTime - lastAdShownTimeMs
 
                 if (lastAdShownTimeMs > 0 && timePassed < timerIntervalMs) {

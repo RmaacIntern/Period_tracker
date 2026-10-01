@@ -11,13 +11,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
-import com.aivigil.periodtracker.MainActivity
 import com.aivigil.periodtracker.databinding.FragmentProfileBinding
 import com.aivigil.periodtracker.notification.AlarmScheduler
-import com.aivigil.periodtracker.notification.DailyLogReminderWorker
+import com.aivigil.periodtracker.notification.NotificationPrefs
 import com.aivigil.periodtracker.onboarding.OnboardingFragment5
 import com.aivigil.periodtracker.profile.sheets.ActivitySheet
 import com.aivigil.periodtracker.profile.sheets.AgeSheet
@@ -33,7 +29,6 @@ import com.aivigil.periodtracker.viewmodel.CycleViewModelFactory
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-import java.util.concurrent.TimeUnit
 
 class ProfileFragment : Fragment() {
 
@@ -119,7 +114,6 @@ class ProfileFragment : Fragment() {
             binding.tvAgeValue.text      = "${s.age} yrs"
             binding.tvHeightValue.text   = "${s.heightCm} cm"
             binding.tvWeightValue.text   = "${s.weightKg.toInt()} kg"
-            binding.tvActivityValue.text = s.activityLevel
 
             val condList = s.conditions.split(",").map { it.trim() }.filter { it.isNotBlank() }
             binding.tvConditionsValue.text = when {
@@ -127,7 +121,10 @@ class ProfileFragment : Fragment() {
                 condList.size == 1 -> condList[0]
                 else               -> "${condList.size} conditions"
             }
-            binding.tvGoalValue.text = s.goal
+            // FIX: this printed the raw stored value, so the user saw the enum
+            // name "TRACK_CYCLE" / "BALANCED" instead of a readable label.
+            binding.tvGoalValue.text     = prettyLabel(s.goal)
+            binding.tvActivityValue.text = prettyLabel(s.activityLevel)
 
             // ✅ FIX — tvCycleTypeBadge exists in XML but was never updated from
             // the fragment, so it always showed the hardcoded "Regular Cycle" text.
@@ -170,63 +167,76 @@ class ProfileFragment : Fragment() {
         binding.rowDeleteData.setOnClickListener { showDeleteDialog() }
 
         // ── Reminders ─────────────────────────────────────────────
-        val prefs = requireContext()
-            .getSharedPreferences("reminder_prefs", android.content.Context.MODE_PRIVATE)
+        //
+        // FIX: these switches wrote to SharedPreferences and cancelled their
+        // alarms, but nothing else read those keys. CycleViewModel.refresh()
+        // re-armed period and ovulation alarms on every DB write, and
+        // MainActivity re-enqueued the daily worker on every launch — so turning
+        // a reminder off only held until the next app launch. All scheduling now
+        // goes through NotificationPrefs, which reads these preferences.
+        val ctx = requireContext()
 
-        binding.switchPeriod.isChecked = prefs.getBoolean("period_reminder", true)
-        binding.switchOvul.isChecked   = prefs.getBoolean("ovulation_reminder", true)
-        binding.switchDaily.isChecked  = prefs.getBoolean("daily_reminder", true)
+        binding.switchPeriod.isChecked = NotificationPrefs.isPeriodEnabled(ctx)
+        binding.switchOvul.isChecked   = NotificationPrefs.isOvulationEnabled(ctx)
+        binding.switchDaily.isChecked  = NotificationPrefs.isDailyEnabled(ctx)
 
         binding.switchPeriod.setOnCheckedChangeListener { _, checked ->
-            prefs.edit().putBoolean("period_reminder", checked).apply()
-            if (checked) {
-                val date = vm.prediction.value?.nextPeriodDate
-                if (date != null) {
-                    Log.d("ProfileFragment", "Period alarm ON — scheduling for $date")
-                    AlarmScheduler.schedulePeriodAlarms(requireContext(), date)
-                } else {
-                    Log.w("ProfileFragment", "Period alarm ON — no prediction yet, skipping")
-                }
-            } else {
-                Log.d("ProfileFragment", "Period alarm OFF — cancelling")
-                AlarmScheduler.cancelPeriodAlarms(requireContext())
-            }
+            NotificationPrefs.setPeriodEnabled(ctx, checked)
+            applyReminderState()
+            if (checked) warnIfNotificationsBlocked()
         }
 
         binding.switchOvul.setOnCheckedChangeListener { _, checked ->
-            prefs.edit().putBoolean("ovulation_reminder", checked).apply()
-            if (checked) {
-                val date = vm.prediction.value?.ovulationDate
-                if (date != null) {
-                    Log.d("ProfileFragment", "Ovulation alarm ON — scheduling for $date")
-                    AlarmScheduler.scheduleOvulationAlarm(requireContext(), date)
-                } else {
-                    Log.w("ProfileFragment", "Ovulation alarm ON — no prediction yet, skipping")
-                }
-            } else {
-                Log.d("ProfileFragment", "Ovulation alarm OFF — cancelling")
-                AlarmScheduler.cancelOvulationAlarm(requireContext())
-            }
+            NotificationPrefs.setOvulationEnabled(ctx, checked)
+            applyReminderState()
+            if (checked) warnIfNotificationsBlocked()
         }
 
         binding.switchDaily.setOnCheckedChangeListener { _, checked ->
-            prefs.edit().putBoolean("daily_reminder", checked).apply()
-            if (checked) {
-                Log.d("ProfileFragment", "Daily reminder ON — scheduling WorkManager")
-                val request = PeriodicWorkRequestBuilder<DailyLogReminderWorker>(1, TimeUnit.DAYS)
-                    .setInitialDelay(calculateDelayUntil8pm(), TimeUnit.MILLISECONDS)
-                    .build()
-                WorkManager.getInstance(requireContext()).enqueueUniquePeriodicWork(
-                    "daily_log_reminder",
-                    ExistingPeriodicWorkPolicy.KEEP,
-                    request
-                )
-            } else {
-                Log.d("ProfileFragment", "Daily reminder OFF — cancelling WorkManager")
-                WorkManager.getInstance(requireContext())
-                    .cancelUniqueWork("daily_log_reminder")
-            }
+            NotificationPrefs.setDailyEnabled(ctx, checked)
+            NotificationPrefs.syncDailyReminder(ctx)
+            if (checked) warnIfNotificationsBlocked()
         }
+    }
+
+    /** Re-arms period/ovulation alarms from the current prediction and prefs. */
+    private fun applyReminderState() {
+        val pred = vm.prediction.value
+        if (pred == null) {
+            // No prediction yet — cancel so nothing stale survives. The alarms
+            // will be armed by CycleViewModel as soon as a prediction exists.
+            AlarmScheduler.cancelPeriodAlarms(requireContext())
+            AlarmScheduler.cancelOvulationAlarm(requireContext())
+            Log.d("ProfileFragment", "applyReminderState: no prediction yet")
+            return
+        }
+        NotificationPrefs.rescheduleFromPrediction(
+            context    = requireContext(),
+            nextPeriod = pred.nextPeriodDate,
+            ovulation  = pred.ovulationDate
+        )
+    }
+
+    /**
+     * A switch turned ON while the OS is blocking notifications would do nothing
+     * with no explanation. Tell the user and offer the system settings screen
+     * rather than leaving a reminder that looks enabled but never fires.
+     */
+    private fun warnIfNotificationsBlocked() {
+        if (NotificationPrefs.canPostNotifications(requireContext())) return
+        val root = _binding?.root ?: return
+        com.google.android.material.snackbar.Snackbar
+            .make(root, "Notifications are turned off for this app", 6000)
+            .setAction("Settings") {
+                runCatching {
+                    startActivity(
+                        android.content.Intent(
+                            android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS
+                        ).putExtra("android.provider.extra.APP_PACKAGE", requireContext().packageName)
+                    )
+                }
+            }
+            .show()
     }
 
     // ============================================================
@@ -329,11 +339,22 @@ class ProfileFragment : Fragment() {
     // HELPERS
     // ============================================================
 
-    private fun calculateDelayUntil8pm(): Long {
-        val now    = java.time.LocalDateTime.now()
-        var target = now.withHour(20).withMinute(0).withSecond(0)
-        if (now.isAfter(target)) target = target.plusDays(1)
-        return java.time.Duration.between(now, target).toMillis()
+    // calculateDelayUntil8pm() moved to NotificationPrefs.millisUntilHour() so the
+    // daily-reminder schedule is computed in exactly one place.
+
+    /**
+     * Turns a stored enum-style value into something readable.
+     * "TRACK_CYCLE" → "Track Cycle", "VERY_ACTIVE" → "Very Active".
+     * Values already written in prose are returned untouched.
+     */
+    private fun prettyLabel(raw: String): String {
+        if (raw.isBlank()) return "—"
+        if (!raw.contains('_') && raw != raw.uppercase()) return raw
+        return raw.split('_', ' ')
+            .filter { it.isNotBlank() }
+            .joinToString(" ") { word ->
+                word.lowercase().replaceFirstChar { it.uppercase() }
+            }
     }
 
     // ============================================================

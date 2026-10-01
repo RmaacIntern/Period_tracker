@@ -8,11 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.BlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
+import androidx.activity.viewModels
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
 import com.aivigil.periodtracker.ads.AdConstants
 import com.aivigil.periodtracker.ads.AdsRemoteConfig
 import com.aivigil.periodtracker.ads.BannerAdHelper
@@ -25,21 +23,33 @@ import com.aivigil.periodtracker.databinding.DialogExitConfirmationBinding
 import com.aivigil.periodtracker.databinding.SmallBannerBinding
 import com.aivigil.periodtracker.homefragment.HomeFragment
 import com.aivigil.periodtracker.insights.InsightsFragment
-import com.aivigil.periodtracker.notification.DailyLogReminderWorker
 import com.aivigil.periodtracker.notification.NotificationHelper
+import com.aivigil.periodtracker.notification.NotificationPrefs
 import com.aivigil.periodtracker.profile.ProfileFragment
+import com.aivigil.periodtracker.viewmodel.CycleViewModel
+import com.aivigil.periodtracker.viewmodel.CycleViewModelFactory
 import android.widget.ImageView
 import android.widget.TextView
-import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
+
+    private companion object {
+        const val KEY_SELECTED_TAB = "selected_tab_id"
+        const val TAG_HOME     = "tab_home"
+        const val TAG_CALENDAR = "tab_calendar"
+        const val TAG_INSIGHTS = "tab_insights"
+        const val TAG_PROFILE  = "tab_profile"
+        val TAB_TAGS = listOf(TAG_HOME, TAG_CALENDAR, TAG_INSIGHTS, TAG_PROFILE)
+    }
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navBinding: CustomBottomNavBinding
     private var bannerAdHelper: BannerAdHelper? = null
     private var exitDialogShowing = false
     private var clickInProgress = false
-    private var selectedTabId = -1  // ← -1 means nothing selected yet
+    private var selectedTabId = R.id.navHome
+
+    private val vm: CycleViewModel by viewModels { CycleViewModelFactory(application) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,17 +64,22 @@ class MainActivity : AppCompatActivity() {
         setupBottomNav()
 
         NotificationHelper.createChannels(this)
-        scheduleDailyLogReminder()
+        // FIX: was scheduleDailyLogReminder() — an unconditional re-enqueue that
+        // undid the user's "daily reminder off" choice on every single launch.
+        // syncDailyReminder() enqueues or cancels to match the stored preference.
+        NotificationPrefs.syncDailyReminder(this)
         handleNotificationIntent(intent)
 
-        // AFTER
+        // FIX: selectedTabId was not persisted, so after a rotation it was -1 and
+        // updateTabColors(-1) fell through to the else branch and highlighted Home
+        // while the restored fragment was still Calendar/Insights/Profile.
+        selectedTabId = savedInstanceState?.getInt(KEY_SELECTED_TAB, R.id.navHome)
+            ?: R.id.navHome
+
         if (savedInstanceState == null) {
-            selectedTabId = R.id.navHome
-            updateTabColors(R.id.navHome)
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.mainFragmentContainer, HomeFragment())
-                .commit()
+            showTab(R.id.navHome)
         }
+        updateTabColors(selectedTabId)
 
         onBackPressedDispatcher.addCallback(this) {
             when {
@@ -78,7 +93,6 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     ShowAds.showAdIfEligible(this@MainActivity) {
-                        // ← Small delay lets activity fully resume before showing dialog
                         binding.mainRoot.postDelayed({
                             if (!isFinishing && !isDestroyed) {
                                 showExitDialog()
@@ -103,21 +117,24 @@ class MainActivity : AppCompatActivity() {
         updateTabColors(R.id.navHome)
     }
     private fun onTabClicked(tabId: Int) {
-        if (clickInProgress) return  // ✅ removed tabId == selectedTabId check
+        if (clickInProgress) return
 
-        // If same tab clicked — no ad, just refresh fragment
+        // Pop any detail screens (like PastLogHistoryFragment) before switching tabs
+        val fm = supportFragmentManager
+        if (fm.backStackEntryCount > 0) {
+            fm.popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        }
+
         if (tabId == selectedTabId) {
             selectTab(tabId)
             return
         }
 
         clickInProgress = true
-
-        // Keep current tab visually selected while ad is showing
         updateTabColors(selectedTabId)
 
         ShowAds.showMainOnUserAction(this) {
-            runOnUiThread {  // ✅ ensure UI runs on main thread
+            runOnUiThread {
                 clickInProgress = false
                 selectTab(tabId)
             }
@@ -127,19 +144,53 @@ class MainActivity : AppCompatActivity() {
     private fun selectTab(tabId: Int) {
         selectedTabId = tabId
         updateTabColors(tabId)
+        showTab(tabId)
+    }
 
-        val fragment = when (tabId) {
-            R.id.navHome     -> HomeFragment()
-            R.id.navCalendar -> CalendarFragment()
-            R.id.navInsights -> InsightsFragment()
-            R.id.navProfile  -> ProfileFragment()
-            else             -> HomeFragment()
+    /**
+     * Swaps the visible tab.
+     *
+     * FIX: this used to construct a brand-new Fragment on every tab tap and
+     * `replace()` it, so switching away and back destroyed scroll position,
+     * expanded sections and any in-progress input, and re-ran every DB query
+     * and ad request from scratch. Fragments are now created once, kept in the
+     * FragmentManager by tag, and shown/hidden — so tab state survives.
+     */
+    private fun showTab(tabId: Int) {
+        val tag = tagFor(tabId)
+        val fm = supportFragmentManager
+        if (fm.isStateSaved || isFinishing || isDestroyed) return
+
+        val tx = fm.beginTransaction()
+        TAB_TAGS.forEach { existingTag ->
+            fm.findFragmentByTag(existingTag)?.let { if (it.isAdded) tx.hide(it) }
         }
+        val existing = fm.findFragmentByTag(tag)
+        if (existing == null) {
+            tx.add(R.id.mainFragmentContainer, newFragmentFor(tabId), tag)
+        } else {
+            tx.show(existing)
+        }
+        tx.commitNowAllowingStateLoss()
+    }
 
-        // ✅ commitAllowingStateLoss prevents crash after ad dismiss
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.mainFragmentContainer, fragment)
-            .commitAllowingStateLoss()
+    private fun tagFor(tabId: Int): String = when (tabId) {
+        R.id.navCalendar -> TAG_CALENDAR
+        R.id.navInsights -> TAG_INSIGHTS
+        R.id.navProfile  -> TAG_PROFILE
+        else             -> TAG_HOME
+    }
+
+    private fun newFragmentFor(tabId: Int) = when (tabId) {
+        R.id.navCalendar -> CalendarFragment()
+        R.id.navInsights -> InsightsFragment()
+        R.id.navProfile  -> ProfileFragment()
+        else             -> HomeFragment()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(KEY_SELECTED_TAB, selectedTabId)
     }
 
     private fun updateTabColors(selectedId: Int) {
@@ -220,22 +271,11 @@ class MainActivity : AppCompatActivity() {
         exitDialogShowing = false
         updateTabColors(selectedTabId)
 
-        // ✅ Re-select current tab to ensure correct fragment is showing
-        if (selectedTabId != -1) {
-            val currentFragment = supportFragmentManager
-                .findFragmentById(R.id.mainFragmentContainer)
-            val expectedFragment = when (selectedTabId) {
-                R.id.navHome     -> HomeFragment::class.java
-                R.id.navCalendar -> CalendarFragment::class.java
-                R.id.navInsights -> InsightsFragment::class.java
-                R.id.navProfile  -> ProfileFragment::class.java
-                else             -> HomeFragment::class.java
-            }
-            // Only replace if wrong fragment is showing
-            if (currentFragment?.javaClass != expectedFragment) {
-                selectTab(selectedTabId)
-            }
-        }
+        // FIX (midnight staleness): tells the shared ViewModel to re-read the
+        // calendar date. Without this, an app left open overnight kept reporting
+        // yesterday's cycle day, phase and fertility status until something
+        // happened to touch the database.
+        vm.onAppForegrounded()
 
         preloadMainAd()
     }
@@ -288,41 +328,31 @@ class MainActivity : AppCompatActivity() {
         handleNotificationIntent(intent)
     }
 
+    /**
+     * FIX: this used to look for a "from_notification" extra that NOTHING in the
+     * codebase ever set, so it was dead code — every notification dropped the user
+     * on the Home tab with no context for why the app had opened. Notifications now
+     * carry NotificationHelper.EXTRA_DESTINATION and land on the relevant screen.
+     */
     private fun handleNotificationIntent(intent: android.content.Intent?) {
-        when (intent?.getStringExtra("from_notification")) {
-            "period_confirmed" -> {
-                android.util.Log.i("MainActivity",
-                    "opened from period confirmed notification")
-                android.widget.Toast.makeText(
-                    this,
-                    "Period logged ✓ Cycle updated",
-                    android.widget.Toast.LENGTH_SHORT
-                ).show()
-            }
+        val destination = intent?.getStringExtra(NotificationHelper.EXTRA_DESTINATION)
+            ?: return
+        // Consume it so a rotation or a later onResume does not re-navigate.
+        intent.removeExtra(NotificationHelper.EXTRA_DESTINATION)
+
+        val tab = when (destination) {
+            NotificationHelper.DEST_CALENDAR -> R.id.navCalendar
+            NotificationHelper.DEST_LOG      -> R.id.navHome
+            else                             -> R.id.navHome
         }
+        android.util.Log.i("MainActivity", "opened from notification → $destination")
+        selectedTabId = tab
+        updateTabColors(tab)
+        showTab(tab)
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // DAILY LOG REMINDER
-    // ─────────────────────────────────────────────────────────────
-
-    private fun scheduleDailyLogReminder() {
-        val request = PeriodicWorkRequestBuilder<DailyLogReminderWorker>(1, TimeUnit.DAYS)
-            .setInitialDelay(calculateDelayUntil8pm(), TimeUnit.MILLISECONDS)
-            .build()
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-            "daily_log_reminder",
-            ExistingPeriodicWorkPolicy.KEEP,
-            request
-        )
-    }
-
-    private fun calculateDelayUntil8pm(): Long {
-        val now = java.time.LocalDateTime.now()
-        var target = now.withHour(20).withMinute(0).withSecond(0)
-        if (now.isAfter(target)) target = target.plusDays(1)
-        return java.time.Duration.between(now, target).toMillis()
-    }
+    // Daily-log reminder scheduling now lives in NotificationPrefs so the
+    // preference is honoured from every entry point (see NotificationPrefs).
 
     // ─────────────────────────────────────────────────────────────
     // DESTROY

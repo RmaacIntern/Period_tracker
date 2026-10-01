@@ -35,6 +35,12 @@ interface DailyLogDao {
     @Query("SELECT * FROM daily_logs ORDER BY date DESC, entryNumber ASC LIMIT :n")
     suspend fun getRecent(n: Int): List<DailyLog>
 
+    // All logs on or after an ISO date — used to feed the BBT / LH / cervical
+    // ovulation engine with only the CURRENT cycle's logs. ISO-8601 dates sort
+    // correctly as text, so a string comparison is safe here.
+    @Query("SELECT * FROM daily_logs WHERE date >= :isoDate ORDER BY date ASC, entryNumber ASC")
+    suspend fun getLogsOnOrAfter(isoDate: String): List<DailyLog>
+
     // Insert new entry
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(log: DailyLog): Long

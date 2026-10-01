@@ -83,11 +83,18 @@ class CycleProgressRingView @JvmOverloads constructor(
     // Old code used coerceIn(1, cycleLength) which allowed ovulation to fall
     // inside the period on short cycles (e.g. 19-day cycle, 5-day period).
 
+    // FIX: these two formulas were written out by hand here as well as in
+    // CycleEngine, CalendarFragment and InsightsFragment. Four copies of the same
+    // clamped arithmetic is exactly how the ring ends up disagreeing with the
+    // calendar and the exported report. They now delegate to the engine, which is
+    // the single source of truth.
     private fun ovulationDay(): Int =
-        (cycleLength - 14).coerceAtLeast(periodDuration + 2)
+        com.aivigil.periodtracker.domain.CycleEngine
+            .ovulationDay(cycleLength, periodDuration)
 
     private fun fertileStart(): Int =
-        (ovulationDay() - 5).coerceAtLeast(periodDuration + 1)
+        com.aivigil.periodtracker.domain.CycleEngine
+            .fertileStartDay(cycleLength, periodDuration)
 
     // ✅ FIX 3 — fertileEnd is now ovulationDay (inclusive), matching
     // CycleEngine where the fertile window runs from fertileStart through

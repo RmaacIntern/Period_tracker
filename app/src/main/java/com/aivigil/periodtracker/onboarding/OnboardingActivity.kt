@@ -11,24 +11,23 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.aivigil.periodtracker.MainActivity
 import com.aivigil.periodtracker.ads.AdsRemoteConfig
 import com.aivigil.periodtracker.ads.LoadAds
 import com.aivigil.periodtracker.ads.ShowAds
+import com.aivigil.periodtracker.data.repository.CycleRepository
 import com.aivigil.periodtracker.databinding.ActivityOnboardingBinding
 import com.aivigil.periodtracker.onboarding.viewmodel.OnboardingViewModel
-import com.aivigil.periodtracker.viewmodel.CycleViewModel
-import com.aivigil.periodtracker.viewmodel.CycleViewModelFactory
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDate
 
 class OnboardingActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityOnboardingBinding
     private val onboardingViewModel: OnboardingViewModel by viewModels()
-    private val cycleViewModel: CycleViewModel by viewModels {
-        CycleViewModelFactory(application)
-    }
 
     private val totalSteps = 8
     private var isNavigating = false
@@ -129,14 +128,46 @@ class OnboardingActivity : AppCompatActivity() {
     // ONBOARDING INTERSTITIAL
     // ============================================================
 
+    /**
+     * FIX (P0 — the whole onboarding could be thrown away by an ad click):
+     *
+     * The ad used to be shown FIRST, with saveAndProceed() only running from the
+     * onAdClosed callback. If the user tapped the ad and left for the Play Store,
+     * Android could destroy this Activity before onAdDismissedFullScreenContent()
+     * fired — the callback never ran, nothing was ever saved, and the user came
+     * back to an empty app and 8 steps to redo.
+     *
+     * The user's data is now committed BEFORE the ad is shown. The ad is a
+     * monetisation step; it must never sit between the user's work and its
+     * persistence.
+     */
     private fun showOnboardingAdThenProceed() {
-        if (!AdsRemoteConfig.show_onboarding_interstitial) {
-            saveAndProceed()
-            return
+        if (isSaving) return
+        isSaving = true
+        binding.btnContinue.isEnabled = false
+
+        lifecycleScope.launch {
+            val saved = persistOnboarding()
+            if (!saved) {
+                isSaving = false
+                binding.btnContinue.isEnabled = true
+                showError("Couldn't save your details. Please try again.")
+                return@launch
+            }
+            if (!AdsRemoteConfig.show_onboarding_interstitial) {
+                goToMain()
+                return@launch
+            }
+            ShowAds.showOnboarding(this@OnboardingActivity) {
+                runOnUiThread { goToMain() }
+            }
         }
-        ShowAds.showOnboarding(this) {
-            runOnUiThread { saveAndProceed() }
-        }
+    }
+
+    private fun goToMain() {
+        if (isFinishing || isDestroyed) return
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 
     // ============================================================
@@ -216,31 +247,65 @@ class OnboardingActivity : AppCompatActivity() {
     // SAVE & LAUNCH
     // ============================================================
 
-    private fun saveAndProceed() {
-        val vm         = onboardingViewModel
-        val lastPeriod = vm.lastPeriodStart ?: LocalDate.now()
+    /**
+     * Persists the onboarding answers, then opens the app.
+     *
+     * FIX (P0 — onboarding could be silently lost):
+     * This used to call `cycleViewModel.saveOnboardingData(...)` and immediately
+     * `startActivity()` + `finish()`. `saveOnboardingData` runs in
+     * `viewModelScope`, and `cycleViewModel` is activity-scoped — so `finish()`
+     * triggered `onCleared()` and cancelled that scope at its first suspension
+     * point. Depending on device speed the user could end up:
+     *
+     *   • with settings written but onboarding never marked complete → the whole
+     *     8-step flow replays on next launch and a duplicate PeriodEntry is
+     *     created; or
+     *   • with nothing written at all → Home opens with settings == null, every
+     *     screen's tryBind() returns early, and the app shows only the
+     *     placeholder values baked into the layout XML.
+     *
+     * The write now runs in the repository on a scope that outlives this Activity,
+     * and is awaited before navigating.
+     */
+    /**
+     * Writes the onboarding answers and returns whether it succeeded.
+     *
+     * Runs inside NonCancellable and on the repository (application) scope, so a
+     * finish() or an ad-driven Activity destruction can never abandon a
+     * half-written database. Returns false instead of throwing so the caller can
+     * keep the user on this screen with her answers intact.
+     */
+    private suspend fun persistOnboarding(): Boolean {
+        val vm = onboardingViewModel
+        // Clamp: a future last-period date breaks every downstream calculation.
+        val lastPeriod = (vm.lastPeriodStart ?: LocalDate.now())
+            .coerceAtMost(LocalDate.now())
 
-        cycleViewModel.saveOnboardingData(
-            userName       = vm.userName.ifEmpty { "User" },
-            age            = vm.age,
-            heightCm       = vm.heightCm,
-            weightKg       = vm.weightKg,
-            // ✅ FIX 1 — use enum .name for correct uppercase strings
-            // Old: "Balanced" / "Track My Cycle" — didn't match enum .name values
-            // New: "BALANCED" / "TRACK_CYCLE" — matches ActivityLevel.valueOf() in ProfileFragment
-            activityLevel  = vm.activityLevel?.name
-                ?: OnboardingFragment5.ActivityLevel.BALANCED.name,
-            goal           = vm.goal?.name
-                ?: OnboardingFragment6.Goal.TRACK_CYCLE.name,
-            conditions     = vm.conditions,
-            cycleLength    = vm.cycleLength,
-            periodDuration = vm.periodDuration,
-            lastPeriodStart = lastPeriod
-        )
-
-        startActivity(Intent(this, MainActivity::class.java))
-        finish()
+        return runCatching {
+            withContext(kotlinx.coroutines.NonCancellable) {
+                CycleRepository.getInstance(applicationContext).saveOnboarding(
+                    userName        = vm.userName.ifEmpty { "User" },
+                    age             = vm.age,
+                    heightCm        = vm.heightCm,
+                    weightKg        = vm.weightKg,
+                    // Enum .name keeps these parseable by ActivityLevel.valueOf()
+                    // in ProfileFragment; the UI prettifies them for display.
+                    activityLevel   = vm.activityLevel?.name
+                        ?: OnboardingFragment5.ActivityLevel.BALANCED.name,
+                    goal            = vm.goal?.name
+                        ?: OnboardingFragment6.Goal.TRACK_CYCLE.name,
+                    conditions      = vm.conditions,
+                    cycleLength     = vm.cycleLength,
+                    periodDuration  = vm.periodDuration,
+                    lastPeriodStart = lastPeriod
+                )
+            }
+        }.onFailure {
+            android.util.Log.e("OnboardingActivity", "persistOnboarding failed", it)
+        }.isSuccess
     }
+
+    private var isSaving = false
 
     // ============================================================
     // ERROR DISPLAY

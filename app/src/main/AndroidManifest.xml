@@ -45,11 +45,20 @@
             </intent-filter>
         </receiver>
 
+        <!--
+          Exact alarms are dropped on reboot and on app replacement, and their
+          absolute trigger times become wrong when the timezone changes (a 9am
+          reminder scheduled in Karachi fires at 5am after flying to London).
+          TIMEZONE_CHANGED and DATE_CHANGED were previously not handled at all.
+        -->
         <receiver
             android:name=".notification.BootReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.TIMEZONE_CHANGED"/>
+                <action android:name="android.intent.action.DATE_CHANGED"/>
             </intent-filter>
         </receiver>
 
@@ -63,9 +72,15 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+        <!--
+          launchMode=singleTop so a tapped notification reuses the running
+          instance (delivered via onNewIntent) instead of stacking a second
+          MainActivity on top of the first.
+        -->
         <activity
             android:name=".MainActivity"
             android:exported="false"
+            android:launchMode="singleTop"
             android:windowSoftInputMode="adjustResize" />
 
 

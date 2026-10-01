@@ -5,51 +5,64 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 
-import com.aivigil.periodtracker.data.db.AppDatabase
+import com.aivigil.periodtracker.data.repository.CycleRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
+/**
+ * Re-arms alarms after events that invalidate them.
+ *
+ * Exact alarms do not survive a reboot, and their absolute trigger times become
+ * wrong when the device's timezone changes, so both are handled here.
+ */
 class BootReceiver : BroadcastReceiver() {
 
-    override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action != Intent.ACTION_BOOT_COMPLETED) return
-        Log.i("BootReceiver", "BOOT_COMPLETED — rescheduling alarms")
+    private companion object { const val TAG = "BootReceiver" }
 
+    override fun onReceive(context: Context, intent: Intent) {
+        val action = intent.action
+        if (action != Intent.ACTION_BOOT_COMPLETED &&
+            action != "android.intent.action.MY_PACKAGE_REPLACED" &&
+            action != Intent.ACTION_TIMEZONE_CHANGED &&
+            action != Intent.ACTION_DATE_CHANGED
+        ) return
+
+        Log.i(TAG, "$action — rescheduling alarms")
+
+        val appContext = context.applicationContext
         val result = goAsync()
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val db       = AppDatabase.getInstance(context)
-                val settings = db.userSettingsDao().get() ?: run {
-                    Log.w("BootReceiver", "settings null — skipping alarm reschedule")
+                // FIX: this used to reimplement the prediction by hand —
+                //   nextPeriod = lastPeriod + cycleLength
+                //   ovulation  = nextPeriod - 14
+                // with no clamping for short cycles and no bio-signal input, so the
+                // alarms it set after a reboot could disagree with the dates shown
+                // in the app. It also read settings.lastPeriodStart rather than the
+                // authoritative latest period entry. It now asks the repository for
+                // the same prediction every screen uses.
+                val prediction = CycleRepository.getInstance(appContext).getBestPrediction()
+                if (prediction == null) {
+                    Log.w(TAG, "no prediction available — nothing to reschedule")
                     return@launch
                 }
 
-                val lastPeriod   = LocalDate.parse(settings.lastPeriodStart)
-                val nextPeriod   = lastPeriod.plusDays(settings.cycleLength.toLong())
-                val ovulation    = nextPeriod.minusDays(14)
-                val fertileStart = ovulation.minusDays(5)
-                val today        = LocalDate.now()
+                // FIX: scheduling now goes through NotificationPrefs, so a reboot no
+                // longer re-arms reminders the user had switched off.
+                NotificationPrefs.rescheduleFromPrediction(
+                    context    = appContext,
+                    nextPeriod = prediction.nextPeriodDate,
+                    ovulation  = prediction.ovulationDate,
+                    today      = LocalDate.now()
+                )
+                NotificationPrefs.syncDailyReminder(appContext)
 
-                Log.d("BootReceiver", "nextPeriod=$nextPeriod ovulation=$ovulation fertileStart=$fertileStart")
-
-                if (nextPeriod.isAfter(today)) {
-                    AlarmScheduler.schedulePeriodAlarms(context, nextPeriod)
-                    Log.i("BootReceiver", "period alarms rescheduled for $nextPeriod")
-                } else {
-                    Log.w("BootReceiver", "nextPeriod=$nextPeriod is in the past — skipping")
-                }
-
-                if (fertileStart.isAfter(today)) {
-                    AlarmScheduler.scheduleOvulationAlarm(context, ovulation)
-                    Log.i("BootReceiver", "ovulation alarm rescheduled for $ovulation")
-                } else {
-                    Log.w("BootReceiver", "fertileStart=$fertileStart is in the past — skipping")
-                }
-
+                Log.i(TAG, "rescheduled — nextPeriod=${prediction.nextPeriodDate} " +
+                        "ovulation=${prediction.ovulationDate}")
             } catch (e: Exception) {
-                Log.e("BootReceiver", "error rescheduling alarms", e)
+                Log.e(TAG, "error rescheduling alarms", e)
             } finally {
                 result.finish()
             }

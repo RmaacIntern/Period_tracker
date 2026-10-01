@@ -8,9 +8,11 @@ import com.aivigil.periodtracker.data.entity.PeriodEntry
 import com.aivigil.periodtracker.data.entity.UserSettings
 import com.aivigil.periodtracker.data.repository.CycleRepository
 import com.aivigil.periodtracker.domain.CycleEngine
+import com.aivigil.periodtracker.notification.NotificationPrefs
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.Locale
 
 class CycleViewModel(app: Application) : AndroidViewModel(app) {
@@ -23,8 +25,39 @@ class CycleViewModel(app: Application) : AndroidViewModel(app) {
     val settings: LiveData<UserSettings?>          = repo.observeSettings()
     val periodEntries: LiveData<List<PeriodEntry>> = repo.observePeriodEntries()
     val allLogs: LiveData<List<DailyLog>>          = repo.observeAllLogs()
-    val todayLog: LiveData<DailyLog?>              = repo.observeTodayLog()
-    val todayLogs: LiveData<List<DailyLog>>        = repo.observeTodayLogs()
+
+    // ── TODAY ─────────────────────────────────────────────────────
+    //
+    // FIX (midnight staleness): every date-derived value in this ViewModel used
+    // to call LocalDate.now() inside a .map{} on _prediction, which only
+    // re-emits when the DB changes. An app left open past midnight therefore
+    // reported yesterday's cycle day, yesterday's fertility status, and
+    // yesterday's "today's log" — indefinitely.
+    //
+    // `today` is now an explicit trigger. Every date-dependent value derives
+    // from it, and onAppForegrounded() advances it. That makes the date an
+    // observable input instead of a hidden side effect.
+    private val _today = MutableLiveData(LocalDate.now())
+    val today: LiveData<LocalDate> = _today
+
+    /**
+     * Call from Activity.onResume() and from an ACTION_DATE_CHANGED /
+     * ACTION_TIMEZONE_CHANGED receiver. Cheap and idempotent: it only emits when
+     * the calendar date has actually moved.
+     */
+    fun onAppForegrounded() {
+        val now = LocalDate.now()
+        if (_today.value != now) {
+            Log.i(TAG, "onAppForegrounded: date advanced ${_today.value} → $now — recomputing")
+            _today.value = now
+        }
+        refreshPrediction()
+    }
+
+    // Today's logs re-bind whenever the date advances, so they always query the
+    // real current date instead of a string captured once at process start.
+    val todayLog: LiveData<DailyLog?> = _today.switchMap { repo.observeLogFor(it) }
+    val todayLogs: LiveData<List<DailyLog>> = _today.switchMap { repo.observeLogsFor(it) }
 
     // ── SINGLE PREDICTION SOURCE ──────────────────────────────────
     //
@@ -41,92 +74,107 @@ class CycleViewModel(app: Application) : AndroidViewModel(app) {
     private val _isFertileToday = MutableLiveData<Boolean>()
     val isFertileToday: LiveData<Boolean> = _isFertileToday
 
-    init {
-        fun refresh() = viewModelScope.launch {
-            // ✅ FIX 3 — explicitly post null so UI can show empty state
-            // instead of silently doing nothing when there is no period data yet
-            val pred = repo.getBestPrediction()
-            if (pred == null) {
-                Log.w(TAG, "refresh: getBestPrediction returned null — no period data yet")
-                _prediction.postValue(null)
-                return@launch
-            }
-
-            _prediction.postValue(pred)
-
-            val today = LocalDate.now()
-
-            // ✅ FIX 2 — compute isFertileToday here with a fresh LocalDate.now()
-            _isFertileToday.postValue(
-                CycleEngine.isFertile(today, pred.fertileStart, pred.fertileEnd)
-            )
-
-            // Only schedule period alarm if the reminder date (D-1) is still in the future
-            pred.nextPeriodDate.let { nextPeriod ->
-                if (nextPeriod.minusDays(1).isAfter(today)) {
-                    com.aivigil.periodtracker.notification.AlarmScheduler
-                        .schedulePeriodAlarms(getApplication(), nextPeriod)
-                }
-            }
-
-            // Only schedule ovulation alarm if the fertile window start (ovulation-5)
-            // is still in the future — prevents sending "fertile window starts today"
-            // when the window has already passed
-            pred.ovulationDate.let { ovulation ->
-                val fertileStart = ovulation.minusDays(5)
-                if (fertileStart.isAfter(today)) {
-                    com.aivigil.periodtracker.notification.AlarmScheduler
-                        .scheduleOvulationAlarm(getApplication(), ovulation)
-                }
-            }
-
-            Log.d(TAG, "refresh: prediction updated — " +
-                    "lastPeriod=${pred.lastPeriodStart} " +
-                    "cycleLen=${pred.cycleLength} " +
-                    "nextPeriod=${pred.nextPeriodDate} " +
-                    "ovulation=${pred.ovulationDate} " +
-                    "fertile=${pred.fertileStart}→${pred.fertileEnd} " +
-                    "isFertileToday=${_isFertileToday.value} " +
-                    "confidence=${pred.confidence} source=${pred.dataSource}")
+    private fun refreshPrediction() = viewModelScope.launch {
+        // ✅ FIX 3 — explicitly post null so UI can show empty state
+        // instead of silently doing nothing when there is no period data yet
+        val pred = repo.getBestPrediction()
+        if (pred == null) {
+            Log.w(TAG, "refresh: getBestPrediction returned null — no period data yet")
+            _prediction.postValue(null)
+            _isFertileToday.postValue(false)
+            return@launch
         }
 
-        _prediction.addSource(settings)      { refresh() }
-        _prediction.addSource(periodEntries) { refresh() }
+        _prediction.postValue(pred)
 
-        // ✅ FIX 4 — only trigger refresh() for logs that actually affect
-        // the ovulation prediction (BBT or LH). Flow/mood/symptom logs
-        // do not change cycle math so they no longer cause a full recalc.
+        val today = LocalDate.now()
+        _isFertileToday.postValue(
+            CycleEngine.isFertile(today, pred.fertileStart, pred.fertileEnd)
+        )
+
+        // FIX (user consent): alarms used to be (re)scheduled here unconditionally
+        // on every settings / period / log change. That silently undid the
+        // reminder switches in Profile — a user who turned period reminders OFF
+        // had them re-armed the next time anything touched the database.
+        // NotificationPrefs is now the single gate for all scheduling.
+        NotificationPrefs.rescheduleFromPrediction(
+            context      = getApplication(),
+            nextPeriod   = pred.nextPeriodDate,
+            ovulation    = pred.ovulationDate,
+            today        = today
+        )
+
+        Log.d(TAG, "refresh: prediction updated — " +
+                "lastPeriod=${pred.lastPeriodStart} " +
+                "cycleLen=${pred.cycleLength} " +
+                "nextPeriod=${pred.nextPeriodDate} " +
+                "ovulation=${pred.ovulationDate} " +
+                "fertile=${pred.fertileStart}→${pred.fertileEnd} " +
+                "confidence=${pred.confidence} source=${pred.dataSource}")
+    }
+
+    init {
+        _prediction.addSource(settings)      { refreshPrediction() }
+        _prediction.addSource(periodEntries) { refreshPrediction() }
+        // Date rollover must recompute the prediction-derived alarm schedule too.
+        _prediction.addSource(_today)        { refreshPrediction() }
+
+        // Only recalculate for logs that actually affect the ovulation engine
+        // (BBT / LH / cervical fluid). Flow, mood and symptom logs do not.
+        //
+        // FIX: this used to inspect only the single newest log, so DELETING a BBT
+        // entry left a stale prediction in place. It now looks at whether any
+        // bio-signal data exists at all, which covers inserts, edits and deletes.
         _prediction.addSource(allLogs) { logs ->
-            val lastLog = logs.maxByOrNull { it.loggedAt }
-            val affectsPrediction = lastLog?.basalTemp != null ||
-                    lastLog?.lhTestResult !in listOf("Not Tested", null, "")
-            if (affectsPrediction) {
-                Log.d(TAG, "refresh: triggered by BBT/LH log change " +
-                        "bbt=${lastLog?.basalTemp} lh=${lastLog?.lhTestResult}")
-                refresh()
+            val bioSignalCount = logs.count { log ->
+                log.basalTemp != null ||
+                        (log.lhTestResult.isNotBlank() && log.lhTestResult != "Not Tested") ||
+                        log.cervicalFluid.isNotBlank()
+            }
+            if (bioSignalCount != lastBioSignalCount) {
+                Log.d(TAG, "refresh: bio-signal log count $lastBioSignalCount → $bioSignalCount")
+                lastBioSignalCount = bioSignalCount
+                refreshPrediction()
             }
         }
     }
 
+    private var lastBioSignalCount = -1
+
     // ── Derived: cycle basics ─────────────────────────────────────
 
-    val cycleDay: LiveData<Int> = _prediction.map { pred ->
-        pred?.let { CycleEngine.cycleDay(it.lastPeriodStart, it.cycleLength) } ?: 1
+    // Every value below takes `today` as an explicit input and is wired to the
+    // _today trigger, so all of them recompute on a date rollover instead of
+    // silently reporting yesterday's numbers.
+
+    private fun <T> derive(default: T, block: (CycleEngine.CyclePrediction, LocalDate) -> T)
+            : LiveData<T> = MediatorLiveData<T>().apply {
+        fun calc() {
+            val pred = _prediction.value
+            val day  = _today.value ?: LocalDate.now()
+            value = if (pred == null) default else block(pred, day)
+        }
+        addSource(_prediction) { calc() }
+        addSource(_today)      { calc() }
+    }
+
+    val cycleDay: LiveData<Int> = derive(1) { p, today ->
+        CycleEngine.cycleDay(p.lastPeriodStart, p.cycleLength, today)
     }
 
     val nextPeriodDate: LiveData<LocalDate?> = _prediction.map { it?.nextPeriodDate }
     val ovulationDate: LiveData<LocalDate?>  = _prediction.map { it?.ovulationDate }
 
-    val daysUntilNextPeriod: LiveData<Int> = _prediction.map { pred ->
-        pred?.let { CycleEngine.daysUntilNextPeriod(it.lastPeriodStart, it.cycleLength) } ?: 0
+    val daysUntilNextPeriod: LiveData<Int> = derive(0) { p, today ->
+        CycleEngine.daysUntilNextPeriod(p.lastPeriodStart, p.cycleLength, today)
     }
 
-    val isPeriodLate: LiveData<Boolean> = _prediction.map { pred ->
-        pred?.let { CycleEngine.isPeriodLate(it.lastPeriodStart, it.cycleLength) } ?: false
+    val isPeriodLate: LiveData<Boolean> = derive(false) { p, today ->
+        CycleEngine.isPeriodLate(p.lastPeriodStart, p.cycleLength, today)
     }
 
-    val daysLate: LiveData<Int> = _prediction.map { pred ->
-        pred?.let { CycleEngine.daysLate(it.lastPeriodStart, it.cycleLength) } ?: 0
+    val daysLate: LiveData<Int> = derive(0) { p, today ->
+        CycleEngine.daysLate(p.lastPeriodStart, p.cycleLength, today)
     }
 
     // ── Derived: phase ────────────────────────────────────────────
@@ -135,12 +183,22 @@ class CycleViewModel(app: Application) : AndroidViewModel(app) {
         fun calc() {
             val pred = _prediction.value ?: return
             val dur  = settings.value?.periodDuration ?: 5
-            val day  = CycleEngine.cycleDay(pred.lastPeriodStart, pred.cycleLength)
+            val day  = CycleEngine.cycleDay(
+                pred.lastPeriodStart, pred.cycleLength, _today.value ?: LocalDate.now()
+            )
             value    = CycleEngine.phase(day, pred.cycleLength, dur)
         }
         addSource(_prediction) { calc() }
         addSource(settings)    { calc() }
+        addSource(_today)      { calc() }
     }
+
+    /**
+     * True only when the user has enough real history for predictions to mean
+     * something. UI must show an explicit empty state rather than the
+     * placeholder numbers baked into the layout XML when this is false.
+     */
+    val hasEnoughDataForPredictions: LiveData<Boolean> = periodEntries.map { it.isNotEmpty() }
 
     // ── Derived: fertility ────────────────────────────────────────
 
@@ -170,11 +228,50 @@ class CycleViewModel(app: Application) : AndroidViewModel(app) {
             val pred = _prediction.value ?: run { value = emptySet(); return }
             val dur  = settings.value?.periodDuration ?: 5
             value    = CycleEngine.futurePeriodDays(
-                pred.lastPeriodStart, pred.cycleLength, dur, monthsAhead = 3
+                pred.lastPeriodStart, pred.cycleLength, dur,
+                monthsAhead = 3, today = _today.value ?: LocalDate.now()
             ).values.flatten().toSet()
         }
         addSource(_prediction) { calc() }
         addSource(settings)    { calc() }
+        addSource(_today)      { calc() }
+    }
+
+    /**
+     * Every day the user has ACTUALLY recorded a period on, across all history —
+     * derived from period_entries rather than from the single latest prediction.
+     *
+     * FIX: CalendarFragment used to call CycleEngine.periodDays(pred.lastPeriodStart, …)
+     * itself, which only ever produced the current cycle. A user with six months
+     * of logged periods saw pink days in the current month and nothing at all
+     * when she scrolled back.
+     *
+     * Closed periods use their real recorded length; an open period is filled to
+     * the expected duration and no further.
+     */
+    val loggedPeriodDays: LiveData<Set<LocalDate>> = MediatorLiveData<Set<LocalDate>>().apply {
+        fun calc() {
+            val entries = periodEntries.value ?: run { value = emptySet(); return }
+            val dur     = settings.value?.periodDuration ?: 5
+            val today   = _today.value ?: LocalDate.now()
+            val out     = mutableSetOf<LocalDate>()
+            entries.forEach { entry ->
+                val start = runCatching { LocalDate.parse(entry.startDate) }.getOrNull()
+                    ?: return@forEach
+                val end = entry.endDate
+                    ?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
+                    ?: minOf(CycleEngine.periodEndDate(start, dur), today)
+                var d = start
+                // Bounded so a corrupt endDate cannot spin here.
+                while (!d.isAfter(end) && ChronoUnit.DAYS.between(start, d) < 15) {
+                    out.add(d); d = d.plusDays(1)
+                }
+            }
+            value = out
+        }
+        addSource(periodEntries) { calc() }
+        addSource(settings)      { calc() }
+        addSource(_today)        { calc() }
     }
 
     // ── Derived: confidence ───────────────────────────────────────
@@ -186,6 +283,38 @@ class CycleViewModel(app: Application) : AndroidViewModel(app) {
     fun logPeriodStartToday() = viewModelScope.launch { repo.logPeriodStartToday() }
 
     fun logPeriodStart(date: LocalDate) = viewModelScope.launch { repo.logPeriodStart(date) }
+
+    // ── Awaitable variants ────────────────────────────────────────
+    //
+    // The fire-and-forget versions above launch in viewModelScope and return
+    // immediately, so a caller that navigates away straight after (e.g.
+    // LogSymptomsFragment.popBackStack()) was racing the database write, and any
+    // exception surfaced as an uncaught crash rather than something the screen
+    // could report. These suspend variants let the caller await the write and
+    // handle failure.
+
+    suspend fun logPeriodStartAwait(date: LocalDate) = repo.logPeriodStart(date)
+
+    suspend fun saveDailyLogAwait(
+        flow: String,
+        moods: List<String>,
+        symptoms: List<String>,
+        cervicalFluid: String,
+        basalTemp: Float?,
+        lhTestResult: String = "Not Tested",
+        notes: String,
+        date: LocalDate = LocalDate.now(),
+        periodConfirmed: Boolean = false
+    ) {
+        Log.i(TAG, "saveDailyLogAwait: date=$date flow=$flow lh=$lhTestResult " +
+                "bbt=$basalTemp confirmed=$periodConfirmed")
+        repo.saveDailyLog(
+            date, flow, moods, symptoms, cervicalFluid,
+            basalTemp, lhTestResult, notes, periodConfirmed
+        )
+    }
+
+    suspend fun updateDailyLogAwait(log: DailyLog) = repo.updateDailyLog(log)
 
     /**
      * Marks the current open period as ended today.
@@ -267,6 +396,15 @@ class CycleViewModel(app: Application) : AndroidViewModel(app) {
 
     fun deleteDailyLog(log: DailyLog)       = viewModelScope.launch { repo.deleteDailyLog(log) }
     fun deleteDailyLogById(id: Int)         = viewModelScope.launch { repo.deleteDailyLogById(id) }
+
+    /**
+     * Re-inserts a deleted log, backing the Undo action in the history screen.
+     * entryId is reset to 0 so Room assigns a fresh autoGenerate id rather than
+     * colliding with anything inserted since the delete.
+     */
+    fun restoreDailyLog(log: DailyLog) = viewModelScope.launch {
+        repo.restoreDailyLog(log.copy(entryId = 0))
+    }
     fun updateDailyLog(log: DailyLog)       = viewModelScope.launch { repo.updateDailyLog(log) }
     suspend fun getLogsForDate(date: LocalDate) = repo.getLogForDate(date)
 
@@ -306,30 +444,40 @@ class CycleViewModel(app: Application) : AndroidViewModel(app) {
 
     // ── Insights: bar chart data ──────────────────────────────────
 
-    fun getBarChartData(): LiveData<List<Pair<String, Int>>> = periodEntries.map { entries ->
-        if (entries.size < 2) return@map emptyList()
-        val sorted = entries.sortedBy { it.startDate }
-        val fmt    = DateTimeFormatter.ofPattern("MMM", Locale.getDefault())
-        val result = mutableListOf<Pair<String, Int>>()
+    /**
+     * Completed cycle lengths for the history chart, newest last, max 6.
+     *
+     * FIX 1 — this was a `fun` returning `periodEntries.map { … }`, so every call
+     * built a NEW LiveData transformation. A fragment calling it from
+     * onViewCreated leaked one observer chain per view recreation.
+     * It is now a single `val`.
+     *
+     * FIX 2 — the in-progress cycle is no longer appended. Mixing "days elapsed
+     * so far" into a chart of completed cycle lengths always rendered the current
+     * cycle as an abnormally short one, and on the day a period started it drew a
+     * zero-height bar that looked like a rendering failure.
+     *
+     * FIX 3 — LocalDate.parse is no longer allowed to throw; a malformed row is
+     * skipped rather than crashing the Insights screen.
+     */
+    @get:JvmName("getBarChartDataLiveData")
+    val barChartData: LiveData<List<Pair<String, Int>>> = periodEntries.map { entries ->
+        val fmt = DateTimeFormatter.ofPattern("MMM", Locale.getDefault())
+        val sorted = entries
+            .mapNotNull { e -> runCatching { LocalDate.parse(e.startDate) }.getOrNull() }
+            .sorted()
+        if (sorted.size < 2) return@map emptyList()
 
-        for (i in 0 until sorted.size - 1) {
-            val start = LocalDate.parse(sorted[i].startDate)
-            val next  = LocalDate.parse(sorted[i + 1].startDate)
-            val days  = java.time.temporal.ChronoUnit.DAYS.between(start, next).toInt()
-            result.add(Pair(start.format(fmt), days))
-        }
-
-        // ✅ FIX 5 — removed the erroneous + 1 from the open cycle length calculation.
-        // ChronoUnit.DAYS.between already returns the correct elapsed day count.
-        val latest = sorted.lastOrNull()
-        if (latest != null && latest.endDate == null) {
-            val start = LocalDate.parse(latest.startDate)
-            val cur   = java.time.temporal.ChronoUnit.DAYS.between(start, LocalDate.now()).toInt()
-            result.add(Pair(start.format(fmt), cur))
-        }
-
-        result.takeLast(6)
+        (0 until sorted.size - 1)
+            .mapNotNull { i ->
+                val days = ChronoUnit.DAYS.between(sorted[i], sorted[i + 1]).toInt()
+                // Drop physiologically impossible gaps rather than drawing them.
+                if (days in 18..60) sorted[i].format(fmt) to days else null
+            }
+            .takeLast(6)
     }
+
+
 }
 
 class CycleViewModelFactory(private val app: Application) : ViewModelProvider.Factory {

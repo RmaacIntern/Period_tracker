@@ -45,18 +45,62 @@ object CycleEngine {
     ): Int = rawCycleDay(lastPeriodStart, today).coerceIn(1, cycleLength)
 
     /**
-     * True when raw elapsed days exceed cycle length.
-     * Uses rawCycleDay so clamping doesn't hide a late period.
+     * True when today is strictly AFTER the expected next period date.
+     *
+     * FIX (off-by-one): the previous version used `rawCycleDay > cycleLength`.
+     * For a 28-day cycle starting Jan 1, nextPeriodDate is Jan 29 and
+     * rawCycleDay on Jan 29 is 29 — so the app reported "1 day late" on the
+     * exact day the period was due. A period is late only once its expected
+     * date has passed.
+     *
+     * [today] is injectable so this is unit-testable and so callers can pass
+     * a date that is guaranteed fresh (see CycleViewModel.refresh()).
      */
-    fun isPeriodLate(lastPeriodStart: LocalDate, cycleLength: Int): Boolean =
-        rawCycleDay(lastPeriodStart) > cycleLength
+    fun isPeriodLate(
+        lastPeriodStart: LocalDate,
+        cycleLength: Int,
+        today: LocalDate = LocalDate.now()
+    ): Boolean = today.isAfter(nextPeriodDate(lastPeriodStart, cycleLength))
 
     /**
-     * Days past the expected period date.
-     * Uses rawCycleDay so clamping doesn't hide a late period.
+     * Whole days past the expected period date. 0 on and before the due date.
+     * FIX (off-by-one): measured from nextPeriodDate, not from cycle day.
      */
-    fun daysLate(lastPeriodStart: LocalDate, cycleLength: Int): Int =
-        (rawCycleDay(lastPeriodStart) - cycleLength).coerceAtLeast(0)
+    fun daysLate(
+        lastPeriodStart: LocalDate,
+        cycleLength: Int,
+        today: LocalDate = LocalDate.now()
+    ): Int = ChronoUnit.DAYS
+        .between(nextPeriodDate(lastPeriodStart, cycleLength), today)
+        .toInt()
+        .coerceAtLeast(0)
+
+    /**
+     * Last calendar day of a period that started on [start] and ran
+     * [periodDuration] days. A 5-day period starting on the 1st ends on the 5th.
+     *
+     * Single source of truth — bestPrediction() previously computed this as
+     * start.plusDays(periodDuration), which is the first day AFTER the period
+     * and pushed the fertile-window clamp one day too late.
+     */
+    fun periodEndDate(start: LocalDate, periodDuration: Int): LocalDate =
+        start.plusDays((periodDuration - 1).coerceAtLeast(0).toLong())
+
+    /**
+     * Ovulation cycle DAY (1-based), clamped so it can never fall inside the
+     * period. Exposed so UI, PDF export and the notification scheduler all
+     * derive it from one place instead of re-implementing the formula.
+     */
+    fun ovulationDay(cycleLength: Int, periodDuration: Int): Int =
+        (cycleLength - 14).coerceAtLeast(periodDuration + 2)
+
+    /** Fertile-window start cycle DAY (1-based), clamped past the period. */
+    fun fertileStartDay(cycleLength: Int, periodDuration: Int): Int =
+        (ovulationDay(cycleLength, periodDuration) - 5).coerceAtLeast(periodDuration + 1)
+
+    /** Luteal phase length in days. Medically cycleLength − ovulationDay. */
+    fun lutealPhaseLength(cycleLength: Int, periodDuration: Int): Int =
+        (cycleLength - ovulationDay(cycleLength, periodDuration)).coerceAtLeast(1)
 
     /** Next predicted period = last period start + cycle length. */
     fun nextPeriodDate(lastPeriodStart: LocalDate, cycleLength: Int): LocalDate =
@@ -129,8 +173,8 @@ object CycleEngine {
      * - Follicular phase can be 0 days on very short cycles (< 21 days)
      */
     fun phase(day: Int, cycleLength: Int, periodDuration: Int): Phase {
-        val ovDay        = (cycleLength - 14).coerceAtLeast(periodDuration + 2)
-        val fertileStart = (ovDay - 5).coerceAtLeast(periodDuration + 1)
+        val ovDay        = ovulationDay(cycleLength, periodDuration)
+        val fertileStart = fertileStartDay(cycleLength, periodDuration)
         return when {
             day <= periodDuration           -> Phase.MENSTRUAL
             day < fertileStart              -> Phase.FOLLICULAR
@@ -198,20 +242,28 @@ object CycleEngine {
         lastPeriodStart: LocalDate,
         cycleLength: Int,
         periodDuration: Int,
-        monthsAhead: Int = 3
+        monthsAhead: Int = 3,
+        today: LocalDate = LocalDate.now()
     ): Map<LocalDate, Set<LocalDate>> {
-        val cutoff = lastPeriodStart.plusMonths(monthsAhead.toLong())
+        // FIX: the cutoff is measured from TODAY, not from lastPeriodStart.
+        // Anchoring it to lastPeriodStart meant the window shrank as the cycle
+        // progressed — a user 2 months into her data saw only 1 month of
+        // predictions instead of 3, and the calendar emptied out over time.
+        val cutoff = today.plusMonths(monthsAhead.toLong())
+        val safeCycleLength = cycleLength.coerceIn(18, 60)
         val result = mutableMapOf<LocalDate, Set<LocalDate>>()
         var cycleNumber = 1
-        while (true) {
-            val start = lastPeriodStart.plusDays((cycleLength * cycleNumber).toLong())
+        // Hard iteration bound: defensive against a bad cycleLength producing
+        // an unbounded loop. 3 months can never need more than ~10 cycles.
+        while (cycleNumber <= 24) {
+            val start = lastPeriodStart.plusDays((safeCycleLength.toLong() * cycleNumber))
             if (start.isAfter(cutoff)) break
-            result[start] = periodDays(start, periodDuration)
-            Log.d(TAG, "futurePeriodDays: cycle #$cycleNumber → $start")
+            // Only emit periods that are actually in the future.
+            if (!start.isBefore(today)) result[start] = periodDays(start, periodDuration)
             cycleNumber++
         }
-        Log.d(TAG, "futurePeriodDays: ${result.size} periods over " +
-                "$monthsAhead months (cycleLen=$cycleLength)")
+        Log.d(TAG, "futurePeriodDays: ${result.size} periods through $cutoff " +
+                "(cycleLen=$safeCycleLength)")
         return result
     }
 
@@ -374,8 +426,9 @@ object CycleEngine {
         if (lhDate != null && cfDate != null) {
             val diff = ChronoUnit.DAYS.between(lhDate, cfDate).toInt()
             return if (kotlin.math.abs(diff) <= 2) {
-                // Signals agree — average them
-                val avgDate = lhDate.plusDays((diff / 2).toLong())
+                // Signals agree — midpoint. Math.round avoids the integer-division
+                // truncation that previously biased every average toward the LH date.
+                val avgDate = lhDate.plusDays(Math.round(diff / 2.0))
                 Log.d(TAG, "resolvedOvulation: LH+cervical agree (diff=$diff) → $avgDate")
                 avgDate
             } else {
@@ -428,7 +481,11 @@ object CycleEngine {
     ): CyclePrediction {
 
         val nextPeriod = lastPeriodStart.plusDays(avgCycleLength.toLong())
-        val periodEnd  = lastPeriodStart.plusDays(periodDuration.toLong())
+        // FIX (off-by-one): periodEnd is the LAST day of the period, not the day
+        // after it. The old `plusDays(periodDuration)` disagreed with
+        // periodDays(), which uses `0 until periodDuration`, and pushed both the
+        // ovulation and fertile-window clamps one day later than intended.
+        val periodEnd  = periodEndDate(lastPeriodStart, periodDuration)
 
         // Formula ovulation (clamped for short cycles)
         val rawFormulaOv  = nextPeriod.minusDays(lutealPhase.toLong())
@@ -441,7 +498,29 @@ object CycleEngine {
         }
 
         // ✅ Resolve using bio signals when available
-        val ovulation = resolvedOvulationDate(formulaOv, bbtOvulation, lhSignal, cervicalSignal)
+        val resolvedOv = resolvedOvulationDate(formulaOv, bbtOvulation, lhSignal, cervicalSignal)
+
+        // FIX: a bio signal is user-entered data and can be mis-logged (e.g. a
+        // positive LH strip recorded on day 2 of the period). Previously the
+        // resolved date was trusted unconditionally, which could place ovulation
+        // inside the period or in the wrong cycle entirely. Accept a bio signal
+        // only when it lands in a physiologically plausible window: after the
+        // period ends and no later than the next expected period.
+        val ovulation = when {
+            !resolvedOv.isAfter(periodEnd) -> {
+                Log.w(TAG, "bestPrediction: resolved ovulation $resolvedOv is inside the " +
+                        "period (ends $periodEnd) — rejecting signal, using formula $formulaOv")
+                formulaOv
+            }
+            !resolvedOv.isBefore(nextPeriod) -> {
+                Log.w(TAG, "bestPrediction: resolved ovulation $resolvedOv is at/after the " +
+                        "next period ($nextPeriod) — rejecting signal, using formula $formulaOv")
+                formulaOv
+            }
+            else -> resolvedOv
+        }
+        // Signals that were rejected must not inflate the confidence score.
+        val signalAccepted = ovulation == resolvedOv
 
         // Fertile window (also clamped for short cycles)
         val rawFertileStart = ovulation.minusDays(5)
@@ -449,10 +528,11 @@ object CycleEngine {
         else periodEnd.plusDays(1)
         val fertileEnd      = ovulation.plusDays(1)
 
-        // ✅ Dynamic confidence based on signal quality
-        val hasBbt       = bbtOvulation != null
-        val hasLh        = lhSignal.estimatedOvulation != null
-        val hasCervical  = cervicalSignal.estimatedOvulation != null
+        // ✅ Dynamic confidence based on signal quality.
+        // A signal that was rejected as implausible above contributes nothing.
+        val hasBbt       = signalAccepted && bbtOvulation != null
+        val hasLh        = signalAccepted && lhSignal.estimatedOvulation != null
+        val hasCervical  = signalAccepted && cervicalSignal.estimatedOvulation != null
         val lhCfAgree    = hasLh && hasCervical &&
                 kotlin.math.abs(
                     ChronoUnit.DAYS.between(
