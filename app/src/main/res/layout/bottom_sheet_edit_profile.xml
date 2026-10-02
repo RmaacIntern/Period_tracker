@@ -6,71 +6,71 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@drawable/bottom_sheet_bg"
-    android:paddingBottom="32dp">
+    android:paddingBottom="@dimen/_27sdp">
 
     <!-- Handle -->
     <View
-        android:layout_width="40dp"
-        android:layout_height="4dp"
+        android:layout_width="@dimen/_34sdp"
+        android:layout_height="@dimen/_3sdp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/_10sdp"
         android:background="@drawable/sheet_handle" />
 
     <!-- Title -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="@dimen/_20sdp"
+        android:layout_marginTop="@dimen/_20sdp"
         android:text="Edit Profile"
-        android:textSize="20sp"
+        android:textSize="@dimen/_16ssp"
         android:textStyle="bold"
         android:textColor="@color/text_primary" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginStart="@dimen/_20sdp"
+        android:layout_marginTop="@dimen/_3sdp"
         android:text="Update your personal details"
-        android:textSize="12sp"
+        android:textSize="@dimen/_10ssp"
         android:textColor="@color/text_secondary" />
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="@dimen/_1sdp"
         android:background="@color/surface_muted"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="@dimen/_14sdp" />
 
     <!-- Fields -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingHorizontal="24dp"
-        android:paddingTop="16dp">
+        android:paddingHorizontal="@dimen/_20sdp"
+        android:paddingTop="@dimen/_14sdp">
 
         <!-- Name -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="NAME"
-            android:textSize="10sp"
+            android:textSize="@dimen/_8ssp"
             android:textStyle="bold"
             android:letterSpacing="0.08"
             android:textColor="@color/text_secondary" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="6dp">
+            android:layout_height="@dimen/_44sdp"
+            android:layout_marginTop="@dimen/_5sdp">
 
             <EditText
                 android:id="@+id/etEditName"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:hint="Your name"
-                android:textSize="15sp"
+                android:textSize="@dimen/_13ssp"
                 android:textColor="@color/text_primary"
                 android:textColorHint="@color/text_hint"
                 android:background="@null"
@@ -83,7 +83,7 @@
 
             <View
                 android:layout_width="0dp"
-                android:layout_height="1.5dp"
+                android:layout_height="@dimen/_1sdp"
                 android:background="#EC4899"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -95,24 +95,24 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="@dimen/_17sdp"
             android:text="AGE"
-            android:textSize="10sp"
+            android:textSize="@dimen/_8ssp"
             android:textStyle="bold"
             android:letterSpacing="0.08"
             android:textColor="@color/text_secondary" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="6dp">
+            android:layout_height="@dimen/_44sdp"
+            android:layout_marginTop="@dimen/_5sdp">
 
             <EditText
                 android:id="@+id/etEditAge"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:hint="Your age"
-                android:textSize="15sp"
+                android:textSize="@dimen/_13ssp"
                 android:textColor="@color/text_primary"
                 android:textColorHint="@color/text_hint"
                 android:background="@null"
@@ -125,7 +125,7 @@
 
             <View
                 android:layout_width="0dp"
-                android:layout_height="1.5dp"
+                android:layout_height="@dimen/_1sdp"
                 android:background="#EC4899"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -137,7 +137,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="@dimen/_17sdp"
             android:orientation="horizontal">
 
             <!-- Height -->
@@ -146,28 +146,28 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:layout_marginEnd="16dp">
+                android:layout_marginEnd="@dimen/_14sdp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="HEIGHT (CM)"
-                    android:textSize="10sp"
+                    android:textSize="@dimen/_8ssp"
                     android:textStyle="bold"
                     android:letterSpacing="0.08"
                     android:textColor="@color/text_secondary" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:layout_marginTop="6dp">
+                    android:layout_height="@dimen/_44sdp"
+                    android:layout_marginTop="@dimen/_5sdp">
 
                     <EditText
                         android:id="@+id/etEditHeight"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:hint="162"
-                        android:textSize="15sp"
+                        android:textSize="@dimen/_13ssp"
                         android:textColor="@color/text_primary"
                         android:textColorHint="@color/text_hint"
                         android:background="@null"
@@ -180,7 +180,7 @@
 
                     <View
                         android:layout_width="0dp"
-                        android:layout_height="1.5dp"
+                        android:layout_height="@dimen/_1sdp"
                         android:background="#EC4899"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -200,22 +200,22 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="WEIGHT (KG)"
-                    android:textSize="10sp"
+                    android:textSize="@dimen/_8ssp"
                     android:textStyle="bold"
                     android:letterSpacing="0.08"
                     android:textColor="@color/text_secondary" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:layout_marginTop="6dp">
+                    android:layout_height="@dimen/_44sdp"
+                    android:layout_marginTop="@dimen/_5sdp">
 
                     <EditText
                         android:id="@+id/etEditWeight"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:hint="60"
-                        android:textSize="15sp"
+                        android:textSize="@dimen/_13ssp"
                         android:textColor="@color/text_primary"
                         android:textColorHint="@color/text_hint"
                         android:background="@null"
@@ -228,7 +228,7 @@
 
                     <View
                         android:layout_width="0dp"
-                        android:layout_height="1.5dp"
+                        android:layout_height="@dimen/_1sdp"
                         android:background="#EC4899"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -243,8 +243,8 @@
         <com.aivigil.periodtracker.widgets.GradientButton
             android:id="@+id/btnSaveProfile"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="28dp"
+            android:layout_height="@dimen/_44sdp"
+            android:layout_marginTop="@dimen/_24sdp"
             android:text="Save Changes" />
 
     </LinearLayout>

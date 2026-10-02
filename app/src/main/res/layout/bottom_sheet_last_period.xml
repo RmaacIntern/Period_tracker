@@ -6,24 +6,24 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@drawable/bottom_sheet_bg"
-    android:paddingBottom="32dp">
+    android:paddingBottom="@dimen/_27sdp">
 
     <!-- Handle -->
     <View
-        android:layout_width="40dp"
-        android:layout_height="4dp"
+        android:layout_width="@dimen/_34sdp"
+        android:layout_height="@dimen/_3sdp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/_10sdp"
         android:background="@drawable/sheet_handle" />
 
     <!-- Question -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="@dimen/_20sdp"
+        android:layout_marginTop="@dimen/_20sdp"
         android:text="When did your period start?"
-        android:textSize="18sp"
+        android:textSize="@dimen/_15ssp"
         android:textStyle="bold"
         android:textColor="@color/text_primary" />
 
@@ -31,49 +31,46 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="8dp">
+        android:layout_marginHorizontal="@dimen/_20sdp"
+        android:layout_marginTop="@dimen/_7sdp">
 
         <TextView
             android:id="@+id/tvSelectedPeriodDate"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Thu, Sep 17"
-            android:textSize="28sp"
+            android:textSize="@dimen/_22ssp"
             android:textStyle="bold"
             android:textColor="@color/text_primary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="@dimen/_1sdp"
         android:background="@color/surface_muted"
-        android:layout_marginTop="12dp" />
+        android:layout_marginTop="@dimen/_10sdp" />
 
     <!-- Month nav row -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="24dp"
-        android:paddingTop="14dp"
-        android:paddingBottom="8dp">
+        android:paddingHorizontal="@dimen/_20sdp"
+        android:paddingTop="@dimen/_12sdp"
+        android:paddingBottom="@dimen/_7sdp">
 
         <TextView
             android:id="@+id/tvCalSheetMonthYear"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="September 2026"
-            android:textSize="15sp"
+            android:textSize="@dimen/_13ssp"
             android:textStyle="bold"
             android:textColor="@color/text_primary"
-
-            android:drawablePadding="4dp"
+            android:drawablePadding="@dimen/_3sdp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
@@ -88,23 +85,23 @@
 
             <ImageView
                 android:id="@+id/btnCalSheetPrev"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:padding="2dp"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:padding="@dimen/_2sdp"
                 android:src="@drawable/ic_back"
                 android:background="@drawable/bg_arrow_shadow"
                 android:scaleType="centerInside"
                 android:contentDescription="Previous month" />
 
             <View
-                android:layout_width="4dp"
+                android:layout_width="@dimen/_3sdp"
                 android:layout_height="match_parent" />
 
             <ImageView
                 android:id="@+id/btnCalSheetNext"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:padding="2dp"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:padding="@dimen/_2sdp"
                 android:background="@drawable/bg_arrow_shadow"
                 android:src="@drawable/ic_next"
                 android:scaleType="centerInside"
@@ -119,64 +116,64 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingHorizontal="16dp">
+        android:paddingHorizontal="@dimen/_14sdp">
 
-        <TextView android:layout_width="0dp" android:layout_height="32dp"
+        <TextView android:layout_width="0dp" android:layout_height="@dimen/_27sdp"
             android:layout_weight="1" android:gravity="center"
-            android:text="S" android:textSize="12sp" android:textColor="@color/text_secondary" />
-        <TextView android:layout_width="0dp" android:layout_height="32dp"
+            android:text="S" android:textSize="@dimen/_10ssp" android:textColor="@color/text_secondary" />
+        <TextView android:layout_width="0dp" android:layout_height="@dimen/_27sdp"
             android:layout_weight="1" android:gravity="center"
-            android:text="M" android:textSize="12sp" android:textColor="@color/text_secondary" />
-        <TextView android:layout_width="0dp" android:layout_height="32dp"
+            android:text="M" android:textSize="@dimen/_10ssp" android:textColor="@color/text_secondary" />
+        <TextView android:layout_width="0dp" android:layout_height="@dimen/_27sdp"
             android:layout_weight="1" android:gravity="center"
-            android:text="T" android:textSize="12sp" android:textColor="@color/text_secondary" />
-        <TextView android:layout_width="0dp" android:layout_height="32dp"
+            android:text="T" android:textSize="@dimen/_10ssp" android:textColor="@color/text_secondary" />
+        <TextView android:layout_width="0dp" android:layout_height="@dimen/_27sdp"
             android:layout_weight="1" android:gravity="center"
-            android:text="W" android:textSize="12sp" android:textColor="@color/text_secondary" />
-        <TextView android:layout_width="0dp" android:layout_height="32dp"
+            android:text="W" android:textSize="@dimen/_10ssp" android:textColor="@color/text_secondary" />
+        <TextView android:layout_width="0dp" android:layout_height="@dimen/_27sdp"
             android:layout_weight="1" android:gravity="center"
-            android:text="T" android:textSize="12sp" android:textColor="@color/text_secondary" />
-        <TextView android:layout_width="0dp" android:layout_height="32dp"
+            android:text="T" android:textSize="@dimen/_10ssp" android:textColor="@color/text_secondary" />
+        <TextView android:layout_width="0dp" android:layout_height="@dimen/_27sdp"
             android:layout_weight="1" android:gravity="center"
-            android:text="F" android:textSize="12sp" android:textColor="@color/text_secondary" />
-        <TextView android:layout_width="0dp" android:layout_height="32dp"
+            android:text="F" android:textSize="@dimen/_10ssp" android:textColor="@color/text_secondary" />
+        <TextView android:layout_width="0dp" android:layout_height="@dimen/_27sdp"
             android:layout_weight="1" android:gravity="center"
-            android:text="S" android:textSize="12sp" android:textColor="@color/text_secondary" />
+            android:text="S" android:textSize="@dimen/_10ssp" android:textColor="@color/text_secondary" />
     </LinearLayout>
 
     <!-- Calendar grid -->
     <com.aivigil.periodtracker.calendar.SheetCalendarView
         android:id="@+id/sheetCalendarView"
         android:layout_width="match_parent"
-        android:layout_height="280dp"
-        android:layout_marginHorizontal="16dp" />
+        android:layout_height="@dimen/_240sdp"
+        android:layout_marginHorizontal="@dimen/_14sdp" />
 
     <!-- Cancel / OK -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="8dp"
-        android:paddingHorizontal="24dp">
+        android:layout_marginTop="@dimen/_7sdp"
+        android:paddingHorizontal="@dimen/_20sdp">
 
         <TextView
             android:id="@+id/btnPeriodDateCancel"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="@dimen/_44sdp"
             android:layout_weight="1"
             android:gravity="center"
             android:text="Cancel"
-            android:textSize="15sp"
+            android:textSize="@dimen/_13ssp"
             android:textColor="@color/text_secondary" />
 
         <TextView
             android:id="@+id/btnPeriodDateOk"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="@dimen/_44sdp"
             android:layout_weight="1"
             android:gravity="center"
             android:text="OK"
-            android:textSize="15sp"
+            android:textSize="@dimen/_13ssp"
             android:textStyle="bold"
             android:textColor="#EC4899" />
 

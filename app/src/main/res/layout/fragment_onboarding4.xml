@@ -6,16 +6,15 @@
     android:id="@+id/onboarding4Root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingHorizontal="24dp"
-    android:paddingBottom="24dp"
+    android:paddingHorizontal="@dimen/_20sdp"
+    android:paddingBottom="@dimen/_20sdp"
     tools:context=".onboarding.OnboardingFragment4">
 
-    <!-- heartIconCircle background set in Kotlin via ThemeHelper.iconCirclePink() -->
     <FrameLayout
         android:id="@+id/heartIconCircle"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_marginTop="24dp"
+        android:layout_width="@dimen/_48sdp"
+        android:layout_height="@dimen/_48sdp"
+        android:layout_marginTop="@dimen/_20sdp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -24,40 +23,37 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="💗"
-            android:textSize="22sp" />
+            android:textSize="@dimen/_18ssp" />
     </FrameLayout>
 
-    <!-- ✅ FIX — #3D1B2E → @color/text_primary -->
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/_14sdp"
         android:text="Anything your body\nlives with?"
-        android:textSize="22sp"
+        android:textSize="@dimen/_18ssp"
         android:textStyle="bold"
         android:textColor="@color/text_primary"
         app:layout_constraintTop_toBottomOf="@id/heartIconCircle" />
 
-    <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
     <TextView
         android:id="@+id/tvSubtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/_7sdp"
         android:text="Period Tracker quietly adapts its predictions, cycle insights, and helpful tips around your health. Pick all that apply, or none."
-        android:textSize="13sp"
+        android:textSize="@dimen/_11ssp"
         android:textColor="@color/text_secondary"
         app:layout_constraintTop_toBottomOf="@id/tvTitle" />
 
-    <!-- Chips use @style/ConditionChip — Material handles dark mode for chip colors -->
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/conditionsChipGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        app:chipSpacingHorizontal="8dp"
-        app:chipSpacingVertical="8dp"
+        android:layout_marginTop="@dimen/_17sdp"
+        app:chipSpacingHorizontal="@dimen/_7sdp"
+        app:chipSpacingVertical="@dimen/_7sdp"
         app:layout_constraintTop_toBottomOf="@id/tvSubtitle">
 
         <com.google.android.material.chip.Chip
@@ -123,21 +119,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/ConditionChip"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/_14sdp"
         android:text="🍃  None of these"
         android:textAlignment="center"
-        app:chipStartPadding="16dp"
+        app:chipStartPadding="@dimen/_14sdp"
         app:layout_constraintTop_toBottomOf="@id/conditionsChipGroup" />
 
-    <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
     <TextView
         android:id="@+id/tvFooterNote"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="@dimen/_20sdp"
         android:gravity="center"
         android:text="🔒 Kept confidential and securely stored on-device"
-        android:textSize="11sp"
+        android:textSize="@dimen/_9ssp"
         android:textColor="@color/text_secondary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

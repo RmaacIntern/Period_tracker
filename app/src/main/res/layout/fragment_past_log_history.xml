@@ -10,15 +10,15 @@
     <!-- TOP BAR -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:paddingHorizontal="16dp"
+        android:layout_height="@dimen/_48sdp"
+        android:paddingHorizontal="@dimen/_14sdp"
         android:background="@color/surface_card">
 
         <ImageView
             android:id="@+id/btnBack"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:padding="8dp"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:padding="@dimen/_7sdp"
             android:src="@drawable/ic_arrow_left"
             android:contentDescription="Back"
             app:layout_constraintStart_toStartOf="parent"
@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Log History"
-            android:textSize="16sp"
+            android:textSize="@dimen/_13ssp"
             android:textStyle="bold"
             android:textColor="@color/text_primary"
             app:layout_constraintStart_toStartOf="parent"
@@ -44,15 +44,15 @@
         android:id="@+id/summaryStrip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="10dp">
+        android:paddingHorizontal="@dimen/_14sdp"
+        android:paddingVertical="@dimen/_8sdp">
 
         <TextView
             android:id="@+id/tvTotalDays"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0 days logged"
-            android:textSize="13sp"
+            android:textSize="@dimen/_11ssp"
             android:textColor="@color/text_primary"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
@@ -64,7 +64,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0 entries"
-            android:textSize="12sp"
+            android:textSize="@dimen/_10ssp"
             android:textColor="@color/text_secondary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -74,7 +74,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="@dimen/_1sdp"
         android:background="@color/stroke_card" />
 
     <!-- EMPTY STATE -->
@@ -91,23 +91,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="🌸"
-            android:textSize="48sp" />
+            android:textSize="@dimen/_38ssp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="@dimen/_10sdp"
             android:text="No logs yet"
-            android:textSize="16sp"
+            android:textSize="@dimen/_13ssp"
             android:textStyle="bold"
             android:textColor="@color/text_primary" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="@dimen/_5sdp"
             android:text="Start logging from the Home screen"
-            android:textSize="13sp"
+            android:textSize="@dimen/_11ssp"
             android:textColor="@color/text_secondary" />
 
     </LinearLayout>
@@ -118,8 +118,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:paddingHorizontal="16dp"
-        android:paddingBottom="24dp"
+        android:paddingHorizontal="@dimen/_14sdp"
+        android:paddingBottom="@dimen/_20sdp"
         android:clipToPadding="false"
         android:visibility="visible" />
 

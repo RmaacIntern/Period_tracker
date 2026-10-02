@@ -288,7 +288,8 @@ class HomeFragment : Fragment() {
         binding.nextPeriodCard.background     = ThemeHelper.cardBg(requireContext(), 14f)
         binding.tagLoggedPeriod.background    = ThemeHelper.iconCirclePink(requireContext())
             .apply { shape = android.graphics.drawable.GradientDrawable.RECTANGLE; cornerRadius = 20f * resources.displayMetrics.density }
-        binding.tagEstimatedPeriod.background = ThemeHelper.cardBg(requireContext(), 20f)
+        binding.lastPeriodCard.background = ThemeHelper.periodPredCardBg(requireContext(), 14f)
+        binding.nextPeriodCard.background = ThemeHelper.fertilePredCardBg(requireContext(), 14f)
         listOf(binding.statFlow, binding.statMood, binding.statSymptoms, binding.statNotes)
             .forEach { it.root.background = ThemeHelper.basalCardBg(requireContext(), 14f) }
     }

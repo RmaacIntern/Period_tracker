@@ -110,4 +110,10 @@ dependencies {
     androidTestImplementation("androidx.test:core:1.6.1")
     androidTestImplementation(libs.androidx.room.testing)
     androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
+
+
+    // SDP - scalable dp for view sizes
+    implementation("com.intuit.sdp:sdp-android:1.1.0")
+     // SSP - scalable sp for text sizes
+    implementation("com.intuit.ssp:ssp-android:1.1.0")
 }

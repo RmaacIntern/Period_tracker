@@ -5,66 +5,61 @@
     android:id="@+id/onboarding5Root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingHorizontal="24dp"
+    android:paddingHorizontal="@dimen/_20sdp"
     tools:context=".onboarding.OnboardingFragment5">
 
-    <!-- moveIconCircle background set in Kotlin via ThemeHelper.iconCirclePink() -->
     <FrameLayout
         android:id="@+id/moveIconCircle"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_marginTop="24dp"
+        android:layout_width="@dimen/_48sdp"
+        android:layout_height="@dimen/_48sdp"
+        android:layout_marginTop="@dimen/_20sdp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <ImageView
-            android:layout_width="26dp"
-            android:layout_height="26dp"
+            android:layout_width="@dimen/_22sdp"
+            android:layout_height="@dimen/_22sdp"
             android:layout_gravity="center"
             android:src="@drawable/ic_running"
             android:contentDescription="Movement icon" />
     </FrameLayout>
 
-    <!-- ✅ FIX — #3D1B2E → @color/text_primary -->
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/_14sdp"
         android:text="How does your body\nlike to move?"
-        android:textSize="22sp"
+        android:textSize="@dimen/_18ssp"
         android:textStyle="bold"
         android:textColor="@color/text_primary"
         app:layout_constraintTop_toBottomOf="@id/moveIconCircle" />
 
-    <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
     <TextView
         android:id="@+id/tvSubtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/_7sdp"
         android:text="Period Tracker matches workout and rest suggestions to each cycle phase."
-        android:textSize="13sp"
+        android:textSize="@dimen/_11ssp"
         android:textColor="@color/text_secondary"
         app:layout_constraintTop_toBottomOf="@id/tvTitle" />
-
-    <!-- Card backgrounds + text colors set in Kotlin via ThemeHelper / renderSelection() -->
 
     <!-- Gentle -->
     <LinearLayout
         android:id="@+id/cardGentle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:padding="16dp"
+        android:layout_marginTop="@dimen/_17sdp"
+        android:padding="@dimen/_14sdp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         app:layout_constraintTop_toBottomOf="@id/tvSubtitle">
 
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginEnd="12dp"
+            android:layout_width="@dimen/_17sdp"
+            android:layout_height="@dimen/_17sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
             android:src="@drawable/gentle"
             android:contentDescription="Gentle icon" />
 
@@ -79,26 +74,26 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Gentle"
-                android:textSize="14sp"
+                android:textSize="@dimen/_12ssp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvGentleDesc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:text="Walks, stretching, low-key days"
-                android:textSize="11sp" />
+                android:textSize="@dimen/_9ssp" />
         </LinearLayout>
 
         <FrameLayout
             android:id="@+id/checkGentle"
-            android:layout_width="24dp"
-            android:layout_height="24dp">
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp">
             <ImageView
                 android:id="@+id/ivCheckGentle"
-                android:layout_width="14dp"
-                android:layout_height="14dp"
+                android:layout_width="@dimen/_12sdp"
+                android:layout_height="@dimen/_12sdp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_uncheck"
                 android:contentDescription="Selection state" />
@@ -110,16 +105,16 @@
         android:id="@+id/cardBalanced"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:padding="16dp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:padding="@dimen/_14sdp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         app:layout_constraintTop_toBottomOf="@id/cardGentle">
 
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginEnd="12dp"
+            android:layout_width="@dimen/_17sdp"
+            android:layout_height="@dimen/_17sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
             android:src="@drawable/balance"
             android:contentDescription="Balanced icon" />
 
@@ -134,26 +129,26 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Balanced"
-                android:textSize="14sp"
+                android:textSize="@dimen/_12ssp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvBalancedDesc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:text="Regular movement, some workouts"
-                android:textSize="11sp" />
+                android:textSize="@dimen/_9ssp" />
         </LinearLayout>
 
         <FrameLayout
             android:id="@+id/checkBalanced"
-            android:layout_width="24dp"
-            android:layout_height="24dp">
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp">
             <ImageView
                 android:id="@+id/ivCheckBalanced"
-                android:layout_width="14dp"
-                android:layout_height="14dp"
+                android:layout_width="@dimen/_12sdp"
+                android:layout_height="@dimen/_12sdp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_check"
                 android:contentDescription="Selection state" />
@@ -165,16 +160,16 @@
         android:id="@+id/cardActive"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:padding="16dp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:padding="@dimen/_14sdp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         app:layout_constraintTop_toBottomOf="@id/cardBalanced">
 
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginEnd="12dp"
+            android:layout_width="@dimen/_17sdp"
+            android:layout_height="@dimen/_17sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
             android:src="@drawable/active"
             android:contentDescription="Very active icon" />
 
@@ -189,41 +184,40 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Very active"
-                android:textSize="14sp"
+                android:textSize="@dimen/_12ssp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvActiveDesc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:text="Training most days, love to sweat"
-                android:textSize="11sp" />
+                android:textSize="@dimen/_9ssp" />
         </LinearLayout>
 
         <FrameLayout
             android:id="@+id/checkActive"
-            android:layout_width="24dp"
-            android:layout_height="24dp">
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp">
             <ImageView
                 android:id="@+id/ivCheckActive"
-                android:layout_width="14dp"
-                android:layout_height="14dp"
+                android:layout_width="@dimen/_12sdp"
+                android:layout_height="@dimen/_12sdp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_uncheck"
                 android:contentDescription="Selection state" />
         </FrameLayout>
     </LinearLayout>
 
-    <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
     <TextView
         android:id="@+id/tvFooterNote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="@dimen/_20sdp"
         android:gravity="center"
         android:text="🔒 Kept confidential and securely stored on-device"
-        android:textSize="11sp"
+        android:textSize="@dimen/_9ssp"
         android:textColor="@color/text_secondary"
         app:layout_constraintBottom_toBottomOf="parent" />
 

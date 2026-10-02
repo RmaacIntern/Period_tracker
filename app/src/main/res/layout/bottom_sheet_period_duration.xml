@@ -5,22 +5,22 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@drawable/bottom_sheet_bg"
-    android:paddingBottom="32dp">
+    android:paddingBottom="@dimen/_27sdp">
 
     <View
-        android:layout_width="40dp"
-        android:layout_height="4dp"
+        android:layout_width="@dimen/_34sdp"
+        android:layout_height="@dimen/_3sdp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/_10sdp"
         android:background="@drawable/sheet_handle" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="@dimen/_20sdp"
+        android:layout_marginTop="@dimen/_20sdp"
         android:text="Period duration"
-        android:textSize="13sp"
+        android:textSize="@dimen/_11ssp"
         android:textColor="#EC4899"
         android:textStyle="bold"
         android:letterSpacing="0.04" />
@@ -29,56 +29,56 @@
         android:id="@+id/tvPeriodDurSelected"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginStart="@dimen/_20sdp"
+        android:layout_marginTop="@dimen/_3sdp"
         android:text="5 days"
-        android:textSize="32sp"
+        android:textSize="@dimen/_27ssp"
         android:textStyle="bold"
         android:textColor="@color/text_primary" />
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="@dimen/_1sdp"
         android:background="@color/surface_muted"
-        android:layout_marginTop="16dp"
-        android:layout_marginHorizontal="24dp" />
+        android:layout_marginTop="@dimen/_14sdp"
+        android:layout_marginHorizontal="@dimen/_20sdp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvPeriodDuration"
         android:layout_width="match_parent"
-        android:layout_height="220dp"
-        android:layout_marginTop="8dp"
+        android:layout_height="@dimen/_190sdp"
+        android:layout_marginTop="@dimen/_7sdp"
         android:overScrollMode="never" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="20dp"
-        android:paddingHorizontal="24dp">
+        android:layout_marginTop="@dimen/_17sdp"
+        android:paddingHorizontal="@dimen/_20sdp">
 
         <TextView
             android:id="@+id/btnPeriodDurCancel"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="@dimen/_44sdp"
             android:layout_weight="1"
             android:gravity="center"
             android:text="Cancel"
-            android:textSize="15sp"
+            android:textSize="@dimen/_13ssp"
             android:textColor="@color/text_secondary"
-            android:layout_marginEnd="8dp" />
+            android:layout_marginEnd="@dimen/_7sdp" />
 
         <TextView
             android:id="@+id/btnPeriodDurOk"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="@dimen/_44sdp"
             android:layout_weight="1"
             android:gravity="center"
             android:text="OK"
-            android:textSize="15sp"
+            android:textSize="@dimen/_13ssp"
             android:textStyle="bold"
             android:textColor="#EC4899"
-            android:layout_marginStart="8dp" />
+            android:layout_marginStart="@dimen/_7sdp" />
 
     </LinearLayout>
 

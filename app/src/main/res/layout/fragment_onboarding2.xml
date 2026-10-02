@@ -5,62 +5,57 @@
     android:id="@+id/onboarding2Root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingHorizontal="24dp"
+    android:paddingHorizontal="@dimen/_20sdp"
     tools:context=".onboarding.OnboardingFragment2">
 
-    <!-- ✅ FIX — replaced hardcoded #3D1B2E with @color/text_primary -->
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="@dimen/_20sdp"
         android:text="How old are you?"
-        android:textSize="24sp"
+        android:textSize="@dimen/_20ssp"
         android:textStyle="bold"
         android:textColor="@color/text_primary"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- ✅ FIX — replaced hardcoded #8A7A8F with @color/text_secondary -->
     <TextView
         android:id="@+id/tvSubtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/_7sdp"
         android:text="Your age helps Period Tracker personalize your cycle insights and predictions."
-        android:textSize="13sp"
+        android:textSize="@dimen/_11ssp"
         android:textColor="@color/text_secondary"
         app:layout_constraintTop_toBottomOf="@id/tvTitle" />
 
-    <!-- ageCard background set in Kotlin via ThemeHelper.cardBg() -->
     <LinearLayout
         android:id="@+id/ageCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:paddingTop="28dp"
-        android:paddingBottom="16dp"
-        android:paddingHorizontal="20dp"
+        android:layout_marginTop="@dimen/_24sdp"
+        android:paddingTop="@dimen/_24sdp"
+        android:paddingBottom="@dimen/_14sdp"
+        android:paddingHorizontal="@dimen/_17sdp"
         android:orientation="vertical"
         android:gravity="center"
         app:layout_constraintTop_toBottomOf="@id/tvSubtitle">
 
-        <!-- brand pink — kept hardcoded, fine in both modes -->
         <TextView
             android:id="@+id/tvAgeValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="27"
-            android:textSize="48sp"
+            android:textSize="@dimen/_40ssp"
             android:textStyle="bold"
             android:textColor="#E63A5E" />
 
-        <!-- ✅ FIX — replaced hardcoded #8A7A8F with @color/text_secondary -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="@dimen/_2sdp"
             android:text="YEARS YOUNG"
-            android:textSize="11sp"
+            android:textSize="@dimen/_9ssp"
             android:textStyle="bold"
             android:letterSpacing="0.08"
             android:textColor="@color/text_secondary" />
@@ -69,7 +64,7 @@
             android:id="@+id/ageSlider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="@dimen/_17sdp"
             android:valueFrom="12"
             android:valueTo="55"
             android:stepSize="1"
@@ -84,7 +79,6 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <!-- ✅ FIX — replaced hardcoded #8A7A8F with @color/text_secondary -->
             <TextView
                 android:id="@+id/tvMinAge"
                 android:layout_width="0dp"
@@ -92,10 +86,9 @@
                 android:layout_weight="1"
                 android:gravity="start"
                 android:text="12"
-                android:textSize="11sp"
+                android:textSize="@dimen/_9ssp"
                 android:textColor="@color/text_secondary" />
 
-            <!-- ✅ FIX — replaced hardcoded #8A7A8F with @color/text_secondary -->
             <TextView
                 android:id="@+id/tvMaxAge"
                 android:layout_width="0dp"
@@ -103,7 +96,7 @@
                 android:layout_weight="1"
                 android:gravity="end"
                 android:text="55+"
-                android:textSize="11sp"
+                android:textSize="@dimen/_9ssp"
                 android:textColor="@color/text_secondary" />
         </LinearLayout>
 
@@ -113,24 +106,23 @@
         android:id="@+id/nativeAdContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginTop="@dimen/_7sdp"
+        android:layout_marginBottom="@dimen/_25sdp"
         android:background="@drawable/bg_ad_card"
-        android:elevation="1dp"
+        android:elevation="@dimen/_1sdp"
         app:layout_constraintBottom_toTopOf="@id/tvFooterNote"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ageCard" />
 
-    <!-- ✅ FIX — replaced hardcoded #8A7A8F with @color/text_secondary -->
     <TextView
         android:id="@+id/tvFooterNote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="@dimen/_20sdp"
         android:gravity="center"
         android:text="🔒 Kept confidential and securely stored on-device"
-        android:textSize="11sp"
+        android:textSize="@dimen/_9ssp"
         android:textColor="@color/text_secondary"
         app:layout_constraintBottom_toBottomOf="parent" />
 

@@ -5,21 +5,21 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingTop="20dp">
+    android:paddingTop="@dimen/_17sdp">
 
     <!-- Day header row -->
     <androidx.constraintlayout.widget.ConstraintLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="8dp">
+        android:paddingBottom="@dimen/_7sdp">
 
         <TextView
             android:id="@+id/tvDayDate"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="TODAY · SEP 22"
-            android:textSize="12sp"
+            android:textSize="@dimen/_10ssp"
             android:textStyle="bold"
             android:letterSpacing="0.05"
             android:textColor="@color/text_primary"
@@ -32,11 +32,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Day 14"
-            android:textSize="11sp"
+            android:textSize="@dimen/_9ssp"
             android:textColor="#A855F7"
             android:textStyle="bold"
-            android:paddingHorizontal="8dp"
-            android:paddingVertical="2dp"
+            android:paddingHorizontal="@dimen/_7sdp"
+            android:paddingVertical="@dimen/_2sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -44,9 +44,9 @@
             android:id="@+id/tvEntryCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="@dimen/_2sdp"
             android:text="2 entries"
-            android:textSize="11sp"
+            android:textSize="@dimen/_9ssp"
             android:textColor="@color/text_secondary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvDayDate" />
@@ -56,12 +56,12 @@
             android:id="@+id/btnEditDay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="@dimen/_2sdp"
             android:text="Edit"
-            android:textSize="12sp"
+            android:textSize="@dimen/_10ssp"
             android:textColor="#EC4899"
             android:textStyle="bold"
-            android:padding="4dp"
+            android:padding="@dimen/_3sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvDayCycleDay" />
 
@@ -73,7 +73,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingHorizontal="12dp"
-        android:paddingVertical="10dp" />
+        android:paddingHorizontal="@dimen/_10sdp"
+        android:paddingVertical="@dimen/_8sdp" />
 
 </LinearLayout>

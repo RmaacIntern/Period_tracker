@@ -5,39 +5,37 @@
     android:id="@+id/onboarding3Root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingHorizontal="24dp"
+    android:paddingHorizontal="@dimen/_20sdp"
     tools:context=".onboarding.OnboardingFragment3">
 
-    <!-- ✅ FIX — #3D1B2E → @color/text_primary -->
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="@dimen/_20sdp"
         android:text="A little about\nyour body"
-        android:textSize="24sp"
+        android:textSize="@dimen/_20ssp"
         android:textStyle="bold"
         android:textColor="@color/text_primary"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
     <TextView
         android:id="@+id/tvSubtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/_7sdp"
         android:text="Height and weight help personalize your cycle insights and health information. No judgment here, ever."
-        android:textSize="13sp"
+        android:textSize="@dimen/_11ssp"
         android:textColor="@color/text_secondary"
         app:layout_constraintTop_toBottomOf="@id/tvTitle" />
 
-    <!-- heightCard background set in Kotlin via ThemeHelper.cardBg() -->
+    <!-- heightCard -->
     <LinearLayout
         android:id="@+id/heightCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:padding="18dp"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:padding="@dimen/_15sdp"
         android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@id/tvSubtitle">
 
@@ -47,16 +45,14 @@
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
-            <!-- ✅ FIX — #2D1B33 → @color/text_primary -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="📏 Height"
-                android:textSize="14sp"
+                android:textSize="@dimen/_12ssp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary" />
 
-            <!-- brand pink — kept hardcoded -->
             <TextView
                 android:id="@+id/tvHeightValue"
                 android:layout_width="0dp"
@@ -64,7 +60,7 @@
                 android:layout_weight="1"
                 android:gravity="end"
                 android:text="162 cm"
-                android:textSize="16sp"
+                android:textSize="@dimen/_13ssp"
                 android:textStyle="bold"
                 android:textColor="#E63A5E" />
         </LinearLayout>
@@ -73,7 +69,7 @@
             android:id="@+id/heightSlider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/_7sdp"
             android:valueFrom="130"
             android:valueTo="210"
             android:stepSize="1"
@@ -87,34 +83,32 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="130 cm"
-                android:textSize="11sp"
+                android:textSize="@dimen/_9ssp"
                 android:textColor="@color/text_secondary" />
 
-            <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="end"
                 android:text="210 cm"
-                android:textSize="11sp"
+                android:textSize="@dimen/_9ssp"
                 android:textColor="@color/text_secondary" />
         </LinearLayout>
     </LinearLayout>
 
-    <!-- weightCard background set in Kotlin via ThemeHelper.cardBg() -->
+    <!-- weightCard -->
     <LinearLayout
         android:id="@+id/weightCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:padding="18dp"
+        android:layout_marginTop="@dimen/_14sdp"
+        android:padding="@dimen/_15sdp"
         android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@id/heightCard">
 
@@ -124,16 +118,14 @@
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
-            <!-- ✅ FIX — #2D1B33 → @color/text_primary -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="⚖️ Weight"
-                android:textSize="14sp"
+                android:textSize="@dimen/_12ssp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary" />
 
-            <!-- brand pink — kept hardcoded -->
             <TextView
                 android:id="@+id/tvWeightValue"
                 android:layout_width="0dp"
@@ -141,7 +133,7 @@
                 android:layout_weight="1"
                 android:gravity="end"
                 android:text="60.0 kg"
-                android:textSize="16sp"
+                android:textSize="@dimen/_13ssp"
                 android:textStyle="bold"
                 android:textColor="#E63A5E" />
         </LinearLayout>
@@ -150,7 +142,7 @@
             android:id="@+id/weightSlider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/_7sdp"
             android:valueFrom="35"
             android:valueTo="140"
             android:stepSize="0.5"
@@ -164,36 +156,33 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="35 kg"
-                android:textSize="11sp"
+                android:textSize="@dimen/_9ssp"
                 android:textColor="@color/text_secondary" />
 
-            <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="end"
                 android:text="140 kg"
-                android:textSize="11sp"
+                android:textSize="@dimen/_9ssp"
                 android:textColor="@color/text_secondary" />
         </LinearLayout>
     </LinearLayout>
 
-    <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
     <TextView
         android:id="@+id/tvFooterNote"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="@dimen/_20sdp"
         android:gravity="center"
         android:text="🔒 Kept confidential and securely stored on-device"
-        android:textSize="11sp"
+        android:textSize="@dimen/_9ssp"
         android:textColor="@color/text_secondary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

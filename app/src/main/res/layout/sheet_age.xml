@@ -6,16 +6,16 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@drawable/bottom_sheet_bg"
-    android:paddingTop="8dp"
-    android:paddingBottom="32dp"
-    android:paddingHorizontal="24dp">
+    android:paddingTop="@dimen/_7sdp"
+    android:paddingBottom="@dimen/_27sdp"
+    android:paddingHorizontal="@dimen/_20sdp">
 
     <!-- Drag handle -->
     <View
-        android:layout_width="40dp"
-        android:layout_height="4dp"
+        android:layout_width="@dimen/_34sdp"
+        android:layout_height="@dimen/_3sdp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="@dimen/_17sdp"
         android:background="@drawable/bg_drag_handle"/>
 
     <!-- Sheet title -->
@@ -23,18 +23,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="How old are you?"
-        android:textSize="18sp"
+        android:textSize="@dimen/_15ssp"
         android:textStyle="bold"
         android:textColor="@color/text_primary"
-        android:layout_marginBottom="4dp"/>
+        android:layout_marginBottom="@dimen/_3sdp"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Your age helps personalize cycle insights and predictions."
-        android:textSize="12sp"
+        android:textSize="@dimen/_10ssp"
         android:textColor="@color/text_secondary"
-        android:layout_marginBottom="20dp"/>
+        android:layout_marginBottom="@dimen/_17sdp"/>
 
     <!-- Age card (white card with shadow) -->
     <LinearLayout
@@ -43,10 +43,10 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center"
-        android:paddingTop="28dp"
-        android:paddingBottom="16dp"
-        android:paddingHorizontal="20dp"
-        android:layout_marginBottom="24dp">
+        android:paddingTop="@dimen/_24sdp"
+        android:paddingBottom="@dimen/_14sdp"
+        android:paddingHorizontal="@dimen/_17sdp"
+        android:layout_marginBottom="@dimen/_20sdp">
 
         <!-- Big age number -->
         <TextView
@@ -54,16 +54,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="27"
-            android:textSize="56sp"
+            android:textSize="@dimen/_48ssp"
             android:textStyle="bold"
             android:textColor="#E63A5E"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="@dimen/_2sdp"
             android:text="YEARS YOUNG"
-            android:textSize="11sp"
+            android:textSize="@dimen/_9ssp"
             android:textStyle="bold"
             android:letterSpacing="0.08"
             android:textColor="@color/text_secondary"/>
@@ -73,7 +73,7 @@
             android:id="@+id/ageSlider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="@dimen/_17sdp"
             android:valueFrom="12"
             android:valueTo="55"
             android:stepSize="1"
@@ -95,7 +95,7 @@
                 android:layout_weight="1"
                 android:gravity="start"
                 android:text="12"
-                android:textSize="11sp"
+                android:textSize="@dimen/_9ssp"
                 android:textColor="@color/text_secondary"/>
 
             <TextView
@@ -104,7 +104,7 @@
                 android:layout_weight="1"
                 android:gravity="end"
                 android:text="55+"
-                android:textSize="11sp"
+                android:textSize="@dimen/_9ssp"
                 android:textColor="@color/text_secondary"/>
 
         </LinearLayout>
@@ -123,24 +123,24 @@
             android:id="@+id/btnSheetCancel"
             style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="0dp"
-            android:layout_height="52dp"
+            android:layout_height="@dimen/_44sdp"
             android:layout_weight="1"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="@dimen/_7sdp"
             android:text="Cancel"
             android:textColor="@color/text_secondary"
-            app:cornerRadius="14dp"/>
+            app:cornerRadius="@dimen/_12sdp"/>
 
         <Button
             android:id="@+id/btnSheetSave"
             style="@style/Widget.Material3.Button"
             android:layout_width="0dp"
-            android:layout_height="52dp"
+            android:layout_height="@dimen/_44sdp"
             android:layout_weight="1"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="@dimen/_7sdp"
             android:text="Save"
             android:textColor="#FFFFFF"
             android:backgroundTint="#EC4899"
-            app:cornerRadius="14dp"/>
+            app:cornerRadius="@dimen/_12sdp"/>
 
     </LinearLayout>
 
@@ -148,10 +148,10 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/_14sdp"
         android:gravity="center"
         android:text="🔒 Stored securely on-device"
-        android:textSize="11sp"
+        android:textSize="@dimen/_9ssp"
         android:textColor="@color/text_secondary"/>
 
 </LinearLayout>

@@ -6,58 +6,58 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@drawable/bottom_sheet_bg"
-    android:paddingBottom="32dp">
+    android:paddingBottom="@dimen/_32sdp">
 
     <!-- Handle -->
     <View
-        android:layout_width="40dp"
-        android:layout_height="4dp"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_4sdp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/_12sdp"
         android:background="@drawable/sheet_handle" />
 
     <!-- Header -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="@dimen/_24sdp"
+        android:layout_marginTop="@dimen/_24sdp"
         android:text="Health Conditions"
-        android:textSize="20sp"
+        android:textSize="@dimen/_18ssp"
         android:textStyle="bold"
         android:textColor="@color/text_primary" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginStart="@dimen/_24sdp"
+        android:layout_marginTop="@dimen/_4sdp"
         android:text="Based on your logged symptoms"
-        android:textSize="12sp"
+        android:textSize="@dimen/_10ssp"
         android:textColor="@color/text_secondary" />
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="@dimen/_1sdp"
         android:background="@color/surface_muted"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="@dimen/_16sdp" />
 
-    <!-- ── Onboarding conditions section ── -->
+    <!-- Onboarding conditions section -->
     <LinearLayout
         android:id="@+id/layoutOnboardingConditions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingHorizontal="24dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="8dp"
+        android:paddingHorizontal="@dimen/_24sdp"
+        android:paddingTop="@dimen/_16sdp"
+        android:paddingBottom="@dimen/_8sdp"
         android:visibility="gone">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Your health conditions"
-            android:textSize="13sp"
+            android:textSize="@dimen/_11ssp"
             android:textStyle="bold"
             android:textColor="@color/text_primary" />
 
@@ -65,15 +65,15 @@
             android:id="@+id/conditionsChipGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            app:chipSpacingHorizontal="6dp"
-            app:chipSpacingVertical="4dp" />
+            android:layout_marginTop="@dimen/_10sdp"
+            app:chipSpacingHorizontal="@dimen/_6sdp"
+            app:chipSpacingVertical="@dimen/_4sdp" />
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="@dimen/_1sdp"
             android:background="@color/surface_muted"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="@dimen/_16sdp" />
 
     </LinearLayout>
 
@@ -84,31 +84,31 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center"
-        android:paddingVertical="32dp"
+        android:paddingVertical="@dimen/_32sdp"
         android:visibility="gone">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="📋"
-            android:textSize="36sp" />
+            android:textSize="@dimen/_30ssp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="@dimen/_12sdp"
             android:text="No symptoms logged yet"
-            android:textSize="15sp"
+            android:textSize="@dimen/_13ssp"
             android:textStyle="bold"
             android:textColor="@color/text_primary" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="@dimen/_6sdp"
             android:gravity="center"
             android:text="Start logging daily symptoms and\nyour health patterns will appear here."
-            android:textSize="12sp"
+            android:textSize="@dimen/_10ssp"
             android:textColor="@color/text_secondary" />
 
     </LinearLayout>
@@ -119,22 +119,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingHorizontal="24dp"
-        android:paddingTop="8dp"
+        android:paddingHorizontal="@dimen/_24sdp"
+        android:paddingTop="@dimen/_8sdp"
         android:visibility="gone">
 
         <!-- Cramps row -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/rowCramps"
             android:layout_width="match_parent"
-            android:layout_height="56dp">
+            android:layout_height="@dimen/_56sdp">
 
             <TextView
                 android:id="@+id/lblCramps"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="🔴 Cramps"
-                android:textSize="14sp"
+                android:textSize="@dimen/_12ssp"
                 android:textColor="@color/text_primary"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -144,9 +144,9 @@
             <ProgressBar
                 android:id="@+id/barCramps"
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="100dp"
-                android:layout_height="6dp"
-                android:layout_marginEnd="10dp"
+                android:layout_width="@dimen/_100sdp"
+                android:layout_height="@dimen/_6sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
                 android:progressTint="#EC4899"
                 android:progressBackgroundTint="@color/surface_muted"
                 android:max="100"
@@ -157,10 +157,10 @@
 
             <TextView
                 android:id="@+id/tvCrampsCount"
-                android:layout_width="40dp"
+                android:layout_width="@dimen/_40sdp"
                 android:layout_height="wrap_content"
                 android:text="0x"
-                android:textSize="12sp"
+                android:textSize="@dimen/_10ssp"
                 android:textStyle="bold"
                 android:textColor="#EC4899"
                 android:gravity="end"
@@ -168,7 +168,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
-            <View android:layout_width="0dp" android:layout_height="1dp"
+            <View android:layout_width="0dp" android:layout_height="@dimen/_1sdp"
                 android:background="@color/surface_muted"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -180,30 +180,32 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/rowHeadache"
             android:layout_width="match_parent"
-            android:layout_height="56dp">
+            android:layout_height="@dimen/_56sdp">
 
             <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                android:text="💡 Headache" android:textSize="14sp" android:textColor="@color/text_primary"
+                android:text="💡 Headache" android:textSize="@dimen/_12ssp"
+                android:textColor="@color/text_primary"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toStartOf="@id/barHeadache" />
 
             <ProgressBar android:id="@+id/barHeadache"
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="100dp" android:layout_height="6dp"
-                android:layout_marginEnd="10dp"
+                android:layout_width="@dimen/_100sdp" android:layout_height="@dimen/_6sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
                 android:progressTint="#A855F7" android:progressBackgroundTint="@color/surface_muted"
                 android:max="100" android:progress="0"
                 app:layout_constraintEnd_toStartOf="@id/tvHeadacheCount"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
 
             <TextView android:id="@+id/tvHeadacheCount"
-                android:layout_width="40dp" android:layout_height="wrap_content"
-                android:text="0x" android:textSize="12sp" android:textStyle="bold"
+                android:layout_width="@dimen/_40sdp" android:layout_height="wrap_content"
+                android:text="0x" android:textSize="@dimen/_10ssp" android:textStyle="bold"
                 android:textColor="#A855F7" android:gravity="end"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
 
-            <View android:layout_width="0dp" android:layout_height="1dp" android:background="@color/surface_muted"
+            <View android:layout_width="0dp" android:layout_height="@dimen/_1sdp"
+                android:background="@color/surface_muted"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -213,30 +215,32 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/rowBloating"
             android:layout_width="match_parent"
-            android:layout_height="56dp">
+            android:layout_height="@dimen/_56sdp">
 
             <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                android:text="🌀 Bloating" android:textSize="14sp" android:textColor="@color/text_primary"
+                android:text="🌀 Bloating" android:textSize="@dimen/_12ssp"
+                android:textColor="@color/text_primary"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toStartOf="@id/barBloating" />
 
             <ProgressBar android:id="@+id/barBloating"
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="100dp" android:layout_height="6dp"
-                android:layout_marginEnd="10dp"
+                android:layout_width="@dimen/_100sdp" android:layout_height="@dimen/_6sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
                 android:progressTint="#EC4899" android:progressBackgroundTint="@color/surface_muted"
                 android:max="100" android:progress="0"
                 app:layout_constraintEnd_toStartOf="@id/tvBloatingCount"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
 
             <TextView android:id="@+id/tvBloatingCount"
-                android:layout_width="40dp" android:layout_height="wrap_content"
-                android:text="0x" android:textSize="12sp" android:textStyle="bold"
+                android:layout_width="@dimen/_40sdp" android:layout_height="wrap_content"
+                android:text="0x" android:textSize="@dimen/_10ssp" android:textStyle="bold"
                 android:textColor="#EC4899" android:gravity="end"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
 
-            <View android:layout_width="0dp" android:layout_height="1dp" android:background="@color/surface_muted"
+            <View android:layout_width="0dp" android:layout_height="@dimen/_1sdp"
+                android:background="@color/surface_muted"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -246,30 +250,32 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/rowFatigue"
             android:layout_width="match_parent"
-            android:layout_height="56dp">
+            android:layout_height="@dimen/_56sdp">
 
             <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                android:text="🌙 Fatigue" android:textSize="14sp" android:textColor="@color/text_primary"
+                android:text="🌙 Fatigue" android:textSize="@dimen/_12ssp"
+                android:textColor="@color/text_primary"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toStartOf="@id/barFatigue" />
 
             <ProgressBar android:id="@+id/barFatigue"
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="100dp" android:layout_height="6dp"
-                android:layout_marginEnd="10dp"
+                android:layout_width="@dimen/_100sdp" android:layout_height="@dimen/_6sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
                 android:progressTint="#A855F7" android:progressBackgroundTint="@color/surface_muted"
                 android:max="100" android:progress="0"
                 app:layout_constraintEnd_toStartOf="@id/tvFatigueCount"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
 
             <TextView android:id="@+id/tvFatigueCount"
-                android:layout_width="40dp" android:layout_height="wrap_content"
-                android:text="0x" android:textSize="12sp" android:textStyle="bold"
+                android:layout_width="@dimen/_40sdp" android:layout_height="wrap_content"
+                android:text="0x" android:textSize="@dimen/_10ssp" android:textStyle="bold"
                 android:textColor="#A855F7" android:gravity="end"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
 
-            <View android:layout_width="0dp" android:layout_height="1dp" android:background="@color/surface_muted"
+            <View android:layout_width="0dp" android:layout_height="@dimen/_1sdp"
+                android:background="@color/surface_muted"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -279,30 +285,32 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/rowTenderBreasts"
             android:layout_width="match_parent"
-            android:layout_height="56dp">
+            android:layout_height="@dimen/_56sdp">
 
             <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                android:text="💗 Tender Breasts" android:textSize="14sp" android:textColor="@color/text_primary"
+                android:text="💗 Tender Breasts" android:textSize="@dimen/_12ssp"
+                android:textColor="@color/text_primary"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toStartOf="@id/barTenderBreasts" />
 
             <ProgressBar android:id="@+id/barTenderBreasts"
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="100dp" android:layout_height="6dp"
-                android:layout_marginEnd="10dp"
+                android:layout_width="@dimen/_100sdp" android:layout_height="@dimen/_6sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
                 android:progressTint="#EC4899" android:progressBackgroundTint="@color/surface_muted"
                 android:max="100" android:progress="0"
                 app:layout_constraintEnd_toStartOf="@id/tvTenderBreastsCount"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
 
             <TextView android:id="@+id/tvTenderBreastsCount"
-                android:layout_width="40dp" android:layout_height="wrap_content"
-                android:text="0x" android:textSize="12sp" android:textStyle="bold"
+                android:layout_width="@dimen/_40sdp" android:layout_height="wrap_content"
+                android:text="0x" android:textSize="@dimen/_10ssp" android:textStyle="bold"
                 android:textColor="#EC4899" android:gravity="end"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
 
-            <View android:layout_width="0dp" android:layout_height="1dp" android:background="@color/surface_muted"
+            <View android:layout_width="0dp" android:layout_height="@dimen/_1sdp"
+                android:background="@color/surface_muted"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -312,30 +320,32 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/rowBackache"
             android:layout_width="match_parent"
-            android:layout_height="56dp">
+            android:layout_height="@dimen/_56sdp">
 
             <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                android:text="🦴 Backache" android:textSize="14sp" android:textColor="@color/text_primary"
+                android:text="🦴 Backache" android:textSize="@dimen/_12ssp"
+                android:textColor="@color/text_primary"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toStartOf="@id/barBackache" />
 
             <ProgressBar android:id="@+id/barBackache"
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="100dp" android:layout_height="6dp"
-                android:layout_marginEnd="10dp"
+                android:layout_width="@dimen/_100sdp" android:layout_height="@dimen/_6sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
                 android:progressTint="#A855F7" android:progressBackgroundTint="@color/surface_muted"
                 android:max="100" android:progress="0"
                 app:layout_constraintEnd_toStartOf="@id/tvBackacheCount"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
 
             <TextView android:id="@+id/tvBackacheCount"
-                android:layout_width="40dp" android:layout_height="wrap_content"
-                android:text="0x" android:textSize="12sp" android:textStyle="bold"
+                android:layout_width="@dimen/_40sdp" android:layout_height="wrap_content"
+                android:text="0x" android:textSize="@dimen/_10ssp" android:textStyle="bold"
                 android:textColor="#A855F7" android:gravity="end"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
 
-            <View android:layout_width="0dp" android:layout_height="1dp" android:background="@color/surface_muted"
+            <View android:layout_width="0dp" android:layout_height="@dimen/_1sdp"
+                android:background="@color/surface_muted"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -345,30 +355,32 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/rowAcne"
             android:layout_width="match_parent"
-            android:layout_height="56dp">
+            android:layout_height="@dimen/_56sdp">
 
             <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                android:text="✨ Acne" android:textSize="14sp" android:textColor="@color/text_primary"
+                android:text="✨ Acne" android:textSize="@dimen/_12ssp"
+                android:textColor="@color/text_primary"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toStartOf="@id/barAcne" />
 
             <ProgressBar android:id="@+id/barAcne"
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="100dp" android:layout_height="6dp"
-                android:layout_marginEnd="10dp"
+                android:layout_width="@dimen/_100sdp" android:layout_height="@dimen/_6sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
                 android:progressTint="#EC4899" android:progressBackgroundTint="@color/surface_muted"
                 android:max="100" android:progress="0"
                 app:layout_constraintEnd_toStartOf="@id/tvAcneCount"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
 
             <TextView android:id="@+id/tvAcneCount"
-                android:layout_width="40dp" android:layout_height="wrap_content"
-                android:text="0x" android:textSize="12sp" android:textStyle="bold"
+                android:layout_width="@dimen/_40sdp" android:layout_height="wrap_content"
+                android:text="0x" android:textSize="@dimen/_10ssp" android:textStyle="bold"
                 android:textColor="#EC4899" android:gravity="end"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
 
-            <View android:layout_width="0dp" android:layout_height="1dp" android:background="@color/surface_muted"
+            <View android:layout_width="0dp" android:layout_height="@dimen/_1sdp"
+                android:background="@color/surface_muted"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -378,30 +390,32 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/rowNausea"
             android:layout_width="match_parent"
-            android:layout_height="56dp">
+            android:layout_height="@dimen/_56sdp">
 
             <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                android:text="🤢 Nausea" android:textSize="14sp" android:textColor="@color/text_primary"
+                android:text="🤢 Nausea" android:textSize="@dimen/_12ssp"
+                android:textColor="@color/text_primary"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toStartOf="@id/barNausea" />
 
             <ProgressBar android:id="@+id/barNausea"
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="100dp" android:layout_height="6dp"
-                android:layout_marginEnd="10dp"
+                android:layout_width="@dimen/_100sdp" android:layout_height="@dimen/_6sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
                 android:progressTint="#A855F7" android:progressBackgroundTint="@color/surface_muted"
                 android:max="100" android:progress="0"
                 app:layout_constraintEnd_toStartOf="@id/tvNauseaCount"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
 
             <TextView android:id="@+id/tvNauseaCount"
-                android:layout_width="40dp" android:layout_height="wrap_content"
-                android:text="0x" android:textSize="12sp" android:textStyle="bold"
+                android:layout_width="@dimen/_40sdp" android:layout_height="wrap_content"
+                android:text="0x" android:textSize="@dimen/_10ssp" android:textStyle="bold"
                 android:textColor="#A855F7" android:gravity="end"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
 
-            <View android:layout_width="0dp" android:layout_height="1dp" android:background="@color/surface_muted"
+            <View android:layout_width="0dp" android:layout_height="@dimen/_1sdp"
+                android:background="@color/surface_muted"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -411,25 +425,26 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/rowCravings"
             android:layout_width="match_parent"
-            android:layout_height="56dp">
+            android:layout_height="@dimen/_56sdp">
 
             <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                android:text="🍫 Cravings" android:textSize="14sp" android:textColor="@color/text_primary"
+                android:text="🍫 Cravings" android:textSize="@dimen/_12ssp"
+                android:textColor="@color/text_primary"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toStartOf="@id/barCravings" />
 
             <ProgressBar android:id="@+id/barCravings"
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="100dp" android:layout_height="6dp"
-                android:layout_marginEnd="10dp"
+                android:layout_width="@dimen/_100sdp" android:layout_height="@dimen/_6sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
                 android:progressTint="#EC4899" android:progressBackgroundTint="@color/surface_muted"
                 android:max="100" android:progress="0"
                 app:layout_constraintEnd_toStartOf="@id/tvCravingsCount"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
 
             <TextView android:id="@+id/tvCravingsCount"
-                android:layout_width="40dp" android:layout_height="wrap_content"
-                android:text="0x" android:textSize="12sp" android:textStyle="bold"
+                android:layout_width="@dimen/_40sdp" android:layout_height="wrap_content"
+                android:text="0x" android:textSize="@dimen/_10ssp" android:textStyle="bold"
                 android:textColor="#EC4899" android:gravity="end"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent" />
@@ -440,12 +455,12 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:layout_marginBottom="@dimen/_8sdp"
             android:text="ⓘ  Based on your daily log history. Log symptoms regularly for accurate patterns."
-            android:textSize="11sp"
+            android:textSize="@dimen/_9ssp"
             android:textColor="@color/text_secondary"
-            android:lineSpacingExtra="2dp" />
+            android:lineSpacingExtra="@dimen/_2sdp" />
 
     </LinearLayout>
 

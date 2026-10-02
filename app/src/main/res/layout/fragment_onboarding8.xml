@@ -11,22 +11,21 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="20dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="24dp">
+        android:paddingHorizontal="@dimen/_17sdp"
+        android:paddingTop="@dimen/_7sdp"
+        android:paddingBottom="@dimen/_20sdp">
 
-        <!-- moonBadge background set in Kotlin via roundedBgFromColor(icon_bg_teal) -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/moonBadge"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="@dimen/_48sdp"
+            android:layout_height="@dimen/_48sdp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
             <ImageView
                 android:id="@+id/ivMoon"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
                 android:src="@drawable/menstrual_pain"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -35,56 +34,53 @@
                 tools:ignore="ContentDescription" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- ✅ FIX — #2D1B33 → @color/text_primary -->
         <TextView
             android:id="@+id/tvHeading"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@dimen/_14sdp"
             android:text="And your natural rhythm"
-            android:textSize="22sp"
+            android:textSize="@dimen/_18ssp"
             android:textStyle="bold"
             android:textColor="@color/text_primary"
             app:layout_constraintTop_toBottomOf="@id/moonBadge"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
         <TextView
             android:id="@+id/tvSubheading"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="@dimen/_5sdp"
             android:text="Not sure? Averages are 28 and 5. Period Tracker refines both with every period you log."
-            android:textSize="13sp"
+            android:textSize="@dimen/_11ssp"
             android:textColor="@color/text_secondary"
             app:layout_constraintTop_toBottomOf="@id/tvHeading"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- cycleLengthCard background set in Kotlin via ThemeHelper.cardBg() -->
+        <!-- Cycle length card -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cycleLengthCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:padding="18dp"
+            android:layout_marginTop="@dimen/_17sdp"
+            android:padding="@dimen/_15sdp"
             app:layout_constraintTop_toBottomOf="@id/tvSubheading"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
-            <!-- cycleIconBg background set in Kotlin via roundedBgFromColor(icon_bg_teal) -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cycleIconBg"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="@dimen/_27sdp"
+                android:layout_height="@dimen/_27sdp"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
 
                 <ImageView
                     android:id="@+id/ivCycleIcon"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
+                    android:layout_width="@dimen/_21sdp"
+                    android:layout_height="@dimen/_21sdp"
                     android:src="@drawable/ic_cycle"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -93,14 +89,13 @@
                     tools:ignore="ContentDescription" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- ✅ FIX — #2D1B33 → @color/text_primary -->
             <TextView
                 android:id="@+id/tvCycleLengthLabel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="@dimen/_8sdp"
                 android:text="Cycle length"
-                android:textSize="14sp"
+                android:textSize="@dimen/_12ssp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary"
                 app:layout_constraintTop_toTopOf="@id/cycleIconBg"
@@ -108,13 +103,12 @@
                 app:layout_constraintStart_toEndOf="@id/cycleIconBg"
                 app:layout_constraintEnd_toStartOf="@id/tvCycleLengthValue" />
 
-            <!-- brand pink — kept hardcoded -->
             <TextView
                 android:id="@+id/tvCycleLengthValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="28 days"
-                android:textSize="13sp"
+                android:textSize="@dimen/_11ssp"
                 android:textStyle="bold"
                 android:textColor="#E63A5E"
                 app:layout_constraintTop_toTopOf="@id/cycleIconBg"
@@ -125,7 +119,7 @@
                 android:id="@+id/seekCycleLength"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="@dimen/_17sdp"
                 android:valueFrom="21"
                 android:valueTo="45"
                 android:stepSize="1"
@@ -138,41 +132,38 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
-            <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
             <TextView
                 android:id="@+id/tvCycleMinLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:text="21 d"
-                android:textSize="11sp"
+                android:textSize="@dimen/_9ssp"
                 android:textColor="@color/text_secondary"
                 app:layout_constraintTop_toBottomOf="@id/seekCycleLength"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
             <TextView
                 android:id="@+id/tvCycleMaxLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:text="45 d"
-                android:textSize="11sp"
+                android:textSize="@dimen/_9ssp"
                 android:textColor="@color/text_secondary"
                 app:layout_constraintTop_toBottomOf="@id/seekCycleLength"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
-            <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
             <TextView
                 android:id="@+id/tvCycleTypical"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:gravity="center"
                 android:text="Typically 21-35 days"
-                android:textSize="11sp"
+                android:textSize="@dimen/_9ssp"
                 android:textColor="@color/text_secondary"
                 app:layout_constraintTop_toBottomOf="@id/seekCycleLength"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -181,29 +172,28 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- periodLengthCard background set in Kotlin via ThemeHelper.cardBg() -->
+        <!-- Period length card -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/periodLengthCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:padding="18dp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:padding="@dimen/_15sdp"
             app:layout_constraintTop_toBottomOf="@id/cycleLengthCard"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
-            <!-- periodIconBg background set in Kotlin via roundedBgFromColor(icon_bg_pink) -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/periodIconBg"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="@dimen/_27sdp"
+                android:layout_height="@dimen/_27sdp"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
 
                 <ImageView
                     android:id="@+id/ivPeriodIcon"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
+                    android:layout_width="@dimen/_21sdp"
+                    android:layout_height="@dimen/_21sdp"
                     android:src="@drawable/ic_period_drop"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -212,14 +202,13 @@
                     tools:ignore="ContentDescription" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- ✅ FIX — #2D1B33 → @color/text_primary -->
             <TextView
                 android:id="@+id/tvPeriodLengthLabel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="@dimen/_8sdp"
                 android:text="Period length"
-                android:textSize="14sp"
+                android:textSize="@dimen/_12ssp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary"
                 app:layout_constraintTop_toTopOf="@id/periodIconBg"
@@ -227,13 +216,12 @@
                 app:layout_constraintStart_toEndOf="@id/periodIconBg"
                 app:layout_constraintEnd_toStartOf="@id/tvPeriodLengthValue" />
 
-            <!-- brand pink — kept hardcoded -->
             <TextView
                 android:id="@+id/tvPeriodLengthValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="5 days"
-                android:textSize="13sp"
+                android:textSize="@dimen/_11ssp"
                 android:textStyle="bold"
                 android:textColor="#E63A5E"
                 app:layout_constraintTop_toTopOf="@id/periodIconBg"
@@ -244,7 +232,7 @@
                 android:id="@+id/seekPeriodLength"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="@dimen/_17sdp"
                 android:valueFrom="2"
                 android:valueTo="10"
                 android:stepSize="1"
@@ -257,41 +245,38 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
-            <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
             <TextView
                 android:id="@+id/tvPeriodMinLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:text="2 d"
-                android:textSize="11sp"
+                android:textSize="@dimen/_9ssp"
                 android:textColor="@color/text_secondary"
                 app:layout_constraintTop_toBottomOf="@id/seekPeriodLength"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
             <TextView
                 android:id="@+id/tvPeriodMaxLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:text="10 d"
-                android:textSize="11sp"
+                android:textSize="@dimen/_9ssp"
                 android:textColor="@color/text_secondary"
                 app:layout_constraintTop_toBottomOf="@id/seekPeriodLength"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
-            <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
             <TextView
                 android:id="@+id/tvPeriodTypical"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:gravity="center"
                 android:text="Typically 2-7 days"
-                android:textSize="11sp"
+                android:textSize="@dimen/_9ssp"
                 android:textColor="@color/text_secondary"
                 app:layout_constraintTop_toBottomOf="@id/seekPeriodLength"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -302,10 +287,10 @@
 
         <ImageView
             android:id="@+id/ivLock"
-            android:layout_width="12dp"
-            android:layout_height="12dp"
-            android:layout_marginEnd="6dp"
-            android:layout_marginTop="18dp"
+            android:layout_width="@dimen/_10sdp"
+            android:layout_height="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_15sdp"
             android:src="@drawable/ic_lock"
             app:layout_constraintTop_toBottomOf="@id/periodLengthCard"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -314,13 +299,12 @@
             app:layout_constraintHorizontal_chainStyle="packed"
             tools:ignore="ContentDescription" />
 
-        <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
         <TextView
             android:id="@+id/tvPrivacyText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Kept confidential and securely stored on-device"
-            android:textSize="11sp"
+            android:textSize="@dimen/_9ssp"
             android:textColor="@color/text_secondary"
             app:layout_constraintTop_toTopOf="@id/ivLock"
             app:layout_constraintBottom_toBottomOf="@id/ivLock"

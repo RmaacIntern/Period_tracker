@@ -119,7 +119,7 @@ class InsightsFragment : Fragment() {
                 binding.tvHeadachePct.text   = "0%"
                 binding.tvDailyTrackingLabel.text = "• Daily tracking"
                 binding.tvLastUpdatedLabel.text   = "No entries yet"
-                binding.tvSymptomPeakValue.text   = "Not enough data"
+                binding.tvSymptomPeakValue.text   = "No data"
                 return@observe
             }
 
@@ -161,7 +161,7 @@ class InsightsFragment : Fragment() {
                 }
                 val pmsDay = CycleEngine.detectPmsOnsetDay(logTriples)
                 binding.tvSymptomPeakValue.text =
-                    if (pmsDay != null) "Day $pmsDay" else "Not enough data"
+                    if (pmsDay != null) "Day $pmsDay" else "No data"
             } else {
                 binding.tvSymptomPeakValue.text = "—"
             }

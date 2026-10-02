@@ -122,4 +122,28 @@ object ThemeHelper {
             setColor(context.getColor(R.color.basal_card_bg))
         }
     }
+
+    /**
+     * Period prediction card — soft pink tint
+     * Only used by lastPeriodCard in HomeFragment
+     */
+    fun periodPredCardBg(context: Context, radiusDp: Float): GradientDrawable {
+        return GradientDrawable().apply {
+            shape        = GradientDrawable.RECTANGLE
+            cornerRadius = radiusDp * context.resources.displayMetrics.density
+            setColor(context.getColor(R.color.period_pred_card_bg))
+        }
+    }
+
+    /**
+     * Fertile window prediction card — soft purple tint
+     * Only used by nextPeriodCard in HomeFragment
+     */
+    fun fertilePredCardBg(context: Context, radiusDp: Float): GradientDrawable {
+        return GradientDrawable().apply {
+            shape        = GradientDrawable.RECTANGLE
+            cornerRadius = radiusDp * context.resources.displayMetrics.density
+            setColor(context.getColor(R.color.fertile_pred_card_bg))
+        }
+    }
 }

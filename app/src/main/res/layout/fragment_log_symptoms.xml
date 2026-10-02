@@ -11,34 +11,32 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="32dp">
+        android:paddingBottom="@dimen/_27sdp">
 
         <!-- TOP BAR -->
-        <!-- ✅ FIX — #FFFFFF → @color/surface_card so top bar adapts in dark mode -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:paddingHorizontal="16dp"
+            android:layout_height="@dimen/_48sdp"
+            android:paddingHorizontal="@dimen/_14sdp"
             android:background="@color/surface_card">
 
             <ImageView
                 android:id="@+id/btnBack"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:padding="8dp"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:padding="@dimen/_7sdp"
                 android:src="@drawable/ic_arrow_left"
                 android:contentDescription="Back"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
-            <!-- ✅ FIX — #2D1B33 → @color/text_primary -->
             <TextView
                 android:id="@+id/tvScreenTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Log Symptoms"
-                android:textSize="16sp"
+                android:textSize="@dimen/_13ssp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary"
                 app:layout_constraintStart_toStartOf="parent"
@@ -46,38 +44,36 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
-            <!-- brand pink — kept hardcoded -->
             <TextView
                 android:id="@+id/btnSave"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Save"
-                android:textSize="13sp"
+                android:textSize="@dimen/_11ssp"
                 android:textStyle="bold"
                 android:textColor="#EC4899"
-                android:padding="4dp"
+                android:padding="@dimen/_3sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- CYCLE INFO BANNER — brand gradient, set in Kotlin -->
+        <!-- CYCLE INFO BANNER -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cycleBanner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="4dp"
-            android:padding="14dp">
+            android:layout_marginStart="@dimen/_14sdp"
+            android:layout_marginEnd="@dimen/_14sdp"
+            android:layout_marginTop="@dimen/_3sdp"
+            android:padding="@dimen/_12sdp">
 
-            <!-- White text on gradient — correct in both modes -->
             <TextView
                 android:id="@+id/tvBannerCycleDay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="CYCLE DAY · DAY 14"
-                android:textSize="12sp"
+                android:textSize="@dimen/_10ssp"
                 android:textStyle="bold"
                 android:letterSpacing="0.06"
                 android:textColor="#FFFFFF"
@@ -90,7 +86,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="🌸"
-                android:textSize="28sp"
+                android:textSize="@dimen/_22ssp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -98,9 +94,9 @@
                 android:id="@+id/tvBannerPhase"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="@dimen/_5sdp"
                 android:text="Ovulatory Phase"
-                android:textSize="16sp"
+                android:textSize="@dimen/_13ssp"
                 android:textStyle="bold"
                 android:textColor="#FFFFFF"
                 app:layout_constraintStart_toStartOf="parent"
@@ -111,9 +107,9 @@
                 android:id="@+id/tvDatePill"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="@dimen/_3sdp"
                 android:text="Today · Oct 14"
-                android:textSize="12sp"
+                android:textSize="@dimen/_10ssp"
                 android:textStyle="bold"
                 android:textColor="#FFFFFF"
                 android:alpha="0.85"
@@ -121,37 +117,35 @@
                 app:layout_constraintTop_toBottomOf="@id/tvBannerPhase" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- ─── MENSTRUAL FLOW ─── -->
+        <!-- MENSTRUAL FLOW -->
         <LinearLayout
             android:id="@+id/sectionFlow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="16dp"
-            android:paddingHorizontal="16dp">
+            android:layout_marginTop="@dimen/_14sdp"
+            android:paddingHorizontal="@dimen/_14sdp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <!-- ✅ FIX — #2D1B33 → @color/text_primary -->
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="MENSTRUAL FLOW"
-                    android:textSize="10sp"
+                    android:textSize="@dimen/_8ssp"
                     android:textStyle="bold"
                     android:letterSpacing="0.08"
                     android:textColor="@color/text_primary"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/tvFlowCount" />
-                <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
                 <TextView
                     android:id="@+id/tvFlowCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0 selected"
-                    android:textSize="10sp"
+                    android:textSize="@dimen/_8ssp"
                     android:textColor="@color/text_secondary"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -161,7 +155,7 @@
                 android:id="@+id/chipGroupFlow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="@dimen/_8sdp"
                 app:singleSelection="true"
                 app:selectionRequired="false">
                 <com.google.android.material.chip.Chip android:id="@+id/chipFlowNone"
@@ -182,18 +176,18 @@
             </com.google.android.material.chip.ChipGroup>
         </LinearLayout>
 
-        <View android:layout_width="match_parent" android:layout_height="1dp"
-            android:background="@color/stroke_card" android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp" android:layout_marginEnd="16dp" />
+        <View android:layout_width="match_parent" android:layout_height="@dimen/_1sdp"
+            android:background="@color/stroke_card" android:layout_marginTop="@dimen/_14sdp"
+            android:layout_marginStart="@dimen/_14sdp" android:layout_marginEnd="@dimen/_14sdp" />
 
-        <!-- ─── MOOD ─── -->
+        <!-- MOOD -->
         <LinearLayout
             android:id="@+id/sectionMood"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="16dp"
-            android:paddingHorizontal="16dp">
+            android:layout_marginTop="@dimen/_14sdp"
+            android:paddingHorizontal="@dimen/_14sdp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -202,7 +196,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="MOOD"
-                    android:textSize="10sp"
+                    android:textSize="@dimen/_8ssp"
                     android:textStyle="bold"
                     android:letterSpacing="0.08"
                     android:textColor="@color/text_primary"
@@ -214,7 +208,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0 selected"
-                    android:textSize="10sp"
+                    android:textSize="@dimen/_8ssp"
                     android:textColor="@color/text_secondary"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -224,7 +218,7 @@
                 android:id="@+id/chipGroupMood"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="@dimen/_8sdp"
                 app:singleSelection="true">
                 <com.google.android.material.chip.Chip android:id="@+id/chipMoodHappy"
                     android:layout_width="wrap_content" android:layout_height="wrap_content"
@@ -249,33 +243,32 @@
                     android:text="Mixed feelings" style="@style/CycleChip" />
             </com.google.android.material.chip.ChipGroup>
         </LinearLayout>
-        <View android:layout_width="match_parent" android:layout_height="1dp"
-            android:background="@color/stroke_card" android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp" android:layout_marginEnd="16dp" />
+
+        <View android:layout_width="match_parent" android:layout_height="@dimen/_1sdp"
+            android:background="@color/stroke_card" android:layout_marginTop="@dimen/_14sdp"
+            android:layout_marginStart="@dimen/_14sdp" android:layout_marginEnd="@dimen/_14sdp" />
 
         <FrameLayout
             android:id="@+id/nativeAdContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginHorizontal="@dimen/_14sdp"
+            android:layout_marginBottom="@dimen/_8sdp" />
 
-        <View android:layout_width="match_parent"
-            android:layout_height="1dp"
+        <View android:layout_width="match_parent" android:layout_height="@dimen/_1sdp"
             android:background="@color/stroke_card"
+            android:layout_marginStart="@dimen/_14sdp"
+            android:layout_marginEnd="@dimen/_14sdp" />
 
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp" />
-
-        <!-- ─── PHYSICAL SYMPTOMS ─── -->
+        <!-- PHYSICAL SYMPTOMS -->
         <LinearLayout
             android:id="@+id/sectionSymptoms"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="16dp"
-            android:paddingHorizontal="16dp">
+            android:layout_marginTop="@dimen/_14sdp"
+            android:paddingHorizontal="@dimen/_14sdp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -284,7 +277,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="PHYSICAL SYMPTOMS"
-                    android:textSize="10sp"
+                    android:textSize="@dimen/_8ssp"
                     android:textStyle="bold"
                     android:letterSpacing="0.08"
                     android:textColor="@color/text_primary"
@@ -296,7 +289,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0 selected"
-                    android:textSize="10sp"
+                    android:textSize="@dimen/_8ssp"
                     android:textColor="@color/text_secondary"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -306,7 +299,7 @@
                 android:id="@+id/chipGroupSymptoms"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="@dimen/_8sdp"
                 app:singleSelection="false">
                 <com.google.android.material.chip.Chip android:id="@+id/chipSympCramps"
                     android:layout_width="wrap_content" android:layout_height="wrap_content"
@@ -338,18 +331,18 @@
             </com.google.android.material.chip.ChipGroup>
         </LinearLayout>
 
-        <View android:layout_width="match_parent" android:layout_height="1dp"
-            android:background="@color/stroke_card" android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp" android:layout_marginEnd="16dp" />
+        <View android:layout_width="match_parent" android:layout_height="@dimen/_1sdp"
+            android:background="@color/stroke_card" android:layout_marginTop="@dimen/_14sdp"
+            android:layout_marginStart="@dimen/_14sdp" android:layout_marginEnd="@dimen/_14sdp" />
 
-        <!-- ─── CERVICAL FLOW ─── -->
+        <!-- CERVICAL FLOW -->
         <LinearLayout
             android:id="@+id/sectionCervical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="16dp"
-            android:paddingHorizontal="16dp">
+            android:layout_marginTop="@dimen/_14sdp"
+            android:paddingHorizontal="@dimen/_14sdp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -358,7 +351,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="CERVICAL FLOW"
-                    android:textSize="10sp"
+                    android:textSize="@dimen/_8ssp"
                     android:textStyle="bold"
                     android:letterSpacing="0.08"
                     android:textColor="@color/text_primary"
@@ -370,7 +363,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="fertility indicator"
-                    android:textSize="10sp"
+                    android:textSize="@dimen/_8ssp"
                     android:textColor="@color/text_secondary"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -380,7 +373,7 @@
                 android:id="@+id/chipGroupCervical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="@dimen/_8sdp"
                 app:singleSelection="true"
                 app:selectionRequired="false">
                 <com.google.android.material.chip.Chip android:id="@+id/chipCervDry"
@@ -401,18 +394,18 @@
             </com.google.android.material.chip.ChipGroup>
         </LinearLayout>
 
-        <View android:layout_width="match_parent" android:layout_height="1dp"
-            android:background="@color/stroke_card" android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp" android:layout_marginEnd="16dp" />
+        <View android:layout_width="match_parent" android:layout_height="@dimen/_1sdp"
+            android:background="@color/stroke_card" android:layout_marginTop="@dimen/_14sdp"
+            android:layout_marginStart="@dimen/_14sdp" android:layout_marginEnd="@dimen/_14sdp" />
 
-        <!-- ─── OVULATION TEST (LH) ─── -->
+        <!-- OVULATION TEST (LH) -->
         <LinearLayout
             android:id="@+id/sectionLh"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="16dp"
-            android:paddingHorizontal="16dp">
+            android:layout_marginTop="@dimen/_14sdp"
+            android:paddingHorizontal="@dimen/_14sdp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -421,7 +414,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="OVULATION TEST (LH)"
-                    android:textSize="10sp"
+                    android:textSize="@dimen/_8ssp"
                     android:textStyle="bold"
                     android:letterSpacing="0.08"
                     android:textColor="@color/text_primary"
@@ -433,7 +426,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="optional"
-                    android:textSize="10sp"
+                    android:textSize="@dimen/_8ssp"
                     android:textColor="@color/text_secondary"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -443,7 +436,7 @@
                 android:id="@+id/chipGroupLh"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="@dimen/_8sdp"
                 app:singleSelection="true"
                 app:selectionRequired="true">
                 <com.google.android.material.chip.Chip android:id="@+id/chipLhNotTested"
@@ -458,18 +451,18 @@
             </com.google.android.material.chip.ChipGroup>
         </LinearLayout>
 
-        <View android:layout_width="match_parent" android:layout_height="1dp"
-            android:background="@color/stroke_card" android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp" android:layout_marginEnd="16dp" />
+        <View android:layout_width="match_parent" android:layout_height="@dimen/_1sdp"
+            android:background="@color/stroke_card" android:layout_marginTop="@dimen/_14sdp"
+            android:layout_marginStart="@dimen/_14sdp" android:layout_marginEnd="@dimen/_14sdp" />
 
-        <!-- ─── BASAL BODY TEMP ─── -->
+        <!-- BASAL BODY TEMP -->
         <LinearLayout
             android:id="@+id/sectionBasal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="16dp"
-            android:paddingHorizontal="16dp">
+            android:layout_marginTop="@dimen/_14sdp"
+            android:paddingHorizontal="@dimen/_14sdp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -478,7 +471,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="BASAL BODY TEMP"
-                    android:textSize="10sp"
+                    android:textSize="@dimen/_8ssp"
                     android:textStyle="bold"
                     android:letterSpacing="0.08"
                     android:textColor="@color/text_primary"
@@ -490,41 +483,38 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="morning reading"
-                    android:textSize="10sp"
+                    android:textSize="@dimen/_8ssp"
                     android:textColor="@color/text_secondary"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- basalTempCard background set in Kotlin via ThemeHelper.basalCardBg() -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/basalTempCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:padding="14dp">
+                android:layout_marginTop="@dimen/_8sdp"
+                android:padding="@dimen/_12sdp">
 
-                <!-- brand pink — kept hardcoded -->
                 <TextView
                     android:id="@+id/btnTempDown"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="@dimen/_34sdp"
+                    android:layout_height="@dimen/_34sdp"
                     android:gravity="center"
                     android:text="−"
-                    android:textSize="22sp"
+                    android:textSize="@dimen/_18ssp"
                     android:textColor="#EC4899"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
 
-                <!-- ✅ FIX — #2D1B33 → @color/text_primary -->
                 <TextView
                     android:id="@+id/tvBasalTemp"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="97.8°"
-                    android:textSize="36sp"
+                    android:textSize="@dimen/_28ssp"
                     android:textStyle="bold"
                     android:textColor="@color/text_primary"
                     android:gravity="center"
@@ -535,11 +525,11 @@
 
                 <TextView
                     android:id="@+id/btnTempUp"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="@dimen/_34sdp"
+                    android:layout_height="@dimen/_34sdp"
                     android:gravity="center"
                     android:text="+"
-                    android:textSize="22sp"
+                    android:textSize="@dimen/_18ssp"
                     android:textColor="#EC4899"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -548,36 +538,35 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
 
-        <View android:layout_width="match_parent" android:layout_height="1dp"
-            android:background="@color/stroke_card" android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp" android:layout_marginEnd="16dp" />
+        <View android:layout_width="match_parent" android:layout_height="@dimen/_1sdp"
+            android:background="@color/stroke_card" android:layout_marginTop="@dimen/_14sdp"
+            android:layout_marginStart="@dimen/_14sdp" android:layout_marginEnd="@dimen/_14sdp" />
 
-        <!-- ─── DAILY NOTES ─── -->
+        <!-- DAILY NOTES -->
         <LinearLayout
             android:id="@+id/sectionNotes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="16dp"
-            android:paddingHorizontal="16dp">
+            android:layout_marginTop="@dimen/_14sdp"
+            android:paddingHorizontal="@dimen/_14sdp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="DAILY NOTES"
-                android:textSize="10sp"
+                android:textSize="@dimen/_8ssp"
                 android:textStyle="bold"
                 android:letterSpacing="0.08"
                 android:textColor="@color/text_primary" />
 
-            <!-- ✅ FIX — #2D1B33 → @color/text_primary; hint color kept muted -->
             <EditText
                 android:id="@+id/etNotes"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:layout_marginTop="10dp"
+                android:layout_height="@dimen/_85sdp"
+                android:layout_marginTop="@dimen/_8sdp"
                 android:hint="Add any notes here, sleep quality, stress levels..."
-                android:textSize="13sp"
+                android:textSize="@dimen/_11ssp"
                 android:textColor="@color/text_primary"
                 android:textColorHint="@color/text_hint"
                 android:background="@null"
@@ -586,36 +575,35 @@
                 android:padding="0dp" />
         </LinearLayout>
 
-        <!-- INFO BANNER — background set in Kotlin via ThemeHelper.insightBannerBg() -->
+        <!-- INFO BANNER -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/infoBanner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="20dp"
-            android:padding="12dp">
+            android:layout_marginStart="@dimen/_14sdp"
+            android:layout_marginEnd="@dimen/_14sdp"
+            android:layout_marginTop="@dimen/_17sdp"
+            android:padding="@dimen/_10sdp">
 
             <TextView
                 android:id="@+id/ivInfoIcon"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="@dimen/_17sdp"
+                android:layout_height="@dimen/_17sdp"
                 android:gravity="center"
                 android:text="💡"
-                android:textSize="13sp"
+                android:textSize="@dimen/_11ssp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- brand purple — kept hardcoded -->
             <TextView
                 android:id="@+id/tvInfoText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="@dimen/_7sdp"
                 android:text="Consistent daily logging for at least the next 3 cycles will significantly improve your cycle predictions."
-                android:textSize="11sp"
+                android:textSize="@dimen/_9ssp"
                 android:textColor="@color/brand_purple_deep"
-                android:lineSpacingExtra="2dp"
+                android:lineSpacingExtra="@dimen/_2sdp"
                 app:layout_constraintStart_toEndOf="@id/ivInfoIcon"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -624,10 +612,10 @@
         <com.aivigil.periodtracker.widgets.GradientButton
             android:id="@+id/btnSaveDailyLog"
             android:layout_width="match_parent"
-            android:layout_height="54dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="20dp"
+            android:layout_height="@dimen/_46sdp"
+            android:layout_marginStart="@dimen/_14sdp"
+            android:layout_marginEnd="@dimen/_14sdp"
+            android:layout_marginTop="@dimen/_17sdp"
             android:text="💾  Save Daily Log" />
 
     </LinearLayout>

@@ -5,33 +5,33 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    android:paddingHorizontal="28dp"
-    android:paddingTop="32dp"
-    android:paddingBottom="24dp"
+    android:paddingHorizontal="@dimen/_24sdp"
+    android:paddingTop="@dimen/_27sdp"
+    android:paddingBottom="@dimen/_20sdp"
     android:background="@drawable/bg_dialog_card">
 
     <!-- Drop icon circle -->
     <FrameLayout
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_marginBottom="20dp">
+        android:layout_width="@dimen/_54sdp"
+        android:layout_height="@dimen/_54sdp"
+        android:layout_marginBottom="@dimen/_17sdp">
 
         <!-- Outer light pink circle -->
         <View
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+            android:layout_width="@dimen/_54sdp"
+            android:layout_height="@dimen/_54sdp"
             android:background="@drawable/bg_period_confirm_outer" />
 
         <!-- Inner white circle with drop icon -->
         <FrameLayout
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="@dimen/_41sdp"
+            android:layout_height="@dimen/_41sdp"
             android:layout_gravity="center"
             android:background="@drawable/bg_period_confirm_inner">
 
             <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
+                android:layout_width="@dimen/_19sdp"
+                android:layout_height="@dimen/_19sdp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_period_drop"
                 android:contentDescription="Period drop" />
@@ -45,40 +45,40 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Period started?"
-        android:textSize="20sp"
+        android:textSize="@dimen/_16ssp"
         android:textStyle="bold"
         android:textColor="@color/text_primary"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="@dimen/_7sdp" />
 
     <!-- Message -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Is today the first day of your active\nmenstrual flow?"
-        android:textSize="14sp"
+        android:textSize="@dimen/_12ssp"
         android:textColor="@color/text_secondary"
         android:gravity="center"
-        android:lineSpacingExtra="3dp"
-        android:layout_marginBottom="24dp" />
+        android:lineSpacingExtra="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_20sdp" />
 
     <!-- YES button — red gradient -->
     <com.aivigil.periodtracker.widgets.GradientButton
         android:id="@+id/btnYesPeriodStarted"
         android:layout_width="match_parent"
-        android:layout_height="52dp"
+        android:layout_height="@dimen/_44sdp"
         android:text="🩸  Yes, period started"
-        android:layout_marginBottom="12dp" />
+        android:layout_marginBottom="@dimen/_10sdp" />
 
     <!-- NO button — text only -->
     <TextView
         android:id="@+id/btnNoJustBleeding"
         android:layout_width="wrap_content"
-        android:layout_height="48dp"
+        android:layout_height="@dimen/_41sdp"
         android:gravity="center"
         android:text="🩹  No, just bleeding"
-        android:textSize="14sp"
+        android:textSize="@dimen/_12ssp"
         android:textColor="@color/text_secondary"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="@dimen/_14sdp" />
 
     <!-- Footer note -->
     <LinearLayout
@@ -86,13 +86,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        android:layout_marginTop="4dp">
+        android:layout_marginTop="@dimen/_3sdp">
 
         <ImageView
-            android:layout_width="14dp"
-            android:layout_height="14dp"
+            android:layout_width="@dimen/_12sdp"
+            android:layout_height="@dimen/_12sdp"
             android:src="@drawable/ic_info"
-            android:layout_marginEnd="6dp"
+            android:layout_marginEnd="@dimen/_5sdp"
             android:contentDescription="Info"
             android:alpha="0.5" />
 
@@ -101,7 +101,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Choosing yes marks today as Day 1 of your new cycle."
-            android:textSize="11sp"
+            android:textSize="@dimen/_9ssp"
             android:textColor="@color/text_secondary"
             android:gravity="center" />
 

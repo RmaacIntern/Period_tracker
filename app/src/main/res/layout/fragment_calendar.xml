@@ -11,20 +11,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="24dp">
+        android:paddingBottom="@dimen/_20sdp">
 
         <!-- TOP BAR -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:paddingHorizontal="20dp"
+            android:layout_height="@dimen/_48sdp"
+            android:paddingHorizontal="@dimen/_17sdp"
             android:background="@color/surface_bg">
             <TextView
                 android:id="@+id/tvCalendarTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Calendar"
-                android:textSize="22sp"
+                android:textSize="@dimen/_18ssp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary"
                 app:layout_constraintStart_toStartOf="parent"
@@ -36,16 +36,16 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="20dp"
-            android:paddingTop="4dp"
-            android:paddingBottom="10dp">
+            android:paddingHorizontal="@dimen/_17sdp"
+            android:paddingTop="@dimen/_3sdp"
+            android:paddingBottom="@dimen/_8sdp">
 
             <TextView
                 android:id="@+id/tvMonthYear"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="October 2024"
-                android:textSize="20sp"
+                android:textSize="@dimen/_16ssp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary"
                 app:layout_constraintStart_toStartOf="parent"
@@ -54,9 +54,9 @@
 
             <View
                 android:id="@+id/tvMonthDot"
-                android:layout_width="8dp"
-                android:layout_height="8dp"
-                android:layout_marginStart="6dp"
+                android:layout_width="@dimen/_7sdp"
+                android:layout_height="@dimen/_7sdp"
+                android:layout_marginStart="@dimen/_5sdp"
                 app:layout_constraintStart_toEndOf="@id/tvMonthYear"
                 app:layout_constraintTop_toTopOf="@id/tvMonthYear"
                 app:layout_constraintBottom_toBottomOf="@id/tvMonthYear" />
@@ -64,7 +64,7 @@
             <LinearLayout
                 android:id="@+id/navRow"
                 android:layout_width="wrap_content"
-                android:layout_height="36dp"
+                android:layout_height="@dimen/_30sdp"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -73,26 +73,25 @@
 
                 <ImageView
                     android:id="@+id/btnPrevMonth"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:padding="2dp"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:padding="@dimen/_2sdp"
                     android:src="@drawable/ic_back"
                     android:background="@drawable/bg_arrow_shadow"
                     android:scaleType="centerInside"
                     android:contentDescription="Previous month" />
 
                 <View
-                    android:layout_width="4dp"
+                    android:layout_width="@dimen/_3sdp"
                     android:layout_height="match_parent" />
 
                 <ImageView
                     android:id="@+id/btnNextMonth"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:padding="2dp"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:padding="@dimen/_2sdp"
                     android:src="@drawable/ic_next"
                     android:background="@drawable/bg_arrow_shadow"
-
                     android:scaleType="centerInside"
                     android:contentDescription="Next month" />
 
@@ -104,18 +103,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingHorizontal="20dp"
-            android:paddingBottom="12dp">
+            android:paddingHorizontal="@dimen/_17sdp"
+            android:paddingBottom="@dimen/_10sdp">
             <TextView
                 android:id="@+id/tabMonth"
                 android:layout_width="wrap_content"
-                android:layout_height="38dp"
+                android:layout_height="@dimen/_32sdp"
                 android:gravity="center"
                 android:text="Month"
-                android:textSize="13sp"
+                android:textSize="@dimen/_11ssp"
                 android:textStyle="bold"
                 android:textColor="#FFFFFF"
-                android:paddingHorizontal="22dp" />
+                android:paddingHorizontal="@dimen/_18sdp" />
         </LinearLayout>
 
         <!-- CALENDAR CARD -->
@@ -123,11 +122,11 @@
             android:id="@+id/calendarCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:paddingHorizontal="8dp"
-            android:paddingTop="12dp"
-            android:paddingBottom="14dp">
+            android:layout_marginStart="@dimen/_14sdp"
+            android:layout_marginEnd="@dimen/_14sdp"
+            android:paddingHorizontal="@dimen/_7sdp"
+            android:paddingTop="@dimen/_10sdp"
+            android:paddingBottom="@dimen/_12sdp">
 
             <com.aivigil.periodtracker.calendar.CycleCalendarView
                 android:id="@+id/cycleCalendarView"
@@ -140,8 +139,8 @@
             <LinearLayout
                 android:id="@+id/cycleProgressBar"
                 android:layout_width="0dp"
-                android:layout_height="5dp"
-                android:layout_marginTop="10dp"
+                android:layout_height="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_8sdp"
                 android:orientation="horizontal"
                 android:baselineAligned="false"
                 app:layout_constraintStart_toStartOf="parent"
@@ -162,10 +161,10 @@
                 android:id="@+id/tvCycleDay1Label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="@dimen/_3sdp"
                 android:text="Cycle Day 1"
                 android:textColor="@color/text_secondary"
-                android:textSize="10sp"
+                android:textSize="@dimen/_8ssp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cycleProgressBar" />
 
@@ -174,9 +173,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Est. 28 Days"
-                android:textSize="10sp"
+                android:textSize="@dimen/_8ssp"
                 android:textColor="@color/text_secondary"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="@dimen/_3sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cycleProgressBar" />
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -185,9 +184,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginStart="@dimen/_17sdp"
+            android:layout_marginEnd="@dimen/_17sdp"
+            android:layout_marginTop="@dimen/_14sdp"
             android:orientation="horizontal">
 
             <LinearLayout
@@ -196,25 +195,29 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
 
-                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+                <LinearLayout android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal" android:gravity="center_vertical"
-                    android:layout_marginBottom="8dp">
+                    android:layout_marginBottom="@dimen/_7sdp">
                     <View android:id="@+id/legendPeriodDot"
-                        android:layout_width="10dp" android:layout_height="10dp"
+                        android:layout_width="@dimen/_8sdp" android:layout_height="@dimen/_8sdp"
                         android:background="#C2185B" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Period" android:textSize="12sp" android:textColor="@color/text_primary"
-                        android:layout_marginStart="8dp" />
+                        android:text="Period" android:textSize="@dimen/_10ssp"
+                        android:textColor="@color/text_primary"
+                        android:layout_marginStart="@dimen/_7sdp" />
                 </LinearLayout>
 
-                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+                <LinearLayout android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal" android:gravity="center_vertical">
                     <View android:id="@+id/legendOvulationDot"
-                        android:layout_width="10dp" android:layout_height="10dp"
+                        android:layout_width="@dimen/_8sdp" android:layout_height="@dimen/_8sdp"
                         android:background="@color/brand_purple_deep" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Ovulation" android:textSize="12sp" android:textColor="@color/text_primary"
-                        android:layout_marginStart="8dp" />
+                        android:text="Ovulation" android:textSize="@dimen/_10ssp"
+                        android:textColor="@color/text_primary"
+                        android:layout_marginStart="@dimen/_7sdp" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -224,25 +227,29 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
 
-                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+                <LinearLayout android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal" android:gravity="center_vertical"
-                    android:layout_marginBottom="8dp">
+                    android:layout_marginBottom="@dimen/_7sdp">
                     <View android:id="@+id/legendFertileDot"
-                        android:layout_width="10dp" android:layout_height="10dp"
+                        android:layout_width="@dimen/_8sdp" android:layout_height="@dimen/_8sdp"
                         android:background="@color/cycle_fertile" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Fertile window" android:textSize="12sp" android:textColor="@color/text_primary"
-                        android:layout_marginStart="8dp" />
+                        android:text="Fertile window" android:textSize="@dimen/_10ssp"
+                        android:textColor="@color/text_primary"
+                        android:layout_marginStart="@dimen/_7sdp" />
                 </LinearLayout>
 
-                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+                <LinearLayout android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal" android:gravity="center_vertical">
                     <View android:id="@+id/legendPredictedDot"
-                        android:layout_width="10dp" android:layout_height="10dp"
+                        android:layout_width="@dimen/_8sdp" android:layout_height="@dimen/_8sdp"
                         android:background="@color/cycle_predicted" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Predicted Period" android:textSize="12sp" android:textColor="@color/text_primary"
-                        android:layout_marginStart="8dp" />
+                        android:text="Predicted Period" android:textSize="@dimen/_10ssp"
+                        android:textColor="@color/text_primary"
+                        android:layout_marginStart="@dimen/_7sdp" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
@@ -252,17 +259,17 @@
             android:id="@+id/selectedDayCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="16dp"
-            android:padding="16dp">
+            android:layout_marginStart="@dimen/_14sdp"
+            android:layout_marginEnd="@dimen/_14sdp"
+            android:layout_marginTop="@dimen/_14sdp"
+            android:padding="@dimen/_14sdp">
 
             <TextView
                 android:id="@+id/tvSelectedDayFull"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Monday, October 14"
-                android:textSize="16sp"
+                android:textSize="@dimen/_13ssp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary"
                 app:layout_constraintStart_toStartOf="parent"
@@ -274,11 +281,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="☀ Fertile Window"
-                android:textSize="11sp"
+                android:textSize="@dimen/_9ssp"
                 android:textStyle="bold"
                 android:textColor="@color/cycle_fertile"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="5dp"
+                android:paddingHorizontal="@dimen/_8sdp"
+                android:paddingVertical="@dimen/_4sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -286,9 +293,9 @@
                 android:id="@+id/tvSelectedDaySub"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:text="Cycle Day 12 · 14 Days until next period"
-                android:textSize="12sp"
+                android:textSize="@dimen/_10ssp"
                 android:textColor="@color/text_secondary"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -299,7 +306,7 @@
                 android:id="@+id/dayStatRow"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
+                android:layout_marginTop="@dimen/_12sdp"
                 android:orientation="horizontal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -307,62 +314,68 @@
 
                 <LinearLayout android:id="@+id/cardEnergy"
                     android:layout_width="0dp" android:layout_height="wrap_content"
-                    android:layout_weight="1" android:layout_marginEnd="6dp"
-                    android:orientation="vertical" android:gravity="center" android:padding="12dp">
+                    android:layout_weight="1" android:layout_marginEnd="@dimen/_5sdp"
+                    android:orientation="vertical" android:gravity="center"
+                    android:padding="@dimen/_10sdp">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="⚡" android:textSize="18sp" />
+                        android:text="⚡" android:textSize="@dimen/_15ssp" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp" android:text="ENERGY"
-                        android:textSize="9sp" android:textStyle="bold" android:letterSpacing="0.05"
-                        android:textColor="@color/text_secondary" />
+                        android:layout_marginTop="@dimen/_5sdp" android:text="ENERGY"
+                        android:textSize="@dimen/_7ssp" android:textStyle="bold"
+                        android:letterSpacing="0.05" android:textColor="@color/text_secondary" />
                     <TextView android:id="@+id/tvEnergyValue"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp" android:text="High"
-                        android:textSize="13sp" android:textStyle="bold" android:textColor="@color/text_primary" />
+                        android:layout_marginTop="@dimen/_2sdp" android:text="High"
+                        android:textSize="@dimen/_11ssp" android:textStyle="bold"
+                        android:textColor="@color/text_primary" />
                     <TextView android:id="@+id/tvEnergySource"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:layout_marginTop="3dp" android:text="estimated"
-                        android:textSize="9sp" android:textColor="#A855F7" />
+                        android:layout_marginTop="@dimen/_2sdp" android:text="estimated"
+                        android:textSize="@dimen/_7ssp" android:textColor="#A855F7" />
                 </LinearLayout>
 
                 <LinearLayout android:id="@+id/cardLibido"
                     android:layout_width="0dp" android:layout_height="wrap_content"
-                    android:layout_weight="1" android:layout_marginEnd="6dp"
-                    android:orientation="vertical" android:gravity="center" android:padding="12dp">
+                    android:layout_weight="1" android:layout_marginEnd="@dimen/_5sdp"
+                    android:orientation="vertical" android:gravity="center"
+                    android:padding="@dimen/_10sdp">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="🤍" android:textSize="18sp" />
+                        android:text="🤍" android:textSize="@dimen/_15ssp" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp" android:text="LIBIDO"
-                        android:textSize="9sp" android:textStyle="bold" android:letterSpacing="0.05"
-                        android:textColor="@color/text_secondary" />
+                        android:layout_marginTop="@dimen/_5sdp" android:text="LIBIDO"
+                        android:textSize="@dimen/_7ssp" android:textStyle="bold"
+                        android:letterSpacing="0.05" android:textColor="@color/text_secondary" />
                     <TextView android:id="@+id/tvLibidoValue"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp" android:text="Normal"
-                        android:textSize="13sp" android:textStyle="bold" android:textColor="@color/text_primary" />
+                        android:layout_marginTop="@dimen/_2sdp" android:text="Normal"
+                        android:textSize="@dimen/_11ssp" android:textStyle="bold"
+                        android:textColor="@color/text_primary" />
                     <TextView android:id="@+id/tvLibidoSource"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:layout_marginTop="3dp" android:text="estimated"
-                        android:textSize="9sp" android:textColor="#A855F7" />
+                        android:layout_marginTop="@dimen/_2sdp" android:text="estimated"
+                        android:textSize="@dimen/_7ssp" android:textColor="#A855F7" />
                 </LinearLayout>
 
                 <LinearLayout android:id="@+id/cardSleep"
                     android:layout_width="0dp" android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="vertical" android:gravity="center" android:padding="12dp">
+                    android:orientation="vertical" android:gravity="center"
+                    android:padding="@dimen/_10sdp">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="🌙" android:textSize="18sp" />
+                        android:text="🌙" android:textSize="@dimen/_15ssp" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp" android:text="SLEEP"
-                        android:textSize="9sp" android:textStyle="bold" android:letterSpacing="0.05"
-                        android:textColor="@color/text_secondary" />
+                        android:layout_marginTop="@dimen/_5sdp" android:text="SLEEP"
+                        android:textSize="@dimen/_7ssp" android:textStyle="bold"
+                        android:letterSpacing="0.05" android:textColor="@color/text_secondary" />
                     <TextView android:id="@+id/tvSleepValue"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp" android:text="7.5 hrs"
-                        android:textSize="13sp" android:textStyle="bold" android:textColor="@color/text_primary" />
+                        android:layout_marginTop="@dimen/_2sdp" android:text="7.5 hrs"
+                        android:textSize="@dimen/_11ssp" android:textStyle="bold"
+                        android:textColor="@color/text_primary" />
                     <TextView android:id="@+id/tvSleepSource"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:layout_marginTop="3dp" android:text="estimated"
-                        android:textSize="9sp" android:textColor="#A855F7" />
+                        android:layout_marginTop="@dimen/_2sdp" android:text="estimated"
+                        android:textSize="@dimen/_7ssp" android:textColor="#A855F7" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -371,38 +384,45 @@
                 android:id="@+id/cervicalRow"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:padding="12dp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:padding="@dimen/_10sdp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/dayStatRow">
 
                 <TextView android:id="@+id/iconCervical"
-                    android:layout_width="32dp" android:layout_height="32dp"
-                    android:gravity="center" android:text="💧" android:textSize="15sp"
+                    android:layout_width="@dimen/_27sdp"
+                    android:layout_height="@dimen/_27sdp"
+                    android:gravity="center" android:text="💧"
+                    android:textSize="@dimen/_12ssp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
 
                 <LinearLayout
                     android:layout_width="0dp" android:layout_height="wrap_content"
-                    android:orientation="vertical" android:layout_marginStart="10dp"
+                    android:orientation="vertical"
+                    android:layout_marginStart="@dimen/_8sdp"
                     app:layout_constraintStart_toEndOf="@id/iconCervical"
                     app:layout_constraintEnd_toStartOf="@id/tvFertilityChance"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Cervical Fluid" android:textSize="10sp" android:textColor="@color/text_secondary" />
+                        android:text="Cervical Fluid"
+                        android:textSize="@dimen/_8ssp"
+                        android:textColor="@color/text_secondary" />
                     <TextView android:id="@+id/tvCervicalValue"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Creamy · Low viscosity" android:textSize="13sp"
+                        android:text="Creamy · Low viscosity"
+                        android:textSize="@dimen/_11ssp"
                         android:textStyle="bold" android:textColor="@color/text_primary" />
                 </LinearLayout>
 
                 <TextView android:id="@+id/tvFertilityChance"
                     android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Chances: High" android:textSize="11sp" android:textStyle="bold"
-                    android:textColor="#EC4899"
+                    android:text="Chances: High"
+                    android:textSize="@dimen/_9ssp"
+                    android:textStyle="bold" android:textColor="#EC4899"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
@@ -413,29 +433,33 @@
                 android:id="@+id/periodStartSection"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
+                android:layout_marginTop="@dimen/_12sdp"
                 android:orientation="vertical"
-                android:padding="12dp"
+                android:padding="@dimen/_10sdp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cervicalRow">
 
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                <LinearLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal" android:gravity="center_vertical"
-                    android:layout_marginBottom="10dp">
+                    android:layout_marginBottom="@dimen/_8sdp">
                     <TextView android:layout_width="0dp" android:layout_height="wrap_content"
                         android:layout_weight="1" android:text="🩸  Period Start"
-                        android:textSize="13sp" android:textStyle="bold" android:textColor="@color/text_primary" />
+                        android:textSize="@dimen/_11ssp" android:textStyle="bold"
+                        android:textColor="@color/text_primary" />
                     <TextView android:id="@+id/tvPeriodStartStatus"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Not set" android:textSize="11sp" android:textColor="@color/text_secondary" />
+                        android:text="Not set"
+                        android:textSize="@dimen/_9ssp"
+                        android:textColor="@color/text_secondary" />
                 </LinearLayout>
 
                 <com.aivigil.periodtracker.widgets.GradientButton
                     android:id="@+id/btnLogPeriodStart"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="@dimen/_8sdp"
                     android:text="🩸  Log Period Start" />
             </LinearLayout>
 
@@ -446,34 +470,41 @@
             android:id="@+id/dailyTipCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="14dp"
-            android:padding="14dp">
+            android:layout_marginStart="@dimen/_14sdp"
+            android:layout_marginEnd="@dimen/_14sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:padding="@dimen/_12sdp">
 
             <TextView android:id="@+id/ivTipImage"
-                android:layout_width="64dp" android:layout_height="64dp"
-                android:gravity="center" android:text="🌸" android:textSize="28sp"
+                android:layout_width="@dimen/_54sdp"
+                android:layout_height="@dimen/_54sdp"
+                android:gravity="center" android:text="🌸"
+                android:textSize="@dimen/_22ssp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
-                android:orientation="vertical" android:layout_marginStart="12dp"
+                android:orientation="vertical"
+                android:layout_marginStart="@dimen/_10sdp"
                 app:layout_constraintStart_toEndOf="@id/ivTipImage"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="DAILY TIP" android:textSize="9sp" android:textStyle="bold"
+                    android:text="DAILY TIP"
+                    android:textSize="@dimen/_7ssp"
+                    android:textStyle="bold"
                     android:letterSpacing="0.08" android:textColor="#EC4899" />
                 <TextView android:id="@+id/tvTipTitle"
                     android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp" android:text=""
-                    android:textSize="14sp" android:textStyle="bold" android:textColor="@color/text_primary" />
+                    android:layout_marginTop="@dimen/_2sdp" android:text=""
+                    android:textSize="@dimen/_12ssp" android:textStyle="bold"
+                    android:textColor="@color/text_primary" />
                 <TextView android:id="@+id/tvTipBody"
                     android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp" android:text=""
-                    android:textSize="11sp" android:textColor="@color/text_secondary"
+                    android:layout_marginTop="@dimen/_3sdp" android:text=""
+                    android:textSize="@dimen/_9ssp"
+                    android:textColor="@color/text_secondary"
                     android:maxLines="2" android:ellipsize="end" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>

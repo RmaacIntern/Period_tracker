@@ -95,9 +95,17 @@ class OnboardingFragment7 : Fragment() {
         val isYesterday = date == today.minusDays(1)
         val isCustom    = !isToday && !isYesterday
 
+        val whiteColor = Color.WHITE
+        val primaryColor = requireContext().getColor(com.aivigil.periodtracker.R.color.text_primary)
+
         binding.chipToday.background        = chipBg(unselected = !isToday)
+        binding.chipToday.setTextColor(if (isToday) whiteColor else primaryColor)
+
         binding.chipYesterday.background    = chipBg(unselected = !isYesterday)
+        binding.chipYesterday.setTextColor(if (isYesterday) whiteColor else primaryColor)
+
         binding.chipSelectedDate.background = chipBg(unselected = !isCustom)
+        binding.chipSelectedDate.setTextColor(if (isCustom) whiteColor else primaryColor)
         binding.chipSelectedDate.visibility = if (isCustom) View.VISIBLE else View.GONE
     }
 
@@ -107,7 +115,7 @@ class OnboardingFragment7 : Fragment() {
         cornerRadius = 16f * resources.displayMetrics.density
         setColor(
             if (unselected) requireContext().getColor(com.aivigil.periodtracker.R.color.surface_card_inner)
-            else            requireContext().getColor(com.aivigil.periodtracker.R.color.icon_bg_pink)
+            else            requireContext().getColor(com.aivigil.periodtracker.R.color.brand_pink)
         )
     }
 

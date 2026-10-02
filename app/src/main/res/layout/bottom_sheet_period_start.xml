@@ -6,24 +6,24 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@drawable/bottom_sheet_bg"
-    android:paddingBottom="32dp">
+    android:paddingBottom="@dimen/_27sdp">
 
     <!-- Handle -->
     <View
-        android:layout_width="40dp"
-        android:layout_height="4dp"
+        android:layout_width="@dimen/_34sdp"
+        android:layout_height="@dimen/_3sdp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/_10sdp"
         android:background="@drawable/sheet_handle" />
 
     <!-- Question -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="@dimen/_20sdp"
+        android:layout_marginTop="@dimen/_20sdp"
         android:text="Log Period Start"
-        android:textSize="18sp"
+        android:textSize="@dimen/_15ssp"
         android:textStyle="bold"
         android:textColor="@color/text_primary" />
 
@@ -31,15 +31,15 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="8dp">
+        android:layout_marginHorizontal="@dimen/_20sdp"
+        android:layout_marginTop="@dimen/_7sdp">
 
         <TextView
             android:id="@+id/tvPeriodStartDate"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Select a date"
-            android:textSize="28sp"
+            android:textSize="@dimen/_22ssp"
             android:textStyle="bold"
             android:textColor="@color/text_primary"
             app:layout_constraintStart_toStartOf="parent"
@@ -49,11 +49,11 @@
 
         <TextView
             android:id="@+id/btnPeriodStartEdit"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/_34sdp"
+            android:layout_height="@dimen/_34sdp"
             android:gravity="center"
             android:text="✏"
-            android:textSize="16sp"
+            android:textSize="@dimen/_13ssp"
             android:textColor="#FFFFFF"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -63,27 +63,27 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="@dimen/_1sdp"
         android:background="@color/stroke_card"
-        android:layout_marginTop="12dp" />
+        android:layout_marginTop="@dimen/_10sdp" />
 
     <!-- Month nav row -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="24dp"
-        android:paddingTop="14dp"
-        android:paddingBottom="8dp">
+        android:paddingHorizontal="@dimen/_20sdp"
+        android:paddingTop="@dimen/_12sdp"
+        android:paddingBottom="@dimen/_7sdp">
 
         <TextView
             android:id="@+id/tvPeriodStartMonth"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="September 2026"
-            android:textSize="15sp"
+            android:textSize="@dimen/_13ssp"
             android:textStyle="bold"
             android:textColor="@color/text_primary"
-            android:drawablePadding="4dp"
+            android:drawablePadding="@dimen/_3sdp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
@@ -98,21 +98,21 @@
 
             <TextView
                 android:id="@+id/btnPeriodStartPrev"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
                 android:gravity="center"
                 android:text="‹"
-                android:textSize="20sp"
+                android:textSize="@dimen/_16ssp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary" />
 
             <TextView
                 android:id="@+id/btnPeriodStartNext"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
                 android:gravity="center"
                 android:text="›"
-                android:textSize="20sp"
+                android:textSize="@dimen/_16ssp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary" />
 
@@ -125,37 +125,37 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingHorizontal="16dp">
+        android:paddingHorizontal="@dimen/_14sdp">
 
-        <TextView android:layout_width="0dp" android:layout_height="32dp"
+        <TextView android:layout_width="0dp" android:layout_height="@dimen/_27sdp"
             android:layout_weight="1" android:gravity="center"
-            android:text="S" android:textSize="12sp" android:textColor="@color/text_secondary" />
-        <TextView android:layout_width="0dp" android:layout_height="32dp"
+            android:text="S" android:textSize="@dimen/_10ssp" android:textColor="@color/text_secondary" />
+        <TextView android:layout_width="0dp" android:layout_height="@dimen/_27sdp"
             android:layout_weight="1" android:gravity="center"
-            android:text="M" android:textSize="12sp" android:textColor="@color/text_secondary" />
-        <TextView android:layout_width="0dp" android:layout_height="32dp"
+            android:text="M" android:textSize="@dimen/_10ssp" android:textColor="@color/text_secondary" />
+        <TextView android:layout_width="0dp" android:layout_height="@dimen/_27sdp"
             android:layout_weight="1" android:gravity="center"
-            android:text="T" android:textSize="12sp" android:textColor="@color/text_secondary" />
-        <TextView android:layout_width="0dp" android:layout_height="32dp"
+            android:text="T" android:textSize="@dimen/_10ssp" android:textColor="@color/text_secondary" />
+        <TextView android:layout_width="0dp" android:layout_height="@dimen/_27sdp"
             android:layout_weight="1" android:gravity="center"
-            android:text="W" android:textSize="12sp" android:textColor="@color/text_secondary" />
-        <TextView android:layout_width="0dp" android:layout_height="32dp"
+            android:text="W" android:textSize="@dimen/_10ssp" android:textColor="@color/text_secondary" />
+        <TextView android:layout_width="0dp" android:layout_height="@dimen/_27sdp"
             android:layout_weight="1" android:gravity="center"
-            android:text="T" android:textSize="12sp" android:textColor="@color/text_secondary" />
-        <TextView android:layout_width="0dp" android:layout_height="32dp"
+            android:text="T" android:textSize="@dimen/_10ssp" android:textColor="@color/text_secondary" />
+        <TextView android:layout_width="0dp" android:layout_height="@dimen/_27sdp"
             android:layout_weight="1" android:gravity="center"
-            android:text="F" android:textSize="12sp" android:textColor="@color/text_secondary" />
-        <TextView android:layout_width="0dp" android:layout_height="32dp"
+            android:text="F" android:textSize="@dimen/_10ssp" android:textColor="@color/text_secondary" />
+        <TextView android:layout_width="0dp" android:layout_height="@dimen/_27sdp"
             android:layout_weight="1" android:gravity="center"
-            android:text="S" android:textSize="12sp" android:textColor="@color/text_secondary" />
+            android:text="S" android:textSize="@dimen/_10ssp" android:textColor="@color/text_secondary" />
     </LinearLayout>
 
     <!-- Calendar grid -->
     <com.aivigil.periodtracker.calendar.SheetCalendarView
         android:id="@+id/periodStartCalendar"
         android:layout_width="match_parent"
-        android:layout_height="280dp"
-        android:layout_marginHorizontal="16dp" />
+        android:layout_height="@dimen/_240sdp"
+        android:layout_marginHorizontal="@dimen/_14sdp" />
 
     <!-- Recent periods — edit or delete wrong entries -->
     <LinearLayout
@@ -163,19 +163,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="@dimen/_20sdp"
+        android:layout_marginTop="@dimen/_14sdp"
         android:visibility="gone">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Recent periods"
-            android:textSize="12sp"
+            android:textSize="@dimen/_10ssp"
             android:textStyle="bold"
             android:letterSpacing="0.05"
             android:textColor="@color/text_secondary"
-            android:layout_marginBottom="6dp" />
+            android:layout_marginBottom="@dimen/_5sdp" />
 
         <LinearLayout
             android:id="@+id/recentPeriodsList"
@@ -190,27 +190,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="8dp"
-        android:paddingHorizontal="24dp">
+        android:layout_marginTop="@dimen/_7sdp"
+        android:paddingHorizontal="@dimen/_20sdp">
 
         <TextView
             android:id="@+id/btnPeriodStartCancel"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="@dimen/_44sdp"
             android:layout_weight="1"
             android:gravity="center"
             android:text="Cancel"
-            android:textSize="15sp"
+            android:textSize="@dimen/_13ssp"
             android:textColor="@color/text_secondary" />
 
         <TextView
             android:id="@+id/btnPeriodStartOk"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="@dimen/_44sdp"
             android:layout_weight="1"
             android:gravity="center"
             android:text="Log Period Start"
-            android:textSize="15sp"
+            android:textSize="@dimen/_13ssp"
             android:textStyle="bold"
             android:textColor="#EC4899" />
 

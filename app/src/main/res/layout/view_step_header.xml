@@ -6,16 +6,12 @@
 
     <ImageView
         android:id="@+id/btnBack"
-        android:layout_width="35dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="@dimen/_25sdp"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_7sdp"
         android:gravity="center"
         android:src="@drawable/onboarding_back"
-
-
-
-
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -24,10 +20,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="STEP 1 OF 7"
-        android:textSize="12sp"
+        android:textSize="@dimen/_10ssp"
         android:textStyle="bold"
         android:letterSpacing="0.08"
-        android:textColor="#8A7A8F"
+        android:textColor="@color/text_secondary"
         app:layout_constraintTop_toTopOf="@id/btnBack"
         app:layout_constraintBottom_toBottomOf="@id/btnBack"
         app:layout_constraintStart_toStartOf="parent"
@@ -36,9 +32,9 @@
     <FrameLayout
         android:id="@+id/progressTrack"
         android:layout_width="0dp"
-        android:layout_height="5dp"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="14dp"
+        android:layout_height="@dimen/_4sdp"
+        android:layout_marginHorizontal="@dimen/_14sdp"
+        android:layout_marginTop="@dimen/_12sdp"
         app:layout_constraintTop_toBottomOf="@id/btnBack"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

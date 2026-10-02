@@ -5,60 +5,56 @@
     android:id="@+id/onboarding6Root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingHorizontal="24dp"
+    android:paddingHorizontal="@dimen/_20sdp"
     tools:context=".onboarding.OnboardingFragment6">
 
-    <!-- goalIconCircle background set in Kotlin via ThemeHelper.iconCirclePink() -->
     <FrameLayout
         android:id="@+id/goalIconCircle"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_marginTop="24dp"
+        android:layout_width="@dimen/_48sdp"
+        android:layout_height="@dimen/_48sdp"
+        android:layout_marginTop="@dimen/_20sdp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <ImageView
-            android:layout_width="26dp"
-            android:layout_height="26dp"
+            android:layout_width="@dimen/_22sdp"
+            android:layout_height="@dimen/_22sdp"
             android:layout_gravity="center"
             android:src="@drawable/target"
             android:contentDescription="Goal icon" />
     </FrameLayout>
 
-    <!-- ✅ FIX — #3D1B2E → @color/text_primary -->
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/_14sdp"
         android:text="What brings you\nhere, lovely?"
-        android:textSize="22sp"
+        android:textSize="@dimen/_18ssp"
         android:textStyle="bold"
         android:textColor="@color/text_primary"
         app:layout_constraintTop_toBottomOf="@id/goalIconCircle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
     <TextView
         android:id="@+id/tvSubtitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/_7sdp"
         android:text="Everything you need — cycle tracking, ovulation and fertile window, all in one place."
-        android:textSize="13sp"
+        android:textSize="@dimen/_11ssp"
         android:textColor="@color/text_secondary"
         app:layout_constraintTop_toBottomOf="@id/tvTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- cardGoal background set in Kotlin — always brand gradient (fine in both modes) -->
     <LinearLayout
         android:id="@+id/cardGoal"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:padding="20dp"
+        android:layout_marginTop="@dimen/_17sdp"
+        android:padding="@dimen/_17sdp"
         android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@id/tvSubtitle"
         app:layout_constraintBottom_toTopOf="@id/nativeAdContainer"
@@ -72,9 +68,9 @@
             android:gravity="center_vertical">
 
             <ImageView
-                android:layout_width="26dp"
-                android:layout_height="26dp"
-                android:layout_marginEnd="14dp"
+                android:layout_width="@dimen/_22sdp"
+                android:layout_height="@dimen/_22sdp"
+                android:layout_marginEnd="@dimen/_12sdp"
                 android:src="@drawable/period_tracking"
                 android:contentDescription="Track cycle icon" />
 
@@ -84,32 +80,31 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
 
-                <!-- White text on gradient — correct in both modes -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Track my cycle"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/_13ssp"
                     android:textStyle="bold"
                     android:textColor="#FFFFFF" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
+                    android:layout_marginTop="@dimen/_2sdp"
                     android:text="Predictions, phases and daily insights"
-                    android:textSize="12sp"
+                    android:textSize="@dimen/_10ssp"
                     android:textColor="#F5E6F0" />
             </LinearLayout>
 
             <FrameLayout
                 android:id="@+id/checkGoal"
-                android:layout_width="24dp"
-                android:layout_height="24dp">
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp">
                 <ImageView
                     android:id="@+id/ivCheckGoal"
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
+                    android:layout_width="@dimen/_12sdp"
+                    android:layout_height="@dimen/_12sdp"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_check"
                     android:contentDescription="Selected" />
@@ -118,9 +113,9 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="14dp"
-            android:layout_marginBottom="14dp"
+            android:layout_height="@dimen/_1sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_marginBottom="@dimen/_12sdp"
             android:background="#4DFFFFFF" />
 
         <LinearLayout
@@ -130,9 +125,9 @@
             android:gravity="center_vertical">
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginEnd="14dp"
+                android:layout_width="@dimen/_17sdp"
+                android:layout_height="@dimen/_17sdp"
+                android:layout_marginEnd="@dimen/_12sdp"
                 android:src="@drawable/fertile"
                 android:contentDescription="Fertility window icon" />
 
@@ -145,16 +140,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Ovulation &amp; Fertile Window"
-                    android:textSize="14sp"
+                    android:textSize="@dimen/_12ssp"
                     android:textStyle="bold"
                     android:textColor="#FFFFFF" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
+                    android:layout_marginTop="@dimen/_2sdp"
                     android:text="Track ovulation day, fertility score and peak days"
-                    android:textSize="11sp"
+                    android:textSize="@dimen/_9ssp"
                     android:textColor="#F5E6F0" />
             </LinearLayout>
         </LinearLayout>
@@ -164,24 +159,23 @@
         android:id="@+id/nativeAdContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginTop="@dimen/_7sdp"
+        android:layout_marginBottom="@dimen/_25sdp"
         android:background="@drawable/bg_ad_card"
-        android:elevation="1dp"
+        android:elevation="@dimen/_1sdp"
         app:layout_constraintTop_toBottomOf="@id/cardGoal"
         app:layout_constraintBottom_toTopOf="@id/tvFooterNote"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
     <TextView
         android:id="@+id/tvFooterNote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="@dimen/_20sdp"
         android:gravity="center"
         android:text="🔒 Kept confidential and securely stored on-device"
-        android:textSize="11sp"
+        android:textSize="@dimen/_9ssp"
         android:textColor="@color/text_secondary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

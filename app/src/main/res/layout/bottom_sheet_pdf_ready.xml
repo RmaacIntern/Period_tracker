@@ -7,24 +7,24 @@
     android:orientation="vertical"
     android:gravity="center_horizontal"
     android:background="@drawable/bottom_sheet_bg"
-    android:paddingHorizontal="24dp"
-    android:paddingTop="12dp"
-    android:paddingBottom="32dp">
+    android:paddingHorizontal="@dimen/_20sdp"
+    android:paddingTop="@dimen/_10sdp"
+    android:paddingBottom="@dimen/_27sdp">
 
     <!-- Handle -->
     <View
-        android:layout_width="40dp"
-        android:layout_height="4dp"
+        android:layout_width="@dimen/_34sdp"
+        android:layout_height="@dimen/_3sdp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginTop="@dimen/_7sdp"
+        android:layout_marginBottom="@dimen/_17sdp"
         android:background="@drawable/sheet_handle" />
 
     <!-- PDF Icon circle -->
     <FrameLayout
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginBottom="16dp"
+        android:layout_width="@dimen/_50sdp"
+        android:layout_height="@dimen/_50sdp"
+        android:layout_marginBottom="@dimen/_14sdp"
         android:background="@drawable/bg_period_confirm_outer">
 
         <TextView
@@ -34,7 +34,7 @@
             android:text="PDF"
             android:textStyle="bold"
             android:textColor="#E63A5E"
-            android:textSize="14sp" />
+            android:textSize="@dimen/_12ssp" />
 
     </FrameLayout>
 
@@ -43,10 +43,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="PDF Report Ready"
-        android:textSize="18sp"
+        android:textSize="@dimen/_15ssp"
         android:textStyle="bold"
         android:textColor="@color/text_primary"
-        android:layout_marginBottom="6dp" />
+        android:layout_marginBottom="@dimen/_5sdp" />
 
     <!-- Message -->
     <TextView
@@ -54,32 +54,32 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Saved to Downloads/PeriodTracker_Report.pdf"
-        android:textSize="13sp"
+        android:textSize="@dimen/_11ssp"
         android:textColor="@color/text_secondary"
         android:gravity="center"
-        android:layout_marginBottom="24dp" />
+        android:layout_marginBottom="@dimen/_20sdp" />
 
     <!-- Open PDF button -->
     <Button
         android:id="@+id/btnOpenPdf"
         style="@style/Widget.Material3.Button"
         android:layout_width="match_parent"
-        android:layout_height="52dp"
+        android:layout_height="@dimen/_44sdp"
         android:text="Open PDF"
         android:textColor="#FFFFFF"
-        android:textSize="15sp"
+        android:textSize="@dimen/_13ssp"
         android:backgroundTint="#EC4899"
-        app:cornerRadius="14dp"
-        android:layout_marginBottom="12dp" />
+        app:cornerRadius="@dimen/_12sdp"
+        android:layout_marginBottom="@dimen/_10sdp" />
 
     <!-- Close button -->
     <TextView
         android:id="@+id/btnClosePdf"
         android:layout_width="wrap_content"
-        android:layout_height="40dp"
+        android:layout_height="@dimen/_34sdp"
         android:gravity="center"
         android:text="Close"
-        android:textSize="14sp"
+        android:textSize="@dimen/_12ssp"
         android:textColor="@color/text_secondary" />
 
 </LinearLayout>

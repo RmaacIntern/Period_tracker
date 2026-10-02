@@ -13,7 +13,7 @@
         android:layout_height="0dp"
         android:orientation="vertical"
         android:gravity="center_horizontal"
-        android:paddingHorizontal="40dp"
+        android:paddingHorizontal="@dimen/_40sdp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/loadingSection"
         app:layout_constraintStart_toStartOf="parent"
@@ -27,16 +27,16 @@
         <!-- Logo circle -->
         <FrameLayout
             android:id="@+id/logoCircle"
-            android:layout_width="148dp"
-            android:layout_height="148dp"
+            android:layout_width="@dimen/_140sdp"
+            android:layout_height="@dimen/_140sdp"
             android:background="@drawable/bg_logo_circle"
-            android:elevation="8dp"
+            android:elevation="@dimen/_8sdp"
             android:layout_gravity="center_horizontal">
 
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="4dp">
+                android:padding="@dimen/_4sdp">
 
                 <FrameLayout
                     android:layout_width="match_parent"
@@ -56,13 +56,12 @@
         </FrameLayout>
 
         <!-- App name -->
-        <!-- ✅ FIX — replaced hardcoded #2D1B33 with @color/text_primary -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="@dimen/_28sdp"
             android:text="Period Tracker"
-            android:textSize="32sp"
+            android:textSize="@dimen/_24ssp"
             android:textStyle="bold"
             android:textColor="@color/text_primary"
             android:letterSpacing="0.01"
@@ -70,16 +69,15 @@
             android:layout_gravity="center_horizontal" />
 
         <!-- Tagline -->
-        <!-- ✅ FIX — replaced hardcoded #8A7A8F with @color/text_secondary -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="@dimen/_10sdp"
             android:text="Understand your cycle.\nUnderstand yourself."
-            android:textSize="15sp"
+            android:textSize="@dimen/_13ssp"
             android:textColor="@color/text_secondary"
             android:gravity="center"
-            android:lineSpacingExtra="4dp"
+            android:lineSpacingExtra="@dimen/_4sdp"
             android:layout_gravity="center_horizontal" />
 
         <Space
@@ -100,31 +98,29 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="6dp">
+                android:layout_marginBottom="@dimen/_6sdp">
 
                 <ImageView
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
-                    android:layout_marginEnd="6dp"
+                    android:layout_width="@dimen/_14sdp"
+                    android:layout_height="@dimen/_14sdp"
+                    android:layout_marginEnd="@dimen/_6sdp"
                     android:src="@drawable/ic_lock"
                     android:contentDescription="Privacy" />
 
-                <!-- ✅ FIX — replaced hardcoded #6B5B6E with @color/text_secondary -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Private by design · Local device only"
-                    android:textSize="12sp"
+                    android:textSize="@dimen/_10ssp"
                     android:textColor="@color/text_secondary" />
 
             </LinearLayout>
 
-            <!-- ✅ FIX — replaced hardcoded #A99AAC with @color/text_secondary -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Zero tracking · Zero cloud · 100% Yours"
-                android:textSize="11sp"
+                android:textSize="@dimen/_9ssp"
                 android:textColor="@color/text_secondary"
                 android:gravity="center" />
 
@@ -139,27 +135,26 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center_horizontal"
-        android:paddingBottom="48dp"
+        android:paddingBottom="@dimen/_48sdp"
         app:layout_constraintBottom_toTopOf="@id/smallAd"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- ✅ FIX — replaced hardcoded #8A7A8F with @color/text_secondary -->
         <TextView
             android:id="@+id/tvLoading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="@dimen/_10sdp"
             android:text="Loading..."
-            android:textSize="12sp"
+            android:textSize="@dimen/_10ssp"
             android:textColor="@color/text_secondary" />
 
         <ProgressBar
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
-            android:layout_height="8dp"
-            android:layout_marginHorizontal="50dp"
+            android:layout_height="@dimen/_8sdp"
+            android:layout_marginHorizontal="@dimen/_50sdp"
             android:indeterminate="false"
             android:max="100"
             android:progress="0"

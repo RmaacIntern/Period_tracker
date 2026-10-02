@@ -3,25 +3,25 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingBottom="32dp"
+    android:paddingBottom="@dimen/_32sdp"
     android:background="@drawable/bottom_sheet_bg">
 
     <!-- Handle -->
     <View
-        android:layout_width="40dp"
-        android:layout_height="4dp"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_4sdp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:layout_marginBottom="@dimen/_20sdp"
         android:background="@drawable/sheet_handle" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginStart="@dimen/_20sdp"
+        android:layout_marginBottom="@dimen/_16sdp"
         android:text="Activity Level"
-        android:textSize="17sp"
+        android:textSize="@dimen/_15ssp"
         android:textStyle="bold"
         android:textColor="@color/text_primary" />
 
@@ -30,9 +30,9 @@
         android:id="@+id/cardGentle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="10dp"
-        android:padding="16dp"
+        android:layout_marginHorizontal="@dimen/_16sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:padding="@dimen/_16sdp"
         android:orientation="horizontal"
         android:gravity="center_vertical">
 
@@ -47,7 +47,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Gentle"
-                android:textSize="15sp"
+                android:textSize="@dimen/_13ssp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary" />
 
@@ -55,21 +55,21 @@
                 android:id="@+id/tvGentleDesc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:text="Light walks, yoga, low-impact movement"
-                android:textSize="12sp"
+                android:textSize="@dimen/_10ssp"
                 android:textColor="@color/text_secondary" />
         </LinearLayout>
 
         <FrameLayout
             android:id="@+id/checkGentle"
-            android:layout_width="24dp"
-            android:layout_height="24dp">
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp">
 
             <ImageView
                 android:id="@+id/ivCheckGentle"
-                android:layout_width="14dp"
-                android:layout_height="14dp"
+                android:layout_width="@dimen/_14sdp"
+                android:layout_height="@dimen/_14sdp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_uncheck"
                 android:contentDescription="Selection state" />
@@ -81,9 +81,9 @@
         android:id="@+id/cardBalanced"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="10dp"
-        android:padding="16dp"
+        android:layout_marginHorizontal="@dimen/_16sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:padding="@dimen/_16sdp"
         android:orientation="horizontal"
         android:gravity="center_vertical">
 
@@ -98,7 +98,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Balanced"
-                android:textSize="15sp"
+                android:textSize="@dimen/_13ssp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary" />
 
@@ -106,21 +106,21 @@
                 android:id="@+id/tvBalancedDesc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:text="Mix of rest and moderate exercise"
-                android:textSize="12sp"
+                android:textSize="@dimen/_10ssp"
                 android:textColor="@color/text_secondary" />
         </LinearLayout>
 
         <FrameLayout
             android:id="@+id/checkBalanced"
-            android:layout_width="24dp"
-            android:layout_height="24dp">
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp">
 
             <ImageView
                 android:id="@+id/ivCheckBalanced"
-                android:layout_width="14dp"
-                android:layout_height="14dp"
+                android:layout_width="@dimen/_14sdp"
+                android:layout_height="@dimen/_14sdp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_uncheck"
                 android:contentDescription="Selection state" />
@@ -132,9 +132,9 @@
         android:id="@+id/cardActive"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="10dp"
-        android:padding="16dp"
+        android:layout_marginHorizontal="@dimen/_16sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:padding="@dimen/_16sdp"
         android:orientation="horizontal"
         android:gravity="center_vertical">
 
@@ -149,7 +149,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Very Active"
-                android:textSize="15sp"
+                android:textSize="@dimen/_13ssp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary" />
 
@@ -157,21 +157,21 @@
                 android:id="@+id/tvActiveDesc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:text="Intense workouts, sports or high daily activity"
-                android:textSize="12sp"
+                android:textSize="@dimen/_10ssp"
                 android:textColor="@color/text_secondary" />
         </LinearLayout>
 
         <FrameLayout
             android:id="@+id/checkActive"
-            android:layout_width="24dp"
-            android:layout_height="24dp">
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp">
 
             <ImageView
                 android:id="@+id/ivCheckActive"
-                android:layout_width="14dp"
-                android:layout_height="14dp"
+                android:layout_width="@dimen/_14sdp"
+                android:layout_height="@dimen/_14sdp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_uncheck"
                 android:contentDescription="Selection state" />

@@ -5,69 +5,65 @@
     android:id="@+id/onboarding7Root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingHorizontal="24dp"
+    android:paddingHorizontal="@dimen/_20sdp"
     tools:context=".onboarding.OnboardingFragment7">
 
-    <!-- calendarIconCircle background set in Kotlin via ThemeHelper.iconCirclePink() -->
     <FrameLayout
         android:id="@+id/calendarIconCircle"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_marginTop="24dp"
+        android:layout_width="@dimen/_48sdp"
+        android:layout_height="@dimen/_48sdp"
+        android:layout_marginTop="@dimen/_20sdp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <ImageView
-            android:layout_width="26dp"
-            android:layout_height="26dp"
+            android:layout_width="@dimen/_22sdp"
+            android:layout_height="@dimen/_22sdp"
             android:layout_gravity="center"
             android:src="@drawable/ic_calendar"
             android:contentDescription="Calendar icon" />
     </FrameLayout>
 
-    <!-- ✅ FIX — #3D1B2E → @color/text_primary -->
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/_14sdp"
         android:text="When did your last period\nstart?"
-        android:textSize="22sp"
+        android:textSize="@dimen/_18ssp"
         android:textStyle="bold"
         android:textColor="@color/text_primary"
         app:layout_constraintTop_toBottomOf="@id/calendarIconCircle" />
 
-    <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
     <TextView
         android:id="@+id/tvSubtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/_7sdp"
         android:text="An estimate is fine, Period Tracker learns your real rhythm as you log."
-        android:textSize="13sp"
+        android:textSize="@dimen/_11ssp"
         android:textColor="@color/text_secondary"
         app:layout_constraintTop_toBottomOf="@id/tvTitle" />
 
-    <!-- startDateCard + startDateIconCircle backgrounds set in Kotlin via ThemeHelper -->
     <LinearLayout
         android:id="@+id/startDateCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:padding="16dp"
+        android:layout_marginTop="@dimen/_17sdp"
+        android:padding="@dimen/_14sdp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         app:layout_constraintTop_toBottomOf="@id/tvSubtitle">
 
         <FrameLayout
             android:id="@+id/startDateIconCircle"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginEnd="12dp">
+            android:layout_width="@dimen/_34sdp"
+            android:layout_height="@dimen/_34sdp"
+            android:layout_marginEnd="@dimen/_10sdp">
 
             <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
+                android:layout_width="@dimen/_15sdp"
+                android:layout_height="@dimen/_15sdp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_calendar_small"
                 android:contentDescription="Date icon" />
@@ -79,35 +75,33 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="START DATE"
-                android:textSize="10sp"
+                android:textSize="@dimen/_8ssp"
                 android:textStyle="bold"
                 android:letterSpacing="0.06"
                 android:textColor="@color/text_secondary" />
 
-            <!-- Green date color set in Kotlin — brand color, fine in both modes -->
             <TextView
                 android:id="@+id/tvSelectedStartDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:text="Saturday, Sept 12"
-                android:textSize="15sp"
+                android:textSize="@dimen/_13ssp"
                 android:textStyle="bold"
                 android:textColor="@color/text_success" />
         </LinearLayout>
 
         <ImageView
             android:id="@+id/btnEditDate"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="@dimen/_17sdp"
+            android:layout_height="@dimen/_17sdp"
             android:src="@drawable/ic_edit"
             android:contentDescription="Edit date"
-            android:padding="2dp" />
+            android:padding="@dimen/_2sdp" />
     </LinearLayout>
 
     <!-- Quick pick row -->
@@ -115,82 +109,75 @@
         android:id="@+id/quickPickRow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="@dimen/_12sdp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         app:layout_constraintTop_toBottomOf="@id/startDateCard">
 
-        <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Quick pick:"
-            android:textSize="12sp"
+            android:textSize="@dimen/_10ssp"
             android:textColor="@color/text_secondary"
-            android:layout_marginEnd="8dp" />
+            android:layout_marginEnd="@dimen/_7sdp" />
 
-        <!-- Chip backgrounds set in Kotlin via chipBg() using color resources -->
-        <!-- ✅ FIX — #2D1B33 → @color/text_primary -->
         <TextView
             android:id="@+id/chipToday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="6dp"
-            android:layout_marginEnd="6dp"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:paddingVertical="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
             android:text="Today"
-            android:textSize="12sp"
+            android:textSize="@dimen/_10ssp"
             android:textColor="@color/text_primary" />
 
-        <!-- ✅ FIX — #2D1B33 → @color/text_primary -->
         <TextView
             android:id="@+id/chipYesterday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="6dp"
-            android:layout_marginEnd="6dp"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:paddingVertical="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
             android:text="Yesterday"
-            android:textSize="12sp"
+            android:textSize="@dimen/_10ssp"
             android:textColor="@color/text_primary" />
 
-        <!-- brand pink — kept hardcoded -->
         <TextView
             android:id="@+id/chipSelectedDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="6dp"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:paddingVertical="@dimen/_5sdp"
             android:text="Sept 12"
-            android:textSize="12sp"
+            android:textSize="@dimen/_10ssp"
             android:textStyle="bold"
-            android:textColor="#E63A5E" />
+            android:textColor="@color/text_primary" />
 
     </LinearLayout>
 
-    <!-- ✅ FIX — added missing top constraint -->
     <FrameLayout
         android:id="@+id/nativeAdContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginTop="@dimen/_7sdp"
+        android:layout_marginBottom="@dimen/_25sdp"
         android:background="@drawable/bg_ad_card"
-        android:elevation="1dp"
+        android:elevation="@dimen/_1sdp"
         app:layout_constraintTop_toBottomOf="@id/quickPickRow"
         app:layout_constraintBottom_toTopOf="@id/tvFooterNote"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- ✅ FIX — #8A7A8F → @color/text_secondary -->
     <TextView
         android:id="@+id/tvFooterNote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="@dimen/_20sdp"
         android:gravity="center"
         android:text="🔒 Kept confidential and securely stored on-device"
-        android:textSize="11sp"
+        android:textSize="@dimen/_9ssp"
         android:textColor="@color/text_secondary"
         app:layout_constraintBottom_toBottomOf="parent" />
 

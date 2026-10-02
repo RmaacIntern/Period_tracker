@@ -45,6 +45,12 @@
     <!-- Basal temp card -->
     <color name="basal_card_bg">#261520</color>
 
+    <!-- Period prediction card bg -->
+    <color name="period_pred_card_bg">#3A1C2C</color>
+
+    <!-- Fertile prediction card bg -->
+    <color name="fertile_pred_card_bg">#2E1D3A</color>
+
     <!-- Splash screen diagonal gradient -->
     <color name="splash_grad_start">#1A1020</color>
     <color name="splash_grad_mid">#1E1320</color>

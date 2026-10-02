@@ -17,15 +17,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- ✅ FIX — replaced hardcoded #8A7A8F with @color/text_secondary -->
     <TextView
         android:id="@+id/tvFooterNote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingVertical="12dp"
+        android:paddingVertical="@dimen/_10sdp"
         android:gravity="center"
         android:text="🔒 Kept confidential and securely stored on-device"
-        android:textSize="11sp"
+        android:textSize="@dimen/_9ssp"
         android:textColor="@color/text_secondary"
         app:layout_constraintBottom_toTopOf="@id/bannerAdContainer"
         app:layout_constraintStart_toStartOf="parent"
@@ -47,24 +46,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingHorizontal="24dp"
-            android:paddingTop="48dp"
-            android:paddingBottom="16dp">
+            android:paddingHorizontal="@dimen/_20sdp"
+            android:paddingTop="@dimen/_40sdp"
+            android:paddingBottom="@dimen/_14sdp">
 
             <!-- Logo circle -->
             <FrameLayout
                 android:id="@+id/iconCircle"
-                android:layout_width="96dp"
-                android:layout_height="96dp"
+                android:layout_width="@dimen/_80sdp"
+                android:layout_height="@dimen/_80sdp"
                 android:layout_gravity="center_horizontal"
                 android:background="@drawable/bg_logo_circle"
-                android:elevation="6dp"
+                android:elevation="@dimen/_5sdp"
                 android:clipToOutline="true">
 
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="4dp">
+                    android:padding="@dimen/_3sdp">
 
                     <FrameLayout
                         android:layout_width="match_parent"
@@ -83,61 +82,56 @@
                 </FrameLayout>
             </FrameLayout>
 
-            <!-- ✅ FIX — replaced hardcoded #3D1B2E with @color/text_primary -->
             <TextView
                 android:id="@+id/tvTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="@dimen/_17sdp"
                 android:gravity="center"
                 android:text="Welcome to\nPeriod Tracker"
-                android:textSize="26sp"
+                android:textSize="@dimen/_18ssp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary" />
 
-            <!-- ✅ FIX — replaced hardcoded #8A7A8F with @color/text_secondary -->
             <TextView
                 android:id="@+id/tvSubtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="@dimen/_10sdp"
                 android:gravity="center"
                 android:text="Your private companion for your cycle, periods and fertility. Your answers stay on your phone, always."
-                android:textSize="13sp"
+                android:textSize="@dimen/_11ssp"
                 android:textColor="@color/text_secondary" />
 
-            <!-- badgePrivacy background set in Kotlin via ThemeHelper.cardBg() -->
-            <!-- textColor #E63A5E is brand pink — kept hardcoded, looks fine in both modes -->
             <TextView
                 android:id="@+id/badgePrivacy"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="18dp"
-                android:paddingHorizontal="14dp"
-                android:paddingVertical="8dp"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:paddingHorizontal="@dimen/_12sdp"
+                android:paddingVertical="@dimen/_7sdp"
                 android:text="🔒 100% On-device privacy"
-                android:textSize="12sp"
+                android:textSize="@dimen/_10ssp"
                 android:textStyle="bold"
                 android:textColor="#E63A5E" />
 
-            <!-- nameInputCard background set in Kotlin via ThemeHelper.cardBg() -->
             <LinearLayout
                 android:id="@+id/nameInputCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
-                android:padding="18dp"
+                android:layout_marginTop="@dimen/_24sdp"
+                android:padding="@dimen/_15sdp"
                 android:orientation="vertical">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:boxBackgroundMode="outline"
-                    app:boxCornerRadiusTopStart="14dp"
-                    app:boxCornerRadiusTopEnd="14dp"
-                    app:boxCornerRadiusBottomStart="14dp"
-                    app:boxCornerRadiusBottomEnd="14dp"
+                    app:boxCornerRadiusTopStart="@dimen/_12sdp"
+                    app:boxCornerRadiusTopEnd="@dimen/_12sdp"
+                    app:boxCornerRadiusBottomStart="@dimen/_12sdp"
+                    app:boxCornerRadiusBottomEnd="@dimen/_12sdp"
                     app:boxStrokeColor="@color/slider_track_inactive"
                     app:hintEnabled="false">
 
@@ -146,23 +140,22 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="What should we call you?"
-                        android:textSize="15sp"
-                        android:padding="14dp"
+                        android:textSize="@dimen/_13ssp"
+                        android:padding="@dimen/_12sdp"
                         android:inputType="textPersonName"
                         android:maxLines="1"
                         android:maxLength="15" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- error text — brand pink, fine in both modes -->
                 <TextView
                     android:id="@+id/tvNameError"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="@dimen/_8sdp"
                     android:gravity="center"
                     android:text="* Name is required"
                     android:textColor="#E63A5E"
-                    android:textSize="11sp"
+                    android:textSize="@dimen/_9ssp"
                     android:visibility="gone" />
 
             </LinearLayout>
@@ -171,8 +164,8 @@
                 android:id="@+id/nativeAdContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="16dp" />
+                android:layout_marginTop="@dimen/_7sdp"
+                android:layout_marginBottom="@dimen/_14sdp" />
 
         </LinearLayout>
     </ScrollView>
