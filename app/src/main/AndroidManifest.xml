@@ -26,13 +26,13 @@
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-3940256099942544~3347511713"/>
 
-        <receiver
-            android:name=".notification.AlarmReceiver"
-            android:exported="false">
+        <receiver android:name=".notification.AlarmReceiver"
+            android:exported="true">
             <intent-filter>
-                <action android:name="com.aivigil.periodtracker.PERIOD_REMINDER"/>
-                <action android:name="com.aivigil.periodtracker.PERIOD_DAY"/>
-                <action android:name="com.aivigil.periodtracker.OVULATION_ALERT"/>
+                <action android:name="com.aivigil.periodtracker.PERIOD_REMINDER" />
+                <action android:name="com.aivigil.periodtracker.PERIOD_DAY" />
+                <action android:name="com.aivigil.periodtracker.OVULATION_ALERT" />
+                <action android:name="com.aivigil.periodtracker.ACTION_DAILY_LOG" />
             </intent-filter>
         </receiver>
 

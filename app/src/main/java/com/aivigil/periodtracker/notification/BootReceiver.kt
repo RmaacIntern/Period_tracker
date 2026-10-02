@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-
 import com.aivigil.periodtracker.data.repository.CycleRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,22 +32,16 @@ class BootReceiver : BroadcastReceiver() {
 
         val appContext = context.applicationContext
         val result = goAsync()
+
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                // FIX: this used to reimplement the prediction by hand —
-                //   nextPeriod = lastPeriod + cycleLength
-                //   ovulation  = nextPeriod - 14
-                // with no clamping for short cycles and no bio-signal input, so the
-                // alarms it set after a reboot could disagree with the dates shown
-                // in the app. It also read settings.lastPeriodStart rather than the
-                // authoritative latest period entry. It now asks the repository for
-                // the same prediction every screen uses.
                 val prediction = CycleRepository.getInstance(appContext).getBestPrediction()
                 if (prediction == null) {
                     Log.w(TAG, "no prediction available — nothing to reschedule")
+                    // Still reschedule daily reminder even with no prediction
+                    NotificationPrefs.syncDailyReminder(appContext)
                     return@launch
                 }
-
 
                 NotificationPrefs.rescheduleFromPrediction(
                     context    = appContext,

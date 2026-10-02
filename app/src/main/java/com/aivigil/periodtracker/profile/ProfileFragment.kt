@@ -186,21 +186,48 @@ class ProfileFragment : Fragment() {
 
         binding.switchPeriod.setOnCheckedChangeListener { _, checked ->
             NotificationPrefs.setPeriodEnabled(ctx, checked)
+            if (checked) {
+                checkExactAlarmAndWarn(ctx)
+            }
             applyReminderState()
             if (checked) warnIfNotificationsBlocked()
         }
 
         binding.switchOvul.setOnCheckedChangeListener { _, checked ->
             NotificationPrefs.setOvulationEnabled(ctx, checked)
+            if (checked) {
+                checkExactAlarmAndWarn(ctx)
+            }
             applyReminderState()
             if (checked) warnIfNotificationsBlocked()
         }
 
         binding.switchDaily.setOnCheckedChangeListener { _, checked ->
             NotificationPrefs.setDailyEnabled(ctx, checked)
+            if (checked) {
+                checkExactAlarmAndWarn(ctx)
+            }
             NotificationPrefs.syncDailyReminder(ctx)
             if (checked) warnIfNotificationsBlocked()
         }
+
+    }
+    /**
+     * If the OS has not granted exact-alarm permission, open the system
+     * settings screen so the user can enable it. Without this, alarms
+     * fire late (inexact fallback) and the user never knows why.
+     */
+    private fun checkExactAlarmAndWarn(ctx: android.content.Context) {
+        if (com.aivigil.periodtracker.notification.ExactAlarmPermissionHelper
+                .canScheduleExact(ctx)) return
+        val root = _binding?.root ?: return
+        com.google.android.material.snackbar.Snackbar
+            .make(root, "Allow exact alarms for on-time reminders", 7000)
+            .setAction("Enable") {
+                com.aivigil.periodtracker.notification.ExactAlarmPermissionHelper
+                    .openExactAlarmSettings(ctx)
+            }
+            .show()
     }
 
     /** Re-arms period/ovulation alarms from the current prediction and prefs. */

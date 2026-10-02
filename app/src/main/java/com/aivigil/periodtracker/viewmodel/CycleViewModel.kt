@@ -19,6 +19,7 @@ class CycleViewModel(app: Application) : AndroidViewModel(app) {
 
     private val TAG  = "CycleViewModel"
     private val repo = CycleRepository.getInstance(app)
+    private var refreshJob: kotlinx.coroutines.Job? = null
 
     // ── Raw live data ─────────────────────────────────────────────
 
@@ -74,43 +75,42 @@ class CycleViewModel(app: Application) : AndroidViewModel(app) {
     private val _isFertileToday = MutableLiveData<Boolean>()
     val isFertileToday: LiveData<Boolean> = _isFertileToday
 
-    private fun refreshPrediction() = viewModelScope.launch {
-        // ✅ FIX 3 — explicitly post null so UI can show empty state
-        // instead of silently doing nothing when there is no period data yet
-        val pred = repo.getBestPrediction()
-        if (pred == null) {
-            Log.w(TAG, "refresh: getBestPrediction returned null — no period data yet")
-            _prediction.postValue(null)
-            _isFertileToday.postValue(false)
-            return@launch
+    private fun refreshPrediction() {
+        refreshJob?.cancel()
+        refreshJob = viewModelScope.launch {
+            // Debounce: wait 300ms, collapse rapid back-to-back calls into one
+            kotlinx.coroutines.delay(300)
+
+            val pred = repo.getBestPrediction()
+            if (pred == null) {
+                Log.w(TAG, "refresh: getBestPrediction returned null — no period data yet")
+                _prediction.postValue(null)
+                _isFertileToday.postValue(false)
+                return@launch
+            }
+
+            _prediction.postValue(pred)
+
+            val today = LocalDate.now()
+            _isFertileToday.postValue(
+                CycleEngine.isFertile(today, pred.fertileStart, pred.fertileEnd)
+            )
+
+            NotificationPrefs.rescheduleFromPrediction(
+                context    = getApplication(),
+                nextPeriod = pred.nextPeriodDate,
+                ovulation  = pred.ovulationDate,
+                today      = today
+            )
+
+            Log.d(TAG, "refresh: prediction updated — " +
+                    "lastPeriod=${pred.lastPeriodStart} " +
+                    "cycleLen=${pred.cycleLength} " +
+                    "nextPeriod=${pred.nextPeriodDate} " +
+                    "ovulation=${pred.ovulationDate} " +
+                    "fertile=${pred.fertileStart}→${pred.fertileEnd} " +
+                    "confidence=${pred.confidence} source=${pred.dataSource}")
         }
-
-        _prediction.postValue(pred)
-
-        val today = LocalDate.now()
-        _isFertileToday.postValue(
-            CycleEngine.isFertile(today, pred.fertileStart, pred.fertileEnd)
-        )
-
-        // FIX (user consent): alarms used to be (re)scheduled here unconditionally
-        // on every settings / period / log change. That silently undid the
-        // reminder switches in Profile — a user who turned period reminders OFF
-        // had them re-armed the next time anything touched the database.
-        // NotificationPrefs is now the single gate for all scheduling.
-        NotificationPrefs.rescheduleFromPrediction(
-            context      = getApplication(),
-            nextPeriod   = pred.nextPeriodDate,
-            ovulation    = pred.ovulationDate,
-            today        = today
-        )
-
-        Log.d(TAG, "refresh: prediction updated — " +
-                "lastPeriod=${pred.lastPeriodStart} " +
-                "cycleLen=${pred.cycleLength} " +
-                "nextPeriod=${pred.nextPeriodDate} " +
-                "ovulation=${pred.ovulationDate} " +
-                "fertile=${pred.fertileStart}→${pred.fertileEnd} " +
-                "confidence=${pred.confidence} source=${pred.dataSource}")
     }
 
     init {

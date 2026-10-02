@@ -14,6 +14,7 @@ class AlarmReceiver : BroadcastReceiver() {
         const val ACTION_PERIOD_REMINDER  = "com.aivigil.periodtracker.PERIOD_REMINDER"
         const val ACTION_PERIOD_DAY       = "com.aivigil.periodtracker.PERIOD_DAY"
         const val ACTION_OVULATION_ALERT  = "com.aivigil.periodtracker.OVULATION_ALERT"
+        const val ACTION_DAILY_LOG        = "com.aivigil.periodtracker.ACTION_DAILY_LOG"
     }
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -28,6 +29,11 @@ class AlarmReceiver : BroadcastReceiver() {
             ACTION_PERIOD_REMINDER -> NotificationHelper.showPeriodReminderNotification(context)
             ACTION_PERIOD_DAY      -> NotificationHelper.showPeriodStartedNotification(context)
             ACTION_OVULATION_ALERT -> NotificationHelper.showOvulationNotification(context)
+            ACTION_DAILY_LOG       -> {
+                NotificationHelper.showDailyLogNotification(context)
+                // Exact alarms fire once — reschedule for next day 8pm
+                AlarmScheduler.scheduleDailyLogAlarm(context)
+            }
         }
     }
 }

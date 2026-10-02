@@ -1,5 +1,6 @@
 ﻿package com.aivigil.periodtracker
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -35,30 +36,34 @@ class MainActivity : AppCompatActivity() {
 
     private companion object {
         const val KEY_SELECTED_TAB = "selected_tab_id"
-        const val TAG_HOME     = "tab_home"
-        const val TAG_CALENDAR = "tab_calendar"
-        const val TAG_INSIGHTS = "tab_insights"
-        const val TAG_PROFILE  = "tab_profile"
+        const val TAG_HOME         = "tab_home"
+        const val TAG_CALENDAR     = "tab_calendar"
+        const val TAG_INSIGHTS     = "tab_insights"
+        const val TAG_PROFILE      = "tab_profile"
 
         val TAB_TAGS = listOf(TAG_HOME, TAG_CALENDAR, TAG_INSIGHTS, TAG_PROFILE)
     }
 
     private lateinit var binding: ActivityMainBinding
-
-    private var systemBarBottom = 0
     private lateinit var navBinding: CustomBottomNavBinding
+
+    private var systemBarBottom    = 0
     private var bannerAdHelper: BannerAdHelper? = null
-    private var exitDialogShowing = false
-    private var clickInProgress = false
-    private var selectedTabId = R.id.navHome
+    private var exitDialogShowing  = false
+    private var clickInProgress    = false
+    private var selectedTabId      = R.id.navHome
+    private var alarmScheduledOnce = false   // ← prevents re-scheduling on rotation
 
     private val vm: CycleViewModel by viewModels { CycleViewModelFactory(application) }
 
+    // ─────────────────────────────────────────────────────────────
+    // LIFECYCLE
+    // ─────────────────────────────────────────────────────────────
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        binding    = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         navBinding = CustomBottomNavBinding.bind(binding.customBottomNav.root)
 
         setupWindowInsets()
@@ -66,16 +71,35 @@ class MainActivity : AppCompatActivity() {
         preloadMainAd()
         setupBottomNav()
 
+        // Notification setup
         NotificationHelper.createChannels(this)
-        // FIX: was scheduleDailyLogReminder() — an unconditional re-enqueue that
-        // undid the user's "daily reminder off" choice on every single launch.
-        // syncDailyReminder() enqueues or cancels to match the stored preference.
+
+        // Respects the user's reminder toggle — does NOT unconditionally re-arm
         NotificationPrefs.syncDailyReminder(this)
+
+        // Schedule period/ovulation alarms once, only when permission is granted
+        // alarmScheduledOnce is a class field so rotation does not reset it
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+            checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+            == android.content.pm.PackageManager.PERMISSION_GRANTED
+        ) {
+            vm.prediction.observe(this) { pred ->
+                if (pred != null && !alarmScheduledOnce) {
+                    alarmScheduledOnce = true
+                    NotificationPrefs.rescheduleFromPrediction(
+                        context    = this,
+                        nextPeriod = pred.nextPeriodDate,
+                        ovulation  = pred.ovulationDate
+                    )
+                }
+            }
+        }
+
+        // Handle tap from a notification (cold start)
         handleNotificationIntent(intent)
 
-        // FIX: selectedTabId was not persisted, so after a rotation it was -1 and
-        // updateTabColors(-1) fell through to the else branch and highlighted Home
-        // while the restored fragment was still Calendar/Insights/Profile.
+        // Restore selected tab after rotation — without this selectedTabId was
+        // always reset to navHome and the highlighted tab was wrong
         selectedTabId = savedInstanceState?.getInt(KEY_SELECTED_TAB, R.id.navHome)
             ?: R.id.navHome
 
@@ -84,22 +108,20 @@ class MainActivity : AppCompatActivity() {
         }
         updateTabColors(selectedTabId)
 
+        // Back press — show ad then exit dialog
         onBackPressedDispatcher.addCallback(this) {
             when {
-                supportFragmentManager.backStackEntryCount > 0 -> {
+                supportFragmentManager.backStackEntryCount > 0 ->
                     supportFragmentManager.popBackStack()
-                }
+
                 else -> {
                     if (!AdsRemoteConfig.show_back_press_interstitial) {
                         showExitDialog()
                         return@addCallback
                     }
-
                     ShowAds.showAdIfEligible(this@MainActivity) {
                         binding.mainRoot.postDelayed({
-                            if (!isFinishing && !isDestroyed) {
-                                showExitDialog()
-                            }
+                            if (!isFinishing && !isDestroyed) showExitDialog()
                         }, 300)
                     }
                 }
@@ -107,8 +129,29 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        clickInProgress   = false
+        exitDialogShowing = false
+        updateTabColors(selectedTabId)
+        vm.onAppForegrounded()
+        preloadMainAd()
+        applyBottomInset()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(KEY_SELECTED_TAB, selectedTabId)
+    }
+
+    override fun onDestroy() {
+        bannerAdHelper?.destroy()
+        bannerAdHelper = null
+        super.onDestroy()
+    }
+
     // ─────────────────────────────────────────────────────────────
-    // CUSTOM BOTTOM NAV
+    // BOTTOM NAV
     // ─────────────────────────────────────────────────────────────
 
     private fun setupBottomNav() {
@@ -116,26 +159,26 @@ class MainActivity : AppCompatActivity() {
         navBinding.navCalendar.setOnClickListener { onTabClicked(R.id.navCalendar) }
         navBinding.navInsights.setOnClickListener { onTabClicked(R.id.navInsights) }
         navBinding.navProfile.setOnClickListener  { onTabClicked(R.id.navProfile) }
-
         updateTabColors(R.id.navHome)
     }
+
     private fun onTabClicked(tabId: Int) {
         if (clickInProgress) return
 
         val fm = supportFragmentManager
 
-        // Synchronous pop — removes LogSymptoms, PastLogHistory etc.
+        // Pop any backstack fragments (LogSymptoms, PastLogHistory, etc.)
         if (fm.backStackEntryCount > 0) {
-            fm.popBackStackImmediate(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE)
+            fm.popBackStackImmediate(
+                null,
+                androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
+            )
         }
 
-        // After popping, whatever fragment replace() restored is now visible.
-        // Force hide ALL fragments immediately so nothing bleeds through.
+        // Hide everything immediately so nothing bleeds through
         val hideTx = fm.beginTransaction()
         fm.fragments.forEach { fragment ->
-            if (fragment.isAdded && !fragment.isHidden) {
-                hideTx.hide(fragment)
-            }
+            if (fragment.isAdded && !fragment.isHidden) hideTx.hide(fragment)
         }
         hideTx.commitNow()
 
@@ -162,28 +205,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Swaps the visible tab.
-     *
-     * FIX: this used to construct a brand-new Fragment on every tab tap and
-     * `replace()` it, so switching away and back destroyed scroll position,
-     * expanded sections and any in-progress input, and re-ran every DB query
-     * and ad request from scratch. Fragments are now created once, kept in the
-     * FragmentManager by tag, and shown/hidden — so tab state survives.
+     * Fragments are created once and shown/hidden — never replaced.
+     * This preserves scroll position, expanded state, and avoids
+     * re-running DB queries and ad requests on every tab switch.
      */
     private fun showTab(tabId: Int) {
         val tag = tagFor(tabId)
-        val fm = supportFragmentManager
+        val fm  = supportFragmentManager
         if (fm.isStateSaved || isFinishing || isDestroyed) return
 
         val tx = fm.beginTransaction()
 
         // Hide only the 4 known tab fragments — never touch backstack fragments
-        // like LogSymptomsFragment or PastLogHistoryFragment
         TAB_TAGS.forEach { existingTag ->
             fm.findFragmentByTag(existingTag)?.let { fragment ->
-                if (fragment.isAdded && !fragment.isHidden) {
-                    tx.hide(fragment)
-                }
+                if (fragment.isAdded && !fragment.isHidden) tx.hide(fragment)
             }
         }
 
@@ -210,16 +246,16 @@ class MainActivity : AppCompatActivity() {
         else             -> HomeFragment()
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt(KEY_SELECTED_TAB, selectedTabId)
-    }
+    // ─────────────────────────────────────────────────────────────
+    // TAB COLORS
+    // ─────────────────────────────────────────────────────────────
 
     private fun updateTabColors(selectedId: Int) {
         val selectedColor   = android.graphics.Color.parseColor("#FFFFFF")
-        val unselectedColor = ContextCompat.getColor(this, R.color.text_secondary)  // dark-mode aware
+        val unselectedColor = ContextCompat.getColor(this, R.color.text_secondary)
 
-        // Reset all to unselected — INVISIBLE keeps space reserved
+        // Reset all tabs to unselected state
+        // INVISIBLE (not GONE) keeps label space reserved — prevents layout shift
         listOf(
             Triple(navBinding.navHome,     navBinding.iconHome,     navBinding.labelHome),
             Triple(navBinding.navCalendar, navBinding.iconCalendar, navBinding.labelCalendar),
@@ -227,11 +263,11 @@ class MainActivity : AppCompatActivity() {
             Triple(navBinding.navProfile,  navBinding.iconProfile,  navBinding.labelProfile)
         ).forEach { (tab, icon, label) ->
             tab.background   = null
-            label.visibility = View.INVISIBLE  // ← INVISIBLE not GONE — space always reserved
+            label.visibility = View.INVISIBLE
             setTabColor(icon, label, unselectedColor)
         }
 
-        // Set selected tab — gradient pill + white
+        // Apply selected state — gradient pill background + white tint
         val (tab, icon, label) = when (selectedId) {
             R.id.navHome     -> Triple(navBinding.navHome,     navBinding.iconHome,     navBinding.labelHome)
             R.id.navCalendar -> Triple(navBinding.navCalendar, navBinding.iconCalendar, navBinding.labelCalendar)
@@ -255,11 +291,9 @@ class MainActivity : AppCompatActivity() {
     // WINDOW INSETS
     // ─────────────────────────────────────────────────────────────
 
-
-
     private fun setupWindowInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.mainRoot) { view, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val systemBars  = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             systemBarBottom = systemBars.bottom
             view.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
             applyBottomInset()
@@ -275,12 +309,14 @@ class MainActivity : AppCompatActivity() {
 
         val bannerVisible = binding.smallAd.root.visibility == View.VISIBLE
         if (bannerVisible) {
-            // Banner handles system bar gap
-            binding.customBottomNav.root.setPadding(navPaddingStart, navPaddingTop, navPaddingEnd, navPaddingBottom)
+            binding.customBottomNav.root.setPadding(
+                navPaddingStart, navPaddingTop, navPaddingEnd, navPaddingBottom
+            )
             binding.smallAd.root.setPadding(0, 0, 0, systemBarBottom)
         } else {
-            // No banner — nav bar handles system bar gap
-            binding.customBottomNav.root.setPadding(navPaddingStart, navPaddingTop, navPaddingEnd, navPaddingBottom + systemBarBottom)
+            binding.customBottomNav.root.setPadding(
+                navPaddingStart, navPaddingTop, navPaddingEnd, navPaddingBottom + systemBarBottom
+            )
             binding.smallAd.root.setPadding(0, 0, 0, 0)
         }
     }
@@ -300,7 +336,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // ─────────────────────────────────────────────────────────────
-    // PRELOAD INTERSTITIAL
+    // INTERSTITIAL PRELOAD
     // ─────────────────────────────────────────────────────────────
 
     private fun preloadMainAd() {
@@ -311,35 +347,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        clickInProgress = false
-        exitDialogShowing = false
-        updateTabColors(selectedTabId)
-        vm.onAppForegrounded()
-        preloadMainAd()
-        applyBottomInset() // ← add this line
-    }
-
     // ─────────────────────────────────────────────────────────────
     // EXIT DIALOG
     // ─────────────────────────────────────────────────────────────
 
     private fun showExitDialog() {
         if (exitDialogShowing) return
-        if (isFinishing || isDestroyed) return  // ← ADD this guard
+        if (isFinishing || isDestroyed) return
         exitDialogShowing = true
 
-        val dialogBinding = DialogExitConfirmationBinding
-            .inflate(LayoutInflater.from(this))
+        val dialogBinding = DialogExitConfirmationBinding.inflate(LayoutInflater.from(this))
 
         val dialog = android.app.Dialog(this).apply {
             setContentView(dialogBinding.root)
             window?.apply {
                 setBackgroundDrawable(
-                    android.graphics.drawable.ColorDrawable(
-                        android.graphics.Color.TRANSPARENT
-                    )
+                    android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT)
                 )
                 setLayout(
                     (resources.displayMetrics.widthPixels * 0.88).toInt(),
@@ -361,7 +384,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // ─────────────────────────────────────────────────────────────
-    // NOTIFICATION INTENT
+    // NOTIFICATION INTENT HANDLING
     // ─────────────────────────────────────────────────────────────
 
     override fun onNewIntent(intent: android.content.Intent) {
@@ -370,15 +393,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * FIX: this used to look for a "from_notification" extra that NOTHING in the
-     * codebase ever set, so it was dead code — every notification dropped the user
-     * on the Home tab with no context for why the app had opened. Notifications now
-     * carry NotificationHelper.EXTRA_DESTINATION and land on the relevant screen.
+     * Reads the destination extra set by NotificationHelper and navigates
+     * to the correct tab. Extra is consumed immediately so rotation or a
+     * later onResume does not re-navigate.
      */
     private fun handleNotificationIntent(intent: android.content.Intent?) {
         val destination = intent?.getStringExtra(NotificationHelper.EXTRA_DESTINATION)
             ?: return
-        // Consume it so a rotation or a later onResume does not re-navigate.
         intent.removeExtra(NotificationHelper.EXTRA_DESTINATION)
 
         val tab = when (destination) {
@@ -390,18 +411,5 @@ class MainActivity : AppCompatActivity() {
         selectedTabId = tab
         updateTabColors(tab)
         showTab(tab)
-    }
-
-    // Daily-log reminder scheduling now lives in NotificationPrefs so the
-    // preference is honoured from every entry point (see NotificationPrefs).
-
-    // ─────────────────────────────────────────────────────────────
-    // DESTROY
-    // ─────────────────────────────────────────────────────────────
-
-    override fun onDestroy() {
-        bannerAdHelper?.destroy()
-        bannerAdHelper = null
-        super.onDestroy()
     }
 }
